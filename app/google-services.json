@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "293656470596",
+    "project_id": "bon-inventaire-39366",
+    "storage_bucket": "bon-inventaire-39366.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:293656470596:android:f9f9a1e673ead6cf8d8811",
+        "android_client_info": {
+          "package_name": "com.mobdeve.s11.group19.bon_inventaire"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "293656470596-4of8n2vgh3mvem0q2uqh9he4nu0l8htl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAvOkjFv308itljyLCWEZ84ir8fcKfnUfw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "293656470596-4of8n2vgh3mvem0q2uqh9he4nu0l8htl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
