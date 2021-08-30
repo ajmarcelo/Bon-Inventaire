@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFF8EF">
+
+    <ImageButton
+        android:id="@+id/ib_login_back"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:backgroundTint="#05FFFFFF"
+        android:paddingStart="0dp"
+        android:paddingTop="0dp"
+        android:paddingEnd="0dp"
+        android:paddingBottom="0dp"
+        android:scaleType="fitCenter"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/cancel_icon" />
+
+    <ImageView
+        android:id="@+id/iv_login_logo"
+        android:layout_width="70dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="32dp"
+        android:scaleType="fitCenter"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ib_login_back"
+        app:srcCompat="@drawable/app_name_logo" />
+
+    <RelativeLayout
+        android:id="@+id/rl_login_email"
+        android:layout_width="300dp"
+        android:layout_height="0dp"
+        android:layout_margin="15dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        app:layout_constraintEnd_toEndOf="@+id/iv_login_logo"
+        app:layout_constraintStart_toStartOf="@+id/iv_login_logo"
+        app:layout_constraintTop_toBottomOf="@+id/iv_login_logo">
+
+        <LinearLayout
+            android:id="@+id/ll_login_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/border_blue"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <EditText
+                android:id="@+id/et_login_email"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:fontFamily="@font/belleza"
+                android:hint="Email"
+                android:inputType="textEmailAddress"
+                android:outlineProvider="none"
+                android:paddingBottom="0dp"
+                android:textColor="#3A3A3A"
+                android:textColorHighlight="#30638E"
+                android:textColorLink="#30638E"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_login_email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="15dp"
+            android:background="#FFF8EF"
+            android:fontFamily="@font/belleza"
+            android:text=" Email "
+            android:textColor="@color/black"
+            android:textSize="14sp" />
+    </RelativeLayout>
+
+    <!--    til_register_password-->
+    <RelativeLayout
+        android:id="@+id/rl_login_password"
+        android:layout_width="300dp"
+        android:layout_height="0dp"
+        android:layout_margin="15dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        app:layout_constraintEnd_toEndOf="@+id/iv_login_logo"
+        app:layout_constraintStart_toStartOf="@+id/iv_login_logo"
+        app:layout_constraintTop_toBottomOf="@+id/rl_login_email">
+
+        <LinearLayout
+            android:id="@+id/ll_login_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/border_blue"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <EditText
+                android:id="@+id/et_login_password"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:fontFamily="@font/belleza"
+                android:hint="Password"
+                android:maxLength="8"
+                android:inputType="textPassword"
+                android:outlineProvider="none"
+                android:paddingBottom="0dp"
+                android:textColor="#3A3A3A"
+                android:textColorHighlight="#30638E"
+                android:textColorLink="#30638E"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_login_password"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="15dp"
+            android:background="#FFF8EF"
+            android:fontFamily="@font/belleza"
+            android:text=" Password "
+            android:textColor="@color/black"
+            android:textSize="14sp" />
+    </RelativeLayout>
+
+    <ImageButton
+        android:id="@+id/ib_login_confirm"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="32dp"
+        android:backgroundTint="#00FFFFFF"
+        android:paddingStart="0dp"
+        android:paddingTop="0dp"
+        android:paddingEnd="0dp"
+        android:paddingBottom="0dp"
+        android:scaleType="fitCenter"
+        app:layout_constraintEnd_toEndOf="@+id/rl_login_password"
+        app:layout_constraintStart_toStartOf="@+id/rl_login_password"
+        app:layout_constraintTop_toBottomOf="@+id/rl_login_password"
+        app:srcCompat="@drawable/login_btn" />
+
+    <TextView
+        android:id="@+id/tv_login_register"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Don't have an account? Register"
+        android:textSize="13sp"
+        app:layout_constraintEnd_toEndOf="@+id/ib_login_confirm"
+        app:layout_constraintStart_toStartOf="@+id/ib_login_confirm"
+        app:layout_constraintTop_toBottomOf="@+id/ib_login_confirm" />
+
+    <ProgressBar
+        android:id="@+id/pb_login"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:indeterminateTint="#EDAE49"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

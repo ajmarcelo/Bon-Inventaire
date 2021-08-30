@@ -10,6 +10,60 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BonInventaire">
         <activity
+            android:name=".SettingsListActivity"
+            android:exported="true" />
+        <activity
+            android:name=".SettingsItemInListActivity"
+            android:exported="true" />
+        <activity
+            android:name=".SettingsItemActivity"
+            android:exported="true" />
+        <activity
+            android:name=".SettingsAccountActivity"
+            android:exported="true" />
+        <activity
+            android:name=".RegisterActivity"
+            android:exported="true" />
+        <activity
+            android:name=".LoginActivity"
+            android:exported="true" />
+        <activity
+            android:name=".ListActivity"
+            android:exported="true" />
+        <activity
+            android:name=".ItemViewInListActivity"
+            android:exported="true" />
+        <activity
+            android:name=".ItemViewActivity"
+            android:exported="true" />
+        <activity
+            android:name=".ItemListActivity"
+            android:exported="true" />
+        <activity
+            android:name=".ItemAllActivity"
+            android:exported="true" />
+        <activity
+            android:name=".HomeActivity"
+            android:exported="true" />
+        <activity
+            android:name=".EditListActivity"
+            android:exported="true" />
+        <activity
+            android:name=".EditItemInListActivity"
+            android:exported="true" />
+        <activity
+            android:name=".EditItemActivity"
+            android:exported="true" />
+        <activity
+            android:name=".AddListActivity"
+            android:exported="true" />
+        <activity
+            android:name=".AddItemActivity"
+            android:exported="true" />
+        <activity
+            android:name=".AccountEditActivity"
+            android:exported="true" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>

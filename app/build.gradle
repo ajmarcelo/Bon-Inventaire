@@ -3,12 +3,13 @@ plugins {
 }
 
 android {
-    compileSdk 31
+    compileSdkVersion 30
+    buildToolsVersion "30.0.3"
 
     defaultConfig {
         applicationId "com.mobdeve.s11.group19.bon_inventaire"
         minSdk 23
-        targetSdk 31
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
 
