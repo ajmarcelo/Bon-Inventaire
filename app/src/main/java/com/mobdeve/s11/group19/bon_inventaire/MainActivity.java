@@ -7,17 +7,11 @@ import android.view.WindowManager;
 import android.widget.ImageButton;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
     private ImageButton ibRegister;
     private ImageButton ibLogin;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
