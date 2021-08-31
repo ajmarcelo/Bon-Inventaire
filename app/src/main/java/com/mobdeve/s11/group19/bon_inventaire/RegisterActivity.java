@@ -1,9 +1,5 @@
 package com.mobdeve.s11.group19.bon_inventaire;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -14,13 +10,14 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
@@ -110,11 +107,18 @@ public class RegisterActivity extends AppCompatActivity {
             this.etPassword.requestFocus();
             hasError = true;
         }
+        else if(password.length() < 6) {
+            this.etPassword.setError("Must be at least 6 characters");
+            this.etPassword.requestFocus();
+            hasError = true;
+        }
+
         if(confirmPassword.isEmpty()) {
             this.etConfirmPassword.setError("Required Field");
             this.etConfirmPassword.requestFocus();
             hasError = true;
         }
+
         else if(!confirmPassword.equals(password)) {
             this.etConfirmPassword.setError("Password does not match");
             this.etConfirmPassword.requestFocus();
