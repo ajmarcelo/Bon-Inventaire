@@ -1,13 +1,13 @@
 package com.mobdeve.s11.group19.bon_inventaire;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -57,9 +57,9 @@ public class ItemViewInListActivity extends AppCompatActivity {
 
         tvName.setText(name);
         tvList.setText(list);
-        tvNumStocks.setText(String.valueOf(note));
-        tvExpireDate.setText(Integer.toString(numStocks));
-        tvNote.setText(expireDate);
+        tvNumStocks.setText(Integer.toString(numStocks));
+        tvExpireDate.setText(expireDate);
+        tvNote.setText(String.valueOf(note));
     }
 
     @Override
@@ -92,9 +92,9 @@ public class ItemViewInListActivity extends AppCompatActivity {
 
         this.tvName.setText(name);
         this.tvList.setText(list);
-        this.tvNumStocks.setText(String.valueOf(note));
-        this.tvExpireDate.setText(Integer.toString(numStocks));
-        this.tvNote.setText(expireDate);
+        this.tvNumStocks.setText(Integer.toString(numStocks));
+        this.tvExpireDate.setText(expireDate);
+        this.tvNote.setText(String.valueOf(note));
     }
 
     private void initEditItem() {
