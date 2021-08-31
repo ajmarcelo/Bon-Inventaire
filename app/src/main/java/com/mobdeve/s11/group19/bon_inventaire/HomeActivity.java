@@ -1,8 +1,5 @@
 package com.mobdeve.s11.group19.bon_inventaire;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -10,6 +7,9 @@ import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -57,7 +57,9 @@ public class HomeActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         String name = snapshot.getValue().toString();
-                        String title = name.toUpperCase().charAt(0) + name.substring(1,name.length());
+                        String[] splitName = name.split(" ");
+                        String firstName = splitName[0].trim();
+                        String title = firstName.substring(0,1).toUpperCase() + firstName.substring(1).toLowerCase();
                         tvHomeGreeting.setText("Bonjour, " + title + "! ");
                     }
 
