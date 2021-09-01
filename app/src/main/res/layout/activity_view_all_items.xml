@@ -59,4 +59,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/add"
         app:tint="@android:color/white"/>
+
+    <TextView
+        android:id="@+id/tv_no_items"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="You do not have any items as of this moment..."
+        android:textColor="#C8A7A7"
+        android:textStyle="italic"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_all_items_title" />
 </androidx.constraintlayout.widget.ConstraintLayout>
