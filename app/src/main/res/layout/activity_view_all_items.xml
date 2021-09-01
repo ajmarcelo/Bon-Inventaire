@@ -61,7 +61,7 @@
         app:tint="@android:color/white"/>
 
     <TextView
-        android:id="@+id/tv_no_items"
+        android:id="@+id/tv_all_items_no_items"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
