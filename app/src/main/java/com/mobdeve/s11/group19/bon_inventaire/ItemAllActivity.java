@@ -171,7 +171,7 @@ public class ItemAllActivity extends AppCompatActivity {
         if(requestCode == 2)
             getDataFromDatabase();
     }
-    
+
     private void getDataFromDatabase(){
         mDatabase.getReference(Collections.users.name())
                 .child(mAuth.getCurrentUser().getUid()).child(Collections.items.name())

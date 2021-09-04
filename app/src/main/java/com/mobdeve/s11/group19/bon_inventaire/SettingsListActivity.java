@@ -163,7 +163,9 @@ public class SettingsListActivity extends AppCompatActivity {
                         GenericTypeIndicator<ArrayList<Item>> t = new GenericTypeIndicator<ArrayList<Item>>() {};
                         ArrayList<Item> allItem = snapshot.getValue(t);
 
-                        allItem = moveList(allItem,listName);
+                        if(!(allItem == null || allItem.isEmpty()))
+                            allItem = moveList(allItem,listName);
+
                         storeItem(allList, allItem, list);
 
                     }

@@ -130,7 +130,8 @@ public class ItemListActivity extends AppCompatActivity {
                         String list =  intent.getStringExtra(Keys.KEY_LIST.name());
                         Toast.makeText(getApplicationContext(),list,Toast.LENGTH_SHORT).show();
 
-                        filterList(dataItem);
+                        if(!(dataItem == null || dataItem.isEmpty()))
+                            filterList(dataItem);
 
                         if(dataItem == null || dataItem.isEmpty()){
                             dataItem = new ArrayList<Item>();
@@ -239,7 +240,8 @@ public class ItemListActivity extends AppCompatActivity {
                         Intent intent = getIntent();
                         String list =  intent.getStringExtra(Keys.KEY_LIST.name());
 
-                        filterList(dataItem);
+                        if(!(dataItem == null || dataItem.isEmpty()))
+                            filterList(dataItem);
                         
                         if(dataItem == null || dataItem.isEmpty()){
                             dataItem = new ArrayList<Item>();

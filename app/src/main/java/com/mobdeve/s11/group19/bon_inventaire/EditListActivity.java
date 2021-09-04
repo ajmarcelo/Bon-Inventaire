@@ -170,7 +170,9 @@ public class EditListActivity extends AppCompatActivity {
                         GenericTypeIndicator<ArrayList<Item>> t = new GenericTypeIndicator<ArrayList<Item>>() {};
                         ArrayList<Item> allItem = snapshot.getValue(t);
 
-                        allItem = renameList(allItem,oldList,newList);
+                        if(!(allItem == null || allItem.isEmpty()))
+                            allItem = renameList(allItem,oldList,newList);
+
                         storeItem(allList, allItem, index);
 
                     }
