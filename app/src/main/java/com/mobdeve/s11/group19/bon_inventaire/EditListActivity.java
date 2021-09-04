@@ -120,7 +120,7 @@ public class EditListActivity extends AppCompatActivity {
                         allList.set(index, list);
                         String newList = allList.get(index).getListName();
 
-                        storeItem(allList,oldList,newList);
+                        storeItem(allList,oldList,newList,index);
 
                     }
                     @Override
@@ -141,7 +141,7 @@ public class EditListActivity extends AppCompatActivity {
         return sentinel;
     }
 
-    private void storeItem(ArrayList<List> allList, String oldList, String newName) {
+    private void storeItem(ArrayList<List> allList, String oldList, String newName, int index) {
 
         mDatabase.getReference(Collections.users.name())
                 .child(mAuth.getCurrentUser().getUid()).child(Collections.lists.name())
@@ -150,7 +150,7 @@ public class EditListActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if(task.isSuccessful()) {
-                            retrieveItem(allList, oldList, newName);
+                            retrieveItem(allList, oldList, newName, index);
 
                         } else {
                             Toast.makeText(getApplicationContext(), "Can't Edit to the database", Toast.LENGTH_SHORT).show();
@@ -159,7 +159,7 @@ public class EditListActivity extends AppCompatActivity {
                 });
     }
 
-    public void retrieveItem(ArrayList<List> allList, String oldList, String newList) {
+    public void retrieveItem(ArrayList<List> allList, String oldList, String newList, int index) {
         Toast.makeText(getApplicationContext(), "Editing item to the database...", Toast.LENGTH_SHORT).show();
 
         mDatabase.getReference(Collections.users.name())
@@ -171,7 +171,7 @@ public class EditListActivity extends AppCompatActivity {
                         ArrayList<Item> allItem = snapshot.getValue(t);
 
                         allItem = renameList(allItem,oldList,newList);
-                        storeItem(allList, allItem);
+                        storeItem(allList, allItem, index);
 
                     }
                     @Override
@@ -195,7 +195,7 @@ public class EditListActivity extends AppCompatActivity {
         return tempAllItem;
     }
 
-    private void storeItem(ArrayList<List> allList, ArrayList<Item> allItem) {
+    private void storeItem(ArrayList<List> allList, ArrayList<Item> allItem, int index) {
 
         mDatabase.getReference(Collections.users.name())
                 .child(mAuth.getCurrentUser().getUid()).child(Collections.items.name())
@@ -208,9 +208,9 @@ public class EditListActivity extends AppCompatActivity {
                             Toast.makeText(getApplicationContext(), "Successfully Added to the database", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(EditListActivity.this, ItemListActivity.class);
 
-                            intent.putExtra(KEY_LIST, allList.get(1).getListName());
-                            intent.putExtra(KEY_DESCRIPTION, allList.get(1).getListDescription());
-                            intent.putExtra(KEY_ID, allList.get(1).getListID());
+                            intent.putExtra(KEY_LIST, allList.get(index).getListName());
+                            intent.putExtra(KEY_DESCRIPTION, allList.get(index).getListDescription());
+                            intent.putExtra(KEY_ID, allList.get(index).getListID());
 
                             setResult(Activity.RESULT_OK, intent);
                             startActivity(intent);
