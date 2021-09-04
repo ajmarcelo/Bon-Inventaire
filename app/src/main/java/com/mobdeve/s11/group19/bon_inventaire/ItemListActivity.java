@@ -88,7 +88,8 @@ public class ItemListActivity extends AppCompatActivity {
         this.tvTitle = findViewById(R.id.tv_list_items_title);
         this.tvDescription = findViewById(R.id.tv_list_items_description);
         this.tvListItemsNoItems = findViewById(R.id.tv_list_items_no_items);
-
+        this.fabListItemsSettings = findViewById(R.id.fab_list_items_settings);
+        
         Intent intent = getIntent();
 
         String list =  intent.getStringExtra(Keys.KEY_LIST.name());
@@ -96,6 +97,9 @@ public class ItemListActivity extends AppCompatActivity {
 
         tvTitle.setText(list);
         tvDescription.setText(description);
+
+        if(list.equals("Unlisted"))
+            fabListItemsSettings.setVisibility(View.GONE);
 
         initFirebase();
         initConfiguration();
@@ -190,7 +194,7 @@ public class ItemListActivity extends AppCompatActivity {
     }
 
     private void initListItemsEdit() {
-        this.fabListItemsSettings = findViewById(R.id.fab_list_items_settings);
+//        this.fabListItemsSettings = findViewById(R.id.fab_list_items_settings);
         this.fabListItemsSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
