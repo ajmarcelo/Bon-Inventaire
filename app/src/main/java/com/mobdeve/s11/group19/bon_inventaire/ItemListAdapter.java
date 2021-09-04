@@ -1,5 +1,6 @@
 package com.mobdeve.s11.group19.bon_inventaire;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,9 +16,11 @@ import java.util.ArrayList;
 public class ItemListAdapter extends RecyclerView.Adapter<ItemListViewHolder> {
 
     private ArrayList<Item> dataItem;
+    private Activity activity;
 
-    public ItemListAdapter(ArrayList<Item> dataItem) {
+    public ItemListAdapter(ArrayList<Item> dataItem, Activity activity) {
         this.dataItem = dataItem;
+        this.activity = activity;
     }
 
     @NonNull
@@ -41,8 +44,7 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListViewHolder> {
                 intent.putExtra(Keys.KEY_NOTE.name(), dataItem.get(itemListViewHolder.getBindingAdapterPosition()).getItemNote());
                 intent.putExtra(Keys.KEY_ITEM_ID.name(), dataItem.get(itemListViewHolder.getBindingAdapterPosition()).getItemID());
 
-                v.getContext().startActivity(intent);
-
+                activity.startActivityForResult(intent,1);
             }
         });
 
@@ -59,5 +61,11 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListViewHolder> {
     @Override
     public int getItemCount() {
         return this.dataItem.size();
+    }
+
+    public void setData(ArrayList<Item> data){
+        this.dataItem.clear();
+        this.dataItem.addAll(data);
+        notifyDataSetChanged();
     }
 }

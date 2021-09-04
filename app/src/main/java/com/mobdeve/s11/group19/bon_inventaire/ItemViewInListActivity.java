@@ -116,7 +116,7 @@ public class ItemViewInListActivity extends AppCompatActivity {
         this.ibBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ItemViewInListActivity.this,ItemListActivity.class);
+                Intent intent = new Intent();
 
                 Intent info = getIntent();
 
@@ -129,7 +129,6 @@ public class ItemViewInListActivity extends AppCompatActivity {
 
 //                Toast.makeText(getApplicationContext(), info.getStringExtra(EditItemActivity.KEY_NAME), Toast.LENGTH_SHORT).show();
 
-                startActivity(intent);
 
                 finish();
             }

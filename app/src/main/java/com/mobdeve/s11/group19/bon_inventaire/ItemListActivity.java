@@ -5,10 +5,12 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -127,7 +129,7 @@ public class ItemListActivity extends AppCompatActivity {
                         llmManager = new LinearLayoutManager(ItemListActivity.this, LinearLayoutManager.VERTICAL, false);
                         rvListItems.setLayoutManager(llmManager);
 
-                        itemListAdapter = new ItemListAdapter(dataItem);
+                        itemListAdapter = new ItemListAdapter(dataItem,ItemListActivity.this);
                         rvListItems.setAdapter(itemListAdapter);
 
                     }
@@ -203,96 +205,32 @@ public class ItemListActivity extends AppCompatActivity {
         });
     }
 
-//    private int findIndex(ArrayList<Item> allItem, Item item){
-//        int sentinel = 0;
-//        filterList(allItem);
-//        for(int i = 0; i < allItem.size(); i++) {
-//            Item tempItem = allItem.get(i);
-//            if(tempItem.getItemID() == item.getItemID()){
-//                return i;
-//            }
-//        }
-//        return sentinel;
-//    }
-//
-//    private void getDataFromDatabase(){
-//        mDatabase.getReference(Collections.users.name())
-//                .child(mAuth.getCurrentUser().getUid()).child(Collections.items.name())
-//                .addListenerForSingleValueEvent(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                        GenericTypeIndicator<ArrayList<Item>> t = new GenericTypeIndicator<ArrayList<Item>>() {};
-//                        dataItem =  snapshot.getValue(t);
-//
-//                    }
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError error) {
-//                        Toast.makeText(getApplicationContext(), "Can't retrieve data", Toast.LENGTH_SHORT).show();
-//                    }
-//                });
-//    }
+    @SuppressLint("NotifyDataSetChanged")
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-//    private void loadData() {
-//
-//        Intent intent = getIntent();
-//
-//        String eName = intent.getStringExtra(ItemViewInListActivity.KEY_NAME);
-//        String eList = intent.getStringExtra(ItemViewInListActivity.KEY_LIST);
-//        String eNote = intent.getStringExtra(ItemViewInListActivity.KEY_NOTE);
-//        int eNumStocks = intent.getIntExtra(ItemViewInListActivity.KEY_NUM_STOCKS,0);
-//        String eExpireDate = intent.getStringExtra(ItemViewInListActivity.KEY_EXPIRE_DATE);
-//        int eId = intent.getIntExtra(ItemViewInListActivity.KEY_ID,0);
-//
-//
-//        String dName = intent.getStringExtra(SettingsItemInListActivity.KEY_NAME);
-//        String dList = intent.getStringExtra(SettingsItemInListActivity.KEY_LIST);
-//        String dNote = intent.getStringExtra(SettingsItemInListActivity.KEY_NOTE);
-//        int dNumStocks = intent.getIntExtra(SettingsItemInListActivity.KEY_NUM_STOCKS,0);
-//        String dExpireDate = intent.getStringExtra(SettingsItemInListActivity.KEY_EXPIRE_DATE);
-//        int dId = intent.getIntExtra(SettingsItemInListActivity.KEY_ID,0);
-//
-//        String list = intent.getStringExtra(EditListActivity.KEY_LIST);
-//        String desc = intent.getStringExtra(EditListActivity.KEY_DESCRIPTION);
-//
-//        if(!list.equals(null)){
-//            tvTitle.setText(list);
-//            tvDescription.setText(desc);
-//        }
-//
-//
-//        if(eName != null && dataItem != null){
-//            dataItem.clear();
-//            getDataFromDatabase();
-//            Item item = new Item(eName, eList, eNote, eNumStocks, eExpireDate, eId);
-//
-//            filterList(dataItem);
-//
-//            int index = findIndex(dataItem,item);
-//
-//            dataItem.set(index,item);
-//            itemListAdapter.notifyItemChanged(index);
-//            itemListAdapter.notifyItemRangeChanged(0, itemListAdapter.getItemCount());
-//        }
-//        else if(dName != null && dataItem != null){
-//            dataItem.clear();
-//            getDataFromDatabase();
-//            Item item = new Item(dName, dList, dNote, dNumStocks, dExpireDate, dId);
-//
-//            filterList(dataItem);
-//
-//            dataItem.remove(item);
-//            itemListAdapter.notifyItemChanged(0);
-//            itemListAdapter.notifyItemRangeChanged(0, itemListAdapter.getItemCount());
-//        }
-//        else if(dataItem != null){
-//            itemListAdapter.notifyDataSetChanged();
-//        }
-//    }
-//
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//
-//        this.loadData();
-//    }
+        getDataFromDatabase();
+        itemListAdapter.notifyDataSetChanged();
+    }
+
+    private void getDataFromDatabase(){
+        mDatabase.getReference(Collections.users.name())
+                .child(mAuth.getCurrentUser().getUid()).child(Collections.items.name())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        GenericTypeIndicator<ArrayList<Item>> t = new GenericTypeIndicator<ArrayList<Item>>() {};
+                        dataItem =  snapshot.getValue(t);
+
+                        filterList(dataItem);
+
+                        itemListAdapter.setData(dataItem);
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Toast.makeText(getApplicationContext(), "Can't retrieve data", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
 }

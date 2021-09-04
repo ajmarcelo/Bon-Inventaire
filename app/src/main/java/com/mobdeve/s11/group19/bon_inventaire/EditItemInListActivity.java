@@ -208,7 +208,7 @@ public class EditItemInListActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<Void> task) {
                         if(task.isSuccessful()) {
                             Toast.makeText(getApplicationContext(), "Successfully Added to the database", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(EditItemInListActivity.this, ItemViewInListActivity.class);
+                            Intent intent = new Intent();
 
                             intent.putExtra(KEY_NAME, allItem.get(index).getItemName());
                             intent.putExtra(KEY_LIST, allItem.get(index).getItemList());
@@ -218,7 +218,6 @@ public class EditItemInListActivity extends AppCompatActivity {
                             intent.putExtra(KEY_ID, allItem.get(index).getItemID());
 
                             setResult(Activity.RESULT_OK, intent);
-                            startActivity(intent);
                             finish();
                         } else {
                             Toast.makeText(getApplicationContext(), "Can't Add to the database", Toast.LENGTH_SHORT).show();
