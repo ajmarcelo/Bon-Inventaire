@@ -55,12 +55,11 @@ public class ItemAllActivity extends AppCompatActivity {
                         String expireDate = intent.getStringExtra(Keys.KEY_EXPIRE_DATE.name());
                         int id = intent.getIntExtra(Keys.KEY_ITEM_ID.name(),0);
 
+                        if((dataItem.get(0).getItemName()).equals(""))
+                            dataItem.remove(0);
 
-//                        Item holder = new Item("Example Item", "Example Item", "Example Item", 1,"2022",0);
-//                        dataItem.remove(holder);
-//
-//                        rvAllItems.setVisibility(View.VISIBLE);
-//                        tvAllItemsNoItems.setVisibility(View.GONE);
+                        rvAllItems.setVisibility(View.VISIBLE);
+                        tvAllItemsNoItems.setVisibility(View.GONE);
 
                         dataItem.add(0 , new Item(name, list, note, numStocks, expireDate, id));
                         itemAllAdapter.notifyItemChanged(0);
@@ -105,7 +104,7 @@ public class ItemAllActivity extends AppCompatActivity {
 
                         if(dataItem == null){
                             dataItem = new ArrayList<Item>();
-                            dataItem.add(new Item("Example Item", "Example Item", "Example Item", 1,"2022",0));
+                            dataItem.add(new Item("", "Example Item", "Example Item", 1,"2022",0));
                         }
 
                         rvAllItems = findViewById(R.id.rv_all_items);
@@ -117,14 +116,10 @@ public class ItemAllActivity extends AppCompatActivity {
                         itemAllAdapter = new ItemAllAdapter(dataItem);
                         rvAllItems.setAdapter(itemAllAdapter);
 
-                        if(dataItem.get(0).getItemName().equals("Example Item") && dataItem.size() == 1){
+                        if(dataItem.get(0).getItemName().equals("") && dataItem.size() == 1){
                             rvAllItems.setVisibility(View.GONE);
                             tvAllItemsNoItems.setVisibility(View.VISIBLE);
                         }
-//                        else {
-//                            rvAllItems.setVisibility(View.VISIBLE);
-//                            tvNoItems.setVisibility(View.GONE);
-//                        }
                     }
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
@@ -144,7 +139,6 @@ public class ItemAllActivity extends AppCompatActivity {
                 Intent intent = new Intent(ItemAllActivity.this, AddItemActivity.class);
 
                 allItemsAddActivityResultLauncher.launch(intent);
-                //finish();
             }
         });
     }
