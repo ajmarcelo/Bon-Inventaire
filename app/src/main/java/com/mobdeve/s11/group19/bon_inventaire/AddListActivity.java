@@ -1,8 +1,5 @@
 package com.mobdeve.s11.group19.bon_inventaire;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,7 +7,11 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -29,7 +30,7 @@ public class AddListActivity extends AppCompatActivity {
     private ImageButton ibCancel;
     private EditText etName;
     private EditText etDescription;
-
+    private ProgressBar pbAddList;
     private FirebaseAuth mAuth;
     private FirebaseDatabase mdatabase;
 
@@ -55,6 +56,7 @@ public class AddListActivity extends AppCompatActivity {
 
         this.etName = findViewById(R.id.et_add_list_name);
         this.etDescription = findViewById(R.id.et_add_list_description);
+        this.pbAddList = findViewById(R.id.pb_add_list);
     }
 
     private void initSave() {
@@ -92,7 +94,7 @@ public class AddListActivity extends AppCompatActivity {
 
     public void retrieveList(List list) {
         Toast.makeText(getApplicationContext(), "Adding list to the database...", Toast.LENGTH_SHORT).show();
-
+        this.pbAddList.setVisibility(View.VISIBLE);
         mdatabase.getReference(Collections.users.name())
                 .child(mAuth.getCurrentUser().getUid()).child(Collections.lists.name())
                 .addListenerForSingleValueEvent(new ValueEventListener() {

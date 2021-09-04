@@ -166,7 +166,6 @@ public class AccountEditActivity extends AppCompatActivity {
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void void1) {
-                                        //password updated
                                         Toast.makeText(AccountEditActivity.this, "Updated User Password", Toast.LENGTH_SHORT).show();
                                     }
                                 });

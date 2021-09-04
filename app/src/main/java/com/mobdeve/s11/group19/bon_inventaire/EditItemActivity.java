@@ -1,8 +1,5 @@
 package com.mobdeve.s11.group19.bon_inventaire;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
@@ -12,7 +9,11 @@ import android.view.WindowManager;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -42,6 +43,7 @@ public class EditItemActivity extends AppCompatActivity {
     private EditText etNumStocks;
     private EditText etExpireDate;
     private EditText etNote;
+    private ProgressBar pbEditItem;
 
     private FirebaseAuth mAuth;
     private FirebaseDatabase mDatabase;
@@ -73,6 +75,7 @@ public class EditItemActivity extends AppCompatActivity {
         this.etNumStocks = findViewById(R.id.et_edit_item_num_stocks);
         this.etExpireDate = findViewById(R.id.et_edit_item_expire_date);
         this.etNote = findViewById(R.id.et_edit_item_note);
+        this.pbEditItem = findViewById(R.id.pb_edit_item);
 
         Intent intent = getIntent();
 
@@ -129,7 +132,6 @@ public class EditItemActivity extends AppCompatActivity {
                 if (!checkField(name,Integer.parseInt(numStocks))) {
                     Item item = new Item(name,list, note, Integer.parseInt(numStocks),expireDate, id);
                     retrieveItem(item);
-
                 }
                 else
                     Toast.makeText(getApplicationContext(), "Updating Item Failed", Toast.LENGTH_SHORT).show();
@@ -166,6 +168,7 @@ public class EditItemActivity extends AppCompatActivity {
 
     public void retrieveItem(Item item) {
         Toast.makeText(getApplicationContext(), "Adding item to the database...", Toast.LENGTH_SHORT).show();
+        this.pbEditItem.setVisibility(View.VISIBLE);
 
         mDatabase.getReference(Collections.users.name())
                 .child(mAuth.getCurrentUser().getUid()).child(Collections.items.name())
@@ -178,7 +181,6 @@ public class EditItemActivity extends AppCompatActivity {
                         int index = findIndex(allItem,item);
                         allItem.set(index, item);
                         storeItem(allItem, index);
-
                     }
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
