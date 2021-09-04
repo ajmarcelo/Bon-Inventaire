@@ -116,7 +116,7 @@ public class ItemViewActivity extends AppCompatActivity {
         this.ibBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ItemViewActivity.this,ItemAllActivity.class);
+                Intent intent = new Intent();
 
                 Intent info = getIntent();
 
@@ -128,8 +128,6 @@ public class ItemViewActivity extends AppCompatActivity {
                 intent.putExtra(Keys.KEY_ITEM_ID.name(), info.getIntExtra(Keys.KEY_ITEM_ID.name(),0));
 
 //                Toast.makeText(getApplicationContext(), info.getStringExtra(EditItemActivity.KEY_NAME), Toast.LENGTH_SHORT).show();
-
-                startActivity(intent);
 
                 finish();
             }

@@ -14,6 +14,7 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -113,7 +114,7 @@ public class ItemAllActivity extends AppCompatActivity {
                         rvAllItems.setLayoutManager(llmManager);
 
 
-                        itemAllAdapter = new ItemAllAdapter(dataItem);
+                        itemAllAdapter = new ItemAllAdapter(dataItem,ItemAllActivity.this);
                         rvAllItems.setAdapter(itemAllAdapter);
 
                         if(dataItem.get(0).getItemName().equals("") && dataItem.size() == 1){
@@ -157,81 +158,28 @@ public class ItemAllActivity extends AppCompatActivity {
         });
     }
 
-//    private int findIndex(ArrayList<Item> allItem, Item item){
-//        int sentinel = 0;
-//        for(int i = 0; i < allItem.size(); i++) {
-//            Item tempItem = allItem.get(i);
-//            if(tempItem.getItemID() == item.getItemID()){
-//                return i;
-//            }
-//        }
-//        return sentinel;
-//    }
-//
-//    private void getDataFromDatabase(){
-//        mDatabase.getReference(Collections.users.name())
-//                .child(mAuth.getCurrentUser().getUid()).child(Collections.items.name())
-//                .addListenerForSingleValueEvent(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                        GenericTypeIndicator<ArrayList<Item>> t = new GenericTypeIndicator<ArrayList<Item>>() {};
-//                        dataItem =  snapshot.getValue(t);
-//
-//                    }
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError error) {
-//                        Toast.makeText(getApplicationContext(), "Can't retrieve data", Toast.LENGTH_SHORT).show();
-//                    }
-//                });
-//    }
-//
-//    private void loadData() {
-//
-//        Intent intent = getIntent();
-//
-//        String eName = intent.getStringExtra(ItemViewActivity.KEY_NAME);
-//        String eList = intent.getStringExtra(ItemViewActivity.KEY_LIST);
-//        String eNote = intent.getStringExtra(ItemViewActivity.KEY_NOTE);
-//        int eNumStocks = intent.getIntExtra(ItemViewActivity.KEY_NUM_STOCKS,0);
-//        String eExpireDate = intent.getStringExtra(ItemViewActivity.KEY_EXPIRE_DATE);
-//        int eId = intent.getIntExtra(ItemViewActivity.KEY_ID,0);
-//
-//
-//        String dName = intent.getStringExtra(SettingsItemActivity.KEY_NAME);
-//        String dList = intent.getStringExtra(SettingsItemActivity.KEY_LIST);
-//        String dNote = intent.getStringExtra(SettingsItemActivity.KEY_NOTE);
-//        int dNumStocks = intent.getIntExtra(SettingsItemActivity.KEY_NUM_STOCKS,0);
-//        String dExpireDate = intent.getStringExtra(SettingsItemActivity.KEY_EXPIRE_DATE);
-//        int dId = intent.getIntExtra(SettingsItemActivity.KEY_ID,0);
-//
-//
-//        if(eName != null && dataItem != null){
-//            getDataFromDatabase();
-//            Item item = new Item(eName, eList, eNote, eNumStocks, eExpireDate, eId);
-//
-//            int index = findIndex(dataItem,item);
-//
-//            dataItem.set(index,item);
-//            itemAllAdapter.notifyItemChanged(index);
-//            itemAllAdapter.notifyItemRangeChanged(0, itemAllAdapter.getItemCount());
-//        }
-//        else if(dName != null && dataItem != null){
-//            getDataFromDatabase();
-//            Item item = new Item(dName, dList, dNote, dNumStocks, dExpireDate, dId);
-//
-//            dataItem.remove(item);
-//            itemAllAdapter.notifyItemChanged(0);
-//            itemAllAdapter.notifyItemRangeChanged(0, itemAllAdapter.getItemCount());
-//        }
-//        else if(dataItem != null){
-//            itemAllAdapter.notifyDataSetChanged();
-//        }
-//    }
-//
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//
-//        this.loadData();
-//    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 2)
+            getDataFromDatabase();
+    }
+    
+    private void getDataFromDatabase(){
+        mDatabase.getReference(Collections.users.name())
+                .child(mAuth.getCurrentUser().getUid()).child(Collections.items.name())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        GenericTypeIndicator<ArrayList<Item>> t = new GenericTypeIndicator<ArrayList<Item>>() {};
+                        dataItem =  snapshot.getValue(t);
+
+                        itemAllAdapter.setData(dataItem);
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Toast.makeText(getApplicationContext(), "Can't retrieve data", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
 }

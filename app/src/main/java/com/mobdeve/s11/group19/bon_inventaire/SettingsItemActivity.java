@@ -145,7 +145,7 @@ public class SettingsItemActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<Void> task) {
                         if(task.isSuccessful()) {
                             Toast.makeText(getApplicationContext(), "Successfully Deleted from the database", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(SettingsItemActivity.this,ItemAllActivity.class);
+                            Intent intent = new Intent();
 
                             intent.putExtra(Keys.KEY_NAME.name(), item.getItemName());
                             intent.putExtra(Keys.KEY_LIST.name(), item.getItemList());
@@ -155,7 +155,6 @@ public class SettingsItemActivity extends AppCompatActivity {
                             intent.putExtra(Keys.KEY_ITEM_ID.name(), item.getItemID());
 
                             setResult(Activity.RESULT_OK, intent);
-                            startActivity(intent);
                             finish();
                         } else {
                             Toast.makeText(getApplicationContext(), "Can't delete to the database", Toast.LENGTH_SHORT).show();
