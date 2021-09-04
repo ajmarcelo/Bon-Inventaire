@@ -1,5 +1,14 @@
 package com.mobdeve.s11.group19.bon_inventaire;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.ImageButton;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
@@ -8,14 +17,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.app.Activity;
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.View;
-import android.view.WindowManager;
-import android.widget.ImageButton;
-import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -35,7 +36,7 @@ public class ItemAllActivity extends AppCompatActivity {
     private ArrayList<Item> dataItem;
     private FloatingActionButton fabAllItemsAdd;
     private ImageButton ibCancel;
-
+    private TextView tvAllItemsNoItems;
     private FirebaseAuth mAuth;
     private FirebaseDatabase mDatabase;
 
@@ -66,7 +67,7 @@ public class ItemAllActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_all_items);
-
+        tvAllItemsNoItems = findViewById(R.id.tv_all_items_no_items);
         initFirebase();
         initConfiguration();
         initRecyclerView();
@@ -99,6 +100,7 @@ public class ItemAllActivity extends AppCompatActivity {
                             dataItem = new ArrayList<Item>();
                             dataItem.add(new Item("Example Item", "Example Item", "Example Item", 1,"2022",0));
                         }
+
                         rvAllItems = findViewById(R.id.rv_all_items);
 
                         llmManager = new LinearLayoutManager(ItemAllActivity.this, LinearLayoutManager.VERTICAL, false);
@@ -108,6 +110,14 @@ public class ItemAllActivity extends AppCompatActivity {
                         itemAllAdapter = new ItemAllAdapter(dataItem);
                         rvAllItems.setAdapter(itemAllAdapter);
 
+                        if(dataItem.get(0).getItemName().equals("Example Item") && dataItem.size() == 1){
+                            rvAllItems.setVisibility(View.GONE);
+                            tvAllItemsNoItems.setVisibility(View.VISIBLE);
+                        }
+//                        else {
+//                            rvAllItems.setVisibility(View.VISIBLE);
+//                            tvNoItems.setVisibility(View.GONE);
+//                        }
                     }
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
@@ -127,6 +137,7 @@ public class ItemAllActivity extends AppCompatActivity {
                 Intent intent = new Intent(ItemAllActivity.this, AddItemActivity.class);
 
                 allItemsAddActivityResultLauncher.launch(intent);
+                //finish();
             }
         });
     }
