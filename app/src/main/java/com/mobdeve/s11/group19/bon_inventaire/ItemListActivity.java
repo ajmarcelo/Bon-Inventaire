@@ -1,5 +1,14 @@
 package com.mobdeve.s11.group19.bon_inventaire;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.ImageButton;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
@@ -9,16 +18,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.View;
-import android.view.WindowManager;
-import android.widget.ImageButton;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -42,6 +41,7 @@ public class ItemListActivity extends AppCompatActivity {
 
     private TextView tvTitle;
     private TextView tvDescription;
+    private TextView tvListItemsNoItems;
 
     private FirebaseAuth mAuth;
     private FirebaseDatabase mDatabase;
@@ -52,18 +52,29 @@ public class ItemListActivity extends AppCompatActivity {
                 @Override
                 public void onActivityResult(ActivityResult result) {
                     if(result.getResultCode() == Activity.RESULT_OK){
-                        Intent intent = result.getData();
+//                        Intent intent = result.getData();
+//
+//                        String name = intent.getStringExtra(Keys.KEY_NAME.name());
+//                        String list = intent.getStringExtra(Keys.KEY_LIST.name());
+//                        String note = intent.getStringExtra(Keys.KEY_NOTE.name());
+//                        int numStocks = intent.getIntExtra(Keys.KEY_NUM_STOCKS.name(),0);
+//                        String expireDate = intent.getStringExtra(Keys.KEY_EXPIRE_DATE.name());
+//                        int id = intent.getIntExtra(Keys.KEY_ITEM_ID.name(),0);
+//
+//                        if(dataItem.get(0).getItemName().equals(""))
+//                            dataItem.remove(0);
+//
+//                        rvListItems.setVisibility(View.VISIBLE);
+//                        tvListItemsNoItems.setVisibility(View.GONE);
+//
+//                        dataItem.add(0 , new Item(name, list, note, numStocks, expireDate, id));
+//                        itemListAdapter.notifyItemChanged(0);
+//                        itemListAdapter.notifyItemRangeChanged(0, itemListAdapter.getItemCount());
 
-                        String name = intent.getStringExtra(Keys.KEY_NAME.name());
-                        String list = intent.getStringExtra(Keys.KEY_LIST.name());
-                        String note = intent.getStringExtra(Keys.KEY_NOTE.name());
-                        int numStocks = intent.getIntExtra(Keys.KEY_NUM_STOCKS.name(),0);
-                        String expireDate = intent.getStringExtra(Keys.KEY_EXPIRE_DATE.name());
-                        int id = intent.getIntExtra(Keys.KEY_ITEM_ID.name(),0);
+                        getDataFromDatabase();
 
-                        dataItem.add(0 , new Item(name, list, note, numStocks, expireDate, id));
-                        itemListAdapter.notifyItemChanged(0);
-                        itemListAdapter.notifyItemRangeChanged(0, itemListAdapter.getItemCount());
+                        rvListItems.setVisibility(View.VISIBLE);
+                        tvListItemsNoItems.setVisibility(View.GONE);
                     }
                 }
             }
@@ -76,6 +87,7 @@ public class ItemListActivity extends AppCompatActivity {
 
         this.tvTitle = findViewById(R.id.tv_list_items_title);
         this.tvDescription = findViewById(R.id.tv_list_items_description);
+        this.tvListItemsNoItems = findViewById(R.id.tv_list_items_no_items);
 
         Intent intent = getIntent();
 
@@ -104,7 +116,7 @@ public class ItemListActivity extends AppCompatActivity {
     }
 
     private void initRecyclerView () {
-        Toast.makeText(getApplicationContext(), "Retrieving items from the database...", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), "Retrieving items from the database...", Toast.LENGTH_SHORT).show();
 
         mDatabase.getReference(Collections.users.name())
                 .child(mAuth.getCurrentUser().getUid()).child(Collections.items.name())
@@ -116,13 +128,14 @@ public class ItemListActivity extends AppCompatActivity {
 
                         Intent intent = getIntent();
                         String list =  intent.getStringExtra(Keys.KEY_LIST.name());
-
-                        if(dataItem == null){
-                            dataItem = new ArrayList<Item>();
-                            dataItem.add(new Item("Example Item", list, "Example Item", 1,"2022",0));
-                        }
+                        Toast.makeText(getApplicationContext(),list,Toast.LENGTH_SHORT).show();
 
                         filterList(dataItem);
+
+                        if(dataItem == null || dataItem.isEmpty()){
+                            dataItem = new ArrayList<Item>();
+                            dataItem.add(new Item("", list, "Example Item", 1,"2022",0));
+                        }
 
                         rvListItems = findViewById(R.id.rv_list_items);
 
@@ -132,6 +145,10 @@ public class ItemListActivity extends AppCompatActivity {
                         itemListAdapter = new ItemListAdapter(dataItem,ItemListActivity.this);
                         rvListItems.setAdapter(itemListAdapter);
 
+                        if(dataItem.get(0).getItemName().equals("")){
+                            rvListItems.setVisibility(View.GONE);
+                            tvListItemsNoItems.setVisibility(View.VISIBLE);
+                        }
                     }
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
@@ -148,13 +165,12 @@ public class ItemListActivity extends AppCompatActivity {
 
         for(int i = 0; i < dataItem.size(); i++) {
             Item tempItem = dataItem.get(i);
-            if(!tempItem.getItemList().equals(list)) {
+            if(tempItem.getItemList().equals(list)) {
                 tempDataItem.add(tempItem);
             }
         }
-
-        this.dataItem.removeAll(tempDataItem);
-
+        this.dataItem.clear();
+        this.dataItem.addAll(tempDataItem);
     }
 
     private void initListItemsAdd() {
@@ -167,7 +183,6 @@ public class ItemListActivity extends AppCompatActivity {
                 Intent info = getIntent();
 
                 intent.putExtra(Keys.KEY_LIST.name(), info.getStringExtra(Keys.KEY_LIST.name()));
-
 
                 allItemsAddActivityResultLauncher.launch(intent);
             }
@@ -221,9 +236,22 @@ public class ItemListActivity extends AppCompatActivity {
                         GenericTypeIndicator<ArrayList<Item>> t = new GenericTypeIndicator<ArrayList<Item>>() {};
                         dataItem =  snapshot.getValue(t);
 
+                        Intent intent = getIntent();
+                        String list =  intent.getStringExtra(Keys.KEY_LIST.name());
+
                         filterList(dataItem);
+                        
+                        if(dataItem == null || dataItem.isEmpty()){
+                            dataItem = new ArrayList<Item>();
+                            dataItem.add(new Item("", list, "Example Item", 1,"2022",0));
+                        }
 
                         itemListAdapter.setData(dataItem);
+
+                        if(dataItem.get(0).getItemName().equals("")){
+                            rvListItems.setVisibility(View.GONE);
+                            tvListItemsNoItems.setVisibility(View.VISIBLE);
+                        }
                     }
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {

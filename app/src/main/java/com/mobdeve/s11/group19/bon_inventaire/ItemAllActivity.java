@@ -1,5 +1,6 @@
 package com.mobdeve.s11.group19.bon_inventaire;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -44,27 +45,33 @@ public class ItemAllActivity extends AppCompatActivity {
     private ActivityResultLauncher allItemsAddActivityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
+                @SuppressLint("NotifyDataSetChanged")
                 @Override
                 public void onActivityResult(ActivityResult result) {
                     if(result.getResultCode() == Activity.RESULT_OK){
-                        Intent intent = result.getData();
-
-                        String name = intent.getStringExtra(Keys.KEY_NAME.name());
-                        String list = intent.getStringExtra(Keys.KEY_LIST.name());
-                        String note = intent.getStringExtra(Keys.KEY_NOTE.name());
-                        int numStocks = intent.getIntExtra(Keys.KEY_NUM_STOCKS.name(),0);
-                        String expireDate = intent.getStringExtra(Keys.KEY_EXPIRE_DATE.name());
-                        int id = intent.getIntExtra(Keys.KEY_ITEM_ID.name(),0);
-
-                        if((dataItem.get(0).getItemName()).equals(""))
-                            dataItem.remove(0);
+//                        Intent intent = result.getData();
+//
+//                        String name = intent.getStringExtra(Keys.KEY_NAME.name());
+//                        String list = intent.getStringExtra(Keys.KEY_LIST.name());
+//                        String note = intent.getStringExtra(Keys.KEY_NOTE.name());
+//                        int numStocks = intent.getIntExtra(Keys.KEY_NUM_STOCKS.name(),0);
+//                        String expireDate = intent.getStringExtra(Keys.KEY_EXPIRE_DATE.name());
+//                        int id = intent.getIntExtra(Keys.KEY_ITEM_ID.name(),0);
+//
+//                        if(dataItem.get(0).getItemName().equals(""))
+//                            dataItem.remove(0);
+//
+//                        rvAllItems.setVisibility(View.VISIBLE);
+//                        tvAllItemsNoItems.setVisibility(View.GONE);
+//
+//                        dataItem.add(0 , new Item(name, list, note, numStocks, expireDate, id));
+//                        itemAllAdapter.notifyItemChanged(0);
+//                        itemAllAdapter.notifyItemRangeChanged(0, itemAllAdapter.getItemCount());
+//                        itemAllAdapter.notifyDataSetChanged();
+                        getDataFromDatabase();
 
                         rvAllItems.setVisibility(View.VISIBLE);
                         tvAllItemsNoItems.setVisibility(View.GONE);
-
-                        dataItem.add(0 , new Item(name, list, note, numStocks, expireDate, id));
-                        itemAllAdapter.notifyItemChanged(0);
-                        itemAllAdapter.notifyItemRangeChanged(0, itemAllAdapter.getItemCount());
                     }
                 }
             }
@@ -117,7 +124,7 @@ public class ItemAllActivity extends AppCompatActivity {
                         itemAllAdapter = new ItemAllAdapter(dataItem,ItemAllActivity.this);
                         rvAllItems.setAdapter(itemAllAdapter);
 
-                        if(dataItem.get(0).getItemName().equals("") && dataItem.size() == 1){
+                        if(dataItem.get(0).getItemName().equals("")){
                             rvAllItems.setVisibility(View.GONE);
                             tvAllItemsNoItems.setVisibility(View.VISIBLE);
                         }
@@ -174,7 +181,17 @@ public class ItemAllActivity extends AppCompatActivity {
                         GenericTypeIndicator<ArrayList<Item>> t = new GenericTypeIndicator<ArrayList<Item>>() {};
                         dataItem =  snapshot.getValue(t);
 
+                        if(dataItem == null){
+                            dataItem = new ArrayList<Item>();
+                            dataItem.add(new Item("", "Example Item", "Example Item", 1,"2022",0));
+                        }
+
                         itemAllAdapter.setData(dataItem);
+
+                        if(dataItem.get(0).getItemName().equals("")){
+                            rvAllItems.setVisibility(View.GONE);
+                            tvAllItemsNoItems.setVisibility(View.VISIBLE);
+                        }
                     }
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
