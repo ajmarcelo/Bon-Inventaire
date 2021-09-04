@@ -180,7 +180,7 @@ public class AccountEditActivity extends AppCompatActivity {
                         }
                         else {
                             Toast.makeText(AccountEditActivity.this, "Updated Account Information", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(AccountEditActivity.this, AccountEditActivity.class);
+                            Intent intent = new Intent(AccountEditActivity.this, HomeActivity.class);
                             startActivity(intent);
                             finish();
                         }

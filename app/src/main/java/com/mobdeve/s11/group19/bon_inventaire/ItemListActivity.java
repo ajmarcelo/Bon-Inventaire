@@ -116,7 +116,7 @@ public class ItemListActivity extends AppCompatActivity {
     }
 
     private void initRecyclerView () {
-        //Toast.makeText(getApplicationContext(), "Retrieving items from the database...", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), "Retrieving items from the database...", Toast.LENGTH_SHORT).show();
 
         mDatabase.getReference(Collections.users.name())
                 .child(mAuth.getCurrentUser().getUid()).child(Collections.items.name())
@@ -128,7 +128,6 @@ public class ItemListActivity extends AppCompatActivity {
 
                         Intent intent = getIntent();
                         String list =  intent.getStringExtra(Keys.KEY_LIST.name());
-                        Toast.makeText(getApplicationContext(),list,Toast.LENGTH_SHORT).show();
 
                         if(!(dataItem == null || dataItem.isEmpty()))
                             filterList(dataItem);
@@ -242,7 +241,7 @@ public class ItemListActivity extends AppCompatActivity {
 
                         if(!(dataItem == null || dataItem.isEmpty()))
                             filterList(dataItem);
-                        
+
                         if(dataItem == null || dataItem.isEmpty()){
                             dataItem = new ArrayList<Item>();
                             dataItem.add(new Item("", list, "Example Item", 1,"2022",0));
