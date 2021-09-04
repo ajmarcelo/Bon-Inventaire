@@ -48,11 +48,11 @@ public class ListActivity extends AppCompatActivity {
                     if(result.getResultCode() == Activity.RESULT_OK){
                         Intent intent = result.getData();
 
-                        String name =  intent.getStringExtra(AddListActivity.KEY_NAME);
-                        String desc = intent.getStringExtra(AddListActivity.KEY_DESCRIPTION);
-                        int id = intent.getIntExtra(AddListActivity.KEY_ID,0);
+                        String list =  intent.getStringExtra(Keys.KEY_LIST.name());
+                        String desc = intent.getStringExtra(Keys.KEY_DESCRIPTION.name());
+                        int id = intent.getIntExtra(Keys.KEY_LIST_ID.name(),0);
 
-                        dataList.add(1 , new List(name,desc,id));
+                        dataList.add(1 , new List(list,desc,id));
                         listAdapter.notifyItemChanged(0);
                         listAdapter.notifyItemRangeChanged(0, listAdapter.getItemCount());
                     }
@@ -134,76 +134,76 @@ public class ListActivity extends AppCompatActivity {
         });
     }
 
-    private int findIndex(ArrayList<List> allList, List list){
-        int sentinel = 0;
-        for(int i = 0; i < allList.size(); i++) {
-            List tempList = allList.get(i);
-            if(tempList.getListID() == list.getListID()){
-                return i;
-            }
-        }
-        return sentinel;
-    }
+//    private int findIndex(ArrayList<List> allList, List list){
+//        int sentinel = 0;
+//        for(int i = 0; i < allList.size(); i++) {
+//            List tempList = allList.get(i);
+//            if(tempList.getListID() == list.getListID()){
+//                return i;
+//            }
+//        }
+//        return sentinel;
+//    }
 
-    private void getDataFromDatabase(){
-        mDatabase.getReference(Collections.users.name())
-                .child(mAuth.getCurrentUser().getUid()).child(Collections.items.name())
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        GenericTypeIndicator<ArrayList<List>> t = new GenericTypeIndicator<ArrayList<List>>() {};
-                        dataList =  snapshot.getValue(t);
+//    private void getDataFromDatabase(){
+//        mDatabase.getReference(Collections.users.name())
+//                .child(mAuth.getCurrentUser().getUid()).child(Collections.items.name())
+//                .addListenerForSingleValueEvent(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                        GenericTypeIndicator<ArrayList<List>> t = new GenericTypeIndicator<ArrayList<List>>() {};
+//                        dataList =  snapshot.getValue(t);
+//
+//                    }
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError error) {
+//                        Toast.makeText(getApplicationContext(), "Can't retrieve data", Toast.LENGTH_SHORT).show();
+//                    }
+//                });
+//    }
 
-                    }
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        Toast.makeText(getApplicationContext(), "Can't retrieve data", Toast.LENGTH_SHORT).show();
-                    }
-                });
-    }
-
-    private void loadData() {
-
-        Intent intent = getIntent();
-
-
-        String eList = intent.getStringExtra(ItemListActivity.KEY_LIST);
-        String eDescription = intent.getStringExtra(ItemListActivity.KEY_DESCRIPTION);
-        int eId = intent.getIntExtra(ItemListActivity.KEY_ID,0);
-
-
-        String dList = intent.getStringExtra(SettingsListActivity.KEY_LIST);
-        String dDescription = intent.getStringExtra(SettingsListActivity.KEY_DESCRIPTION);
-        int dId = intent.getIntExtra(SettingsListActivity.KEY_ID,0);
-
-
-        if(eList != null && dataList != null){
-            getDataFromDatabase();
-            List list = new List(eList, eDescription, eId);
-
-            int index = findIndex(dataList,list);
-
-            dataList.set(index,list);
-            listAdapter.notifyItemChanged(index);
-            listAdapter.notifyItemRangeChanged(0, listAdapter.getItemCount());
-        }
-        else if(dList != null && dataList != null){
-            getDataFromDatabase();
-            List list = new List(eList, dDescription, dId);
-
-            dataList.remove(list);
-            listAdapter.notifyItemChanged(0);
-            listAdapter.notifyItemRangeChanged(0, listAdapter.getItemCount());
-        }
-        else if(dataList != null){
-            listAdapter.notifyDataSetChanged();
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        this.loadData();
-    }
+//    private void loadData() {
+//
+//        Intent intent = getIntent();
+//
+//
+//        String eList = intent.getStringExtra(Keys.KEY_LIST.name());
+//        String eDescription = intent.getStringExtra(Keys.KEY_DESCRIPTION.name());
+//        int eId = intent.getIntExtra(Keys.KEY_LIST_ID.name(),0);
+//
+//
+//        String dList = intent.getStringExtra(Keys.KEY_LIST.name());
+//        String dDescription = intent.getStringExtra(Keys.KEY_DESCRIPTION.name());
+//        int dId = intent.getIntExtra(Keys.KEY_LIST_ID.name(),0);
+//
+//
+//        if(eList != null && dataList != null){
+//            getDataFromDatabase();
+//            List list = new List(eList, eDescription, eId);
+//
+//            int index = findIndex(dataList,list);
+//
+//            dataList.set(index,list);
+//            listAdapter.notifyItemChanged(index);
+//            listAdapter.notifyItemRangeChanged(0, listAdapter.getItemCount());
+//        }
+//        else if(dList != null && dataList != null){
+//            getDataFromDatabase();
+//            List list = new List(eList, dDescription, dId);
+//
+//            dataList.remove(list);
+//            listAdapter.notifyItemChanged(0);
+//            listAdapter.notifyItemRangeChanged(0, listAdapter.getItemCount());
+//        }
+//        else if(dataList != null){
+//            listAdapter.notifyDataSetChanged();
+//        }
+//    }
+//
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//
+//        this.loadData();
+//    }
 }

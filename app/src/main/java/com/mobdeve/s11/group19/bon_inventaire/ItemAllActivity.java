@@ -48,12 +48,19 @@ public class ItemAllActivity extends AppCompatActivity {
                     if(result.getResultCode() == Activity.RESULT_OK){
                         Intent intent = result.getData();
 
-                        String name =  intent.getStringExtra(AddItemActivity.KEY_NAME);
-                        String list = intent.getStringExtra(AddItemActivity.KEY_LIST);
-                        int numStocks = intent.getIntExtra(AddItemActivity.KEY_NUM_STOCKS,0);
-                        String expireDate = intent.getStringExtra(AddItemActivity.KEY_EXPIRE_DATE);
-                        String note = intent.getStringExtra(AddItemActivity.KEY_NOTE);
-                        int id = intent.getIntExtra(AddItemActivity.KEY_ID,0);
+                        String name = intent.getStringExtra(Keys.KEY_NAME.name());
+                        String list = intent.getStringExtra(Keys.KEY_LIST.name());
+                        String note = intent.getStringExtra(Keys.KEY_NOTE.name());
+                        int numStocks = intent.getIntExtra(Keys.KEY_NUM_STOCKS.name(),0);
+                        String expireDate = intent.getStringExtra(Keys.KEY_EXPIRE_DATE.name());
+                        int id = intent.getIntExtra(Keys.KEY_ITEM_ID.name(),0);
+
+
+//                        Item holder = new Item("Example Item", "Example Item", "Example Item", 1,"2022",0);
+//                        dataItem.remove(holder);
+//
+//                        rvAllItems.setVisibility(View.VISIBLE);
+//                        tvAllItemsNoItems.setVisibility(View.GONE);
 
                         dataItem.add(0 , new Item(name, list, note, numStocks, expireDate, id));
                         itemAllAdapter.notifyItemChanged(0);
@@ -156,81 +163,81 @@ public class ItemAllActivity extends AppCompatActivity {
         });
     }
 
-    private int findIndex(ArrayList<Item> allItem, Item item){
-        int sentinel = 0;
-        for(int i = 0; i < allItem.size(); i++) {
-            Item tempItem = allItem.get(i);
-            if(tempItem.getItemID() == item.getItemID()){
-                return i;
-            }
-        }
-        return sentinel;
-    }
-
-    private void getDataFromDatabase(){
-        mDatabase.getReference(Collections.users.name())
-                .child(mAuth.getCurrentUser().getUid()).child(Collections.items.name())
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        GenericTypeIndicator<ArrayList<Item>> t = new GenericTypeIndicator<ArrayList<Item>>() {};
-                        dataItem =  snapshot.getValue(t);
-
-                    }
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        Toast.makeText(getApplicationContext(), "Can't retrieve data", Toast.LENGTH_SHORT).show();
-                    }
-                });
-    }
-
-    private void loadData() {
-
-        Intent intent = getIntent();
-
-        String eName = intent.getStringExtra(ItemViewActivity.KEY_NAME);
-        String eList = intent.getStringExtra(ItemViewActivity.KEY_LIST);
-        String eNote = intent.getStringExtra(ItemViewActivity.KEY_NOTE);
-        int eNumStocks = intent.getIntExtra(ItemViewActivity.KEY_NUM_STOCKS,0);
-        String eExpireDate = intent.getStringExtra(ItemViewActivity.KEY_EXPIRE_DATE);
-        int eId = intent.getIntExtra(ItemViewActivity.KEY_ID,0);
-
-
-        String dName = intent.getStringExtra(SettingsItemActivity.KEY_NAME);
-        String dList = intent.getStringExtra(SettingsItemActivity.KEY_LIST);
-        String dNote = intent.getStringExtra(SettingsItemActivity.KEY_NOTE);
-        int dNumStocks = intent.getIntExtra(SettingsItemActivity.KEY_NUM_STOCKS,0);
-        String dExpireDate = intent.getStringExtra(SettingsItemActivity.KEY_EXPIRE_DATE);
-        int dId = intent.getIntExtra(SettingsItemActivity.KEY_ID,0);
-
-
-        if(eName != null && dataItem != null){
-            getDataFromDatabase();
-            Item item = new Item(eName, eList, eNote, eNumStocks, eExpireDate, eId);
-
-            int index = findIndex(dataItem,item);
-
-            dataItem.set(index,item);
-            itemAllAdapter.notifyItemChanged(index);
-            itemAllAdapter.notifyItemRangeChanged(0, itemAllAdapter.getItemCount());
-        }
-        else if(dName != null && dataItem != null){
-            getDataFromDatabase();
-            Item item = new Item(dName, dList, dNote, dNumStocks, dExpireDate, dId);
-
-            dataItem.remove(item);
-            itemAllAdapter.notifyItemChanged(0);
-            itemAllAdapter.notifyItemRangeChanged(0, itemAllAdapter.getItemCount());
-        }
-        else if(dataItem != null){
-            itemAllAdapter.notifyDataSetChanged();
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        this.loadData();
-    }
+//    private int findIndex(ArrayList<Item> allItem, Item item){
+//        int sentinel = 0;
+//        for(int i = 0; i < allItem.size(); i++) {
+//            Item tempItem = allItem.get(i);
+//            if(tempItem.getItemID() == item.getItemID()){
+//                return i;
+//            }
+//        }
+//        return sentinel;
+//    }
+//
+//    private void getDataFromDatabase(){
+//        mDatabase.getReference(Collections.users.name())
+//                .child(mAuth.getCurrentUser().getUid()).child(Collections.items.name())
+//                .addListenerForSingleValueEvent(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                        GenericTypeIndicator<ArrayList<Item>> t = new GenericTypeIndicator<ArrayList<Item>>() {};
+//                        dataItem =  snapshot.getValue(t);
+//
+//                    }
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError error) {
+//                        Toast.makeText(getApplicationContext(), "Can't retrieve data", Toast.LENGTH_SHORT).show();
+//                    }
+//                });
+//    }
+//
+//    private void loadData() {
+//
+//        Intent intent = getIntent();
+//
+//        String eName = intent.getStringExtra(ItemViewActivity.KEY_NAME);
+//        String eList = intent.getStringExtra(ItemViewActivity.KEY_LIST);
+//        String eNote = intent.getStringExtra(ItemViewActivity.KEY_NOTE);
+//        int eNumStocks = intent.getIntExtra(ItemViewActivity.KEY_NUM_STOCKS,0);
+//        String eExpireDate = intent.getStringExtra(ItemViewActivity.KEY_EXPIRE_DATE);
+//        int eId = intent.getIntExtra(ItemViewActivity.KEY_ID,0);
+//
+//
+//        String dName = intent.getStringExtra(SettingsItemActivity.KEY_NAME);
+//        String dList = intent.getStringExtra(SettingsItemActivity.KEY_LIST);
+//        String dNote = intent.getStringExtra(SettingsItemActivity.KEY_NOTE);
+//        int dNumStocks = intent.getIntExtra(SettingsItemActivity.KEY_NUM_STOCKS,0);
+//        String dExpireDate = intent.getStringExtra(SettingsItemActivity.KEY_EXPIRE_DATE);
+//        int dId = intent.getIntExtra(SettingsItemActivity.KEY_ID,0);
+//
+//
+//        if(eName != null && dataItem != null){
+//            getDataFromDatabase();
+//            Item item = new Item(eName, eList, eNote, eNumStocks, eExpireDate, eId);
+//
+//            int index = findIndex(dataItem,item);
+//
+//            dataItem.set(index,item);
+//            itemAllAdapter.notifyItemChanged(index);
+//            itemAllAdapter.notifyItemRangeChanged(0, itemAllAdapter.getItemCount());
+//        }
+//        else if(dName != null && dataItem != null){
+//            getDataFromDatabase();
+//            Item item = new Item(dName, dList, dNote, dNumStocks, dExpireDate, dId);
+//
+//            dataItem.remove(item);
+//            itemAllAdapter.notifyItemChanged(0);
+//            itemAllAdapter.notifyItemRangeChanged(0, itemAllAdapter.getItemCount());
+//        }
+//        else if(dataItem != null){
+//            itemAllAdapter.notifyDataSetChanged();
+//        }
+//    }
+//
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//
+//        this.loadData();
+//    }
 }

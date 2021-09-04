@@ -14,13 +14,6 @@ import java.util.ArrayList;
 
 public class ItemListAdapter extends RecyclerView.Adapter<ItemListViewHolder> {
 
-    public static final String KEY_NAME = "KEY_NAME";
-    public static final String KEY_LIST = "KEY_LIST";
-    public static final String KEY_NUM_STOCKS = "KEY_NUM_STOCKS";
-    public static final String KEY_EXPIRE_DATE = "KEY_EXPIRE_DATE";
-    public static final String KEY_NOTE = "KEY_NOTE";
-    public static final String KEY_ID = "KEY_ID";
-
     private ArrayList<Item> dataItem;
 
     public ItemListAdapter(ArrayList<Item> dataItem) {
@@ -41,11 +34,12 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListViewHolder> {
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), ItemViewInListActivity.class);
 
-                intent.putExtra(KEY_NAME, dataItem.get(itemListViewHolder.getBindingAdapterPosition()).getItemName());
-                intent.putExtra(KEY_LIST, dataItem.get(itemListViewHolder.getBindingAdapterPosition()).getItemList());
-                intent.putExtra(KEY_NUM_STOCKS, dataItem.get(itemListViewHolder.getBindingAdapterPosition()).getItemNumStocks());
-                intent.putExtra(KEY_EXPIRE_DATE, dataItem.get(itemListViewHolder.getBindingAdapterPosition()).getItemExpireDate());
-                intent.putExtra(KEY_NOTE, dataItem.get(itemListViewHolder.getBindingAdapterPosition()).getItemNote());
+                intent.putExtra(Keys.KEY_NAME.name(), dataItem.get(itemListViewHolder.getBindingAdapterPosition()).getItemName());
+                intent.putExtra(Keys.KEY_LIST.name(), dataItem.get(itemListViewHolder.getBindingAdapterPosition()).getItemList());
+                intent.putExtra(Keys.KEY_NUM_STOCKS.name(), dataItem.get(itemListViewHolder.getBindingAdapterPosition()).getItemNumStocks());
+                intent.putExtra(Keys.KEY_EXPIRE_DATE.name(), dataItem.get(itemListViewHolder.getBindingAdapterPosition()).getItemExpireDate());
+                intent.putExtra(Keys.KEY_NOTE.name(), dataItem.get(itemListViewHolder.getBindingAdapterPosition()).getItemNote());
+                intent.putExtra(Keys.KEY_ITEM_ID.name(), dataItem.get(itemListViewHolder.getBindingAdapterPosition()).getItemID());
 
                 v.getContext().startActivity(intent);
 

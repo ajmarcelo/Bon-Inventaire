@@ -76,11 +76,12 @@ public class EditItemActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
 
-        String name =  intent.getStringExtra(SettingsItemActivity.KEY_NAME);
-        String list = intent.getStringExtra(SettingsItemActivity.KEY_LIST);
-        String note = intent.getStringExtra(SettingsItemActivity.KEY_NOTE);
-        int numStocks = intent.getIntExtra(SettingsItemActivity.KEY_NUM_STOCKS,0);
-        String expireDate = intent.getStringExtra(SettingsItemActivity.KEY_EXPIRE_DATE);
+        String name = intent.getStringExtra(Keys.KEY_NAME.name());
+        String list = intent.getStringExtra(Keys.KEY_LIST.name());
+        String note = intent.getStringExtra(Keys.KEY_NOTE.name());
+        int numStocks = intent.getIntExtra(Keys.KEY_NUM_STOCKS.name(),0);
+        String expireDate = intent.getStringExtra(Keys.KEY_EXPIRE_DATE.name());
+        int id = intent.getIntExtra(Keys.KEY_ITEM_ID.name(),0);
 
         this.etName.setText(name);
         this.etList.setText(list);
@@ -123,7 +124,7 @@ public class EditItemActivity extends AppCompatActivity {
                 String numStocks = etNumStocks.getText().toString();
                 String expireDate = etExpireDate.getText().toString();
                 String note = etNote.getText().toString();
-                int id = intent.getIntExtra(SettingsItemActivity.KEY_ID,0);
+                int id = intent.getIntExtra(Keys.KEY_ITEM_ID.name(),0);
 
                 if (!checkField(name,Integer.parseInt(numStocks))) {
                     Item item = new Item(name,list, note, Integer.parseInt(numStocks),expireDate, id);

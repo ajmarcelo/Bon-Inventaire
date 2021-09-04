@@ -6,6 +6,7 @@ public enum Keys {
     KEY_NUM_STOCKS,
     KEY_EXPIRE_DATE,
     KEY_NOTE,
-    KEY_ID,
-    KEY_INDEX
+    KEY_ITEM_ID,
+    KEY_LIST_ID,
+    KEY_DESCRIPTION,
 }

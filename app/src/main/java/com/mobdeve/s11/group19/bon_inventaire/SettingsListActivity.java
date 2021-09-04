@@ -25,10 +25,6 @@ import java.util.ArrayList;
 
 public class SettingsListActivity extends AppCompatActivity {
 
-    public static final String KEY_LIST = "KEY_LIST";
-    public static final String KEY_DESCRIPTION = "KEY_DESCRIPTION";
-    public static final String KEY_ID = "KEY_ID";
-
     private TextView tvEdit;
     private TextView tvDelete;
     private ImageButton ibBack;
@@ -66,12 +62,12 @@ public class SettingsListActivity extends AppCompatActivity {
                 Intent intent = new Intent(SettingsListActivity.this, EditListActivity.class);
 
                 Intent info = getIntent();
-                Toast.makeText(getApplicationContext(), info.getStringExtra(ItemListActivity.KEY_LIST), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), info.getStringExtra(Keys.KEY_LIST.name()), Toast.LENGTH_SHORT).show();
 
 
-                intent.putExtra(KEY_LIST, info.getStringExtra(ItemListActivity.KEY_LIST));
-                intent.putExtra(KEY_DESCRIPTION, info.getStringExtra(ItemListActivity.KEY_DESCRIPTION));
-                intent.putExtra(KEY_ID, info.getIntExtra(ItemListActivity.KEY_ID,0));
+                intent.putExtra(Keys.KEY_LIST.name(), info.getStringExtra(Keys.KEY_LIST.name()));
+                intent.putExtra(Keys.KEY_DESCRIPTION.name(), info.getStringExtra(Keys.KEY_DESCRIPTION.name()));
+                intent.putExtra(Keys.KEY_LIST_ID.name(), info.getIntExtra(Keys.KEY_LIST_ID.name(),0));
 
                 startActivity(intent);
                 finish();
@@ -86,9 +82,9 @@ public class SettingsListActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = getIntent();
 
-                String name = intent.getStringExtra(ItemListActivity.KEY_LIST);
-                String description = intent.getStringExtra(ItemListActivity.KEY_DESCRIPTION);
-                int id = intent.getIntExtra(ItemListActivity.KEY_ID,0);
+                String name = intent.getStringExtra(Keys.KEY_LIST.name());
+                String description = intent.getStringExtra(Keys.KEY_DESCRIPTION.name());
+                int id = intent.getIntExtra(Keys.KEY_LIST_ID.name(),0);
 
                 if (name.length() > 0 && description.length() > 0) {
                     //database
@@ -205,9 +201,9 @@ public class SettingsListActivity extends AppCompatActivity {
                             Toast.makeText(getApplicationContext(), "Successfully Added to the database", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(SettingsListActivity.this, ListActivity.class);
 
-                            intent.putExtra(KEY_LIST, list.getListName());
-                            intent.putExtra(KEY_DESCRIPTION, list.getListDescription());
-                            intent.putExtra(KEY_ID, list.getListID());
+                            intent.putExtra(Keys.KEY_LIST.name(), list.getListName());
+                            intent.putExtra(Keys.KEY_DESCRIPTION.name(), list.getListDescription());
+                            intent.putExtra(Keys.KEY_LIST_ID.name(), list.getListID());
 
                             setResult(Activity.RESULT_OK, intent);
                             startActivity(intent);

@@ -25,10 +25,6 @@ import java.util.ArrayList;
 
 public class AddListActivity extends AppCompatActivity {
 
-    public static final String KEY_NAME = "KEY_NAME";
-    public static final String KEY_DESCRIPTION = "KEY_DESCRIPTION";
-    public static final String KEY_ID = "KEY_ID";
-
     private ImageButton ibSave;
     private ImageButton ibCancel;
     private EditText etName;
@@ -142,9 +138,9 @@ public class AddListActivity extends AppCompatActivity {
                             Toast.makeText(getApplicationContext(), "Successfully Added to the database", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent();
 
-                            intent.putExtra(KEY_NAME, allList.get(1).getListName());
-                            intent.putExtra(KEY_DESCRIPTION, allList.get(1).getListDescription());
-                            intent.putExtra(KEY_ID, allList.get(1).getListID());
+                            intent.putExtra(Keys.KEY_LIST.name(), allList.get(1).getListName());
+                            intent.putExtra(Keys.KEY_DESCRIPTION.name(), allList.get(1).getListDescription());
+                            intent.putExtra(Keys.KEY_LIST_ID.name(), allList.get(1).getListID());
 
                             setResult(Activity.RESULT_OK, intent);
                             finish();

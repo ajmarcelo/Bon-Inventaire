@@ -62,8 +62,8 @@ public class EditListActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
 
-        String name =  intent.getStringExtra(SettingsListActivity.KEY_LIST);
-        String description = intent.getStringExtra(SettingsListActivity.KEY_DESCRIPTION);
+        String name =  intent.getStringExtra(Keys.KEY_LIST.name());
+        String description = intent.getStringExtra(Keys.KEY_DESCRIPTION.name());
 
         etName.setText(name);
         etDescription.setText(description);
@@ -78,7 +78,7 @@ public class EditListActivity extends AppCompatActivity {
 
                 String name = etName.getText().toString();
                 String description = etDescription.getText().toString();
-                int id = intent.getIntExtra(SettingsListActivity.KEY_ID,0);
+                int id = intent.getIntExtra(Keys.KEY_LIST_ID.name(),0);
 
                 if (!checkField(name)) {
                     //database

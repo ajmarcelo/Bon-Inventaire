@@ -12,10 +12,6 @@ import java.util.ArrayList;
 
 public class ListAdapter extends RecyclerView.Adapter<ListViewHolder> {
 
-    public static final String KEY_LIST = "KEY_LIST";
-    public static final String KEY_DESCRIPTION = "KEY_DESCRIPTION";
-    public static final String KEY_ID = "KEY_ID";
-
     private ArrayList<List> dataList;
 
     public ListAdapter(ArrayList<List> dataList) {
@@ -36,9 +32,9 @@ public class ListAdapter extends RecyclerView.Adapter<ListViewHolder> {
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), ItemListActivity.class);
 
-                intent.putExtra(KEY_LIST, dataList.get(listViewHolder.getBindingAdapterPosition()).getListName());
-                intent.putExtra(KEY_DESCRIPTION, dataList.get(listViewHolder.getBindingAdapterPosition()).getListDescription());
-                intent.putExtra(KEY_ID, dataList.get(listViewHolder.getBindingAdapterPosition()).getListID());
+                intent.putExtra(Keys.KEY_LIST.name(), dataList.get(listViewHolder.getBindingAdapterPosition()).getListName());
+                intent.putExtra(Keys.KEY_DESCRIPTION.name(), dataList.get(listViewHolder.getBindingAdapterPosition()).getListDescription());
+                intent.putExtra(Keys.KEY_LIST_ID.name(), dataList.get(listViewHolder.getBindingAdapterPosition()).getListID());
 
                 v.getContext().startActivity(intent);
             }

@@ -28,13 +28,6 @@ import java.util.Calendar;
 
 public class AddItemActivity extends AppCompatActivity {
 
-    public static final String KEY_NAME = "KEY_NAME";
-    public static final String KEY_LIST = "KEY_LIST";
-    public static final String KEY_NUM_STOCKS = "KEY_NUM_STOCKS";
-    public static final String KEY_EXPIRE_DATE = "KEY_EXPIRE_DATE";
-    public static final String KEY_NOTE = "KEY_NOTE";
-    public static final String KEY_ID = "KEY_ID";
-
     private ImageButton ibSave;
     private ImageButton ibCancel;
     private EditText etName;
@@ -93,7 +86,7 @@ public class AddItemActivity extends AppCompatActivity {
         });
 
         Intent intent = getIntent();
-        String list =  intent.getStringExtra(ItemListActivity.KEY_LIST);
+        String list =  intent.getStringExtra(Keys.KEY_LIST.name());
 
         this.etList.setText(list);
     }
@@ -206,12 +199,12 @@ public class AddItemActivity extends AppCompatActivity {
                             Toast.makeText(getApplicationContext(), "Successfully Added to the database", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent();
 
-                            intent.putExtra(KEY_NAME, allItem.get(0).getItemName());
-                            intent.putExtra(KEY_LIST, allItem.get(0).getItemList());
-                            intent.putExtra(KEY_NUM_STOCKS, allItem.get(0).getItemNumStocks());
-                            intent.putExtra(KEY_EXPIRE_DATE, allItem.get(0).getItemExpireDate().toString());
-                            intent.putExtra(KEY_NOTE, allItem.get(0).getItemNote());
-                            intent.putExtra(KEY_ID, allItem.get(0).getItemID());
+                            intent.putExtra(Keys.KEY_NAME.name(), allItem.get(0).getItemName());
+                            intent.putExtra(Keys.KEY_LIST.name(), allItem.get(0).getItemList());
+                            intent.putExtra(Keys.KEY_NUM_STOCKS.name(), allItem.get(0).getItemNumStocks());
+                            intent.putExtra(Keys.KEY_EXPIRE_DATE.name(), allItem.get(0).getItemExpireDate());
+                            intent.putExtra(Keys.KEY_NOTE.name(), allItem.get(0).getItemNote());
+                            intent.putExtra(Keys.KEY_ITEM_ID.name(), allItem.get(0).getItemID());
 
                             setResult(Activity.RESULT_OK, intent);
                             finish();

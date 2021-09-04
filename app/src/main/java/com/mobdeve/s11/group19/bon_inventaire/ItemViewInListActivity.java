@@ -13,14 +13,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class ItemViewInListActivity extends AppCompatActivity {
 
-    public static final String KEY_NAME = "KEY_NAME";
-    public static final String KEY_LIST = "KEY_LIST";
-    public static final String KEY_NUM_STOCKS = "KEY_NUM_STOCKS";
-    public static final String KEY_EXPIRE_DATE = "KEY_EXPIRE_DATE";
-    public static final String KEY_NOTE = "KEY_NOTE";
-    public static final String KEY_ID = "KEY_ID";
-    public static final String KEY_DESCRIPTION = "KEY_DESCRIPTION";
-
     private TextView tvName;
     private TextView tvList;
     private TextView tvNumStocks;
@@ -84,11 +76,11 @@ public class ItemViewInListActivity extends AppCompatActivity {
         int numStocks;
         String expireDate;
 
-        name = intent.getStringExtra(ItemListAdapter.KEY_NAME);
-        list = intent.getStringExtra(ItemListAdapter.KEY_LIST);
-        note = intent.getStringExtra(ItemListAdapter.KEY_NOTE);
-        numStocks = intent.getIntExtra(ItemListAdapter.KEY_NUM_STOCKS,0);
-        expireDate = intent.getStringExtra(ItemListAdapter.KEY_EXPIRE_DATE);
+        name = intent.getStringExtra(Keys.KEY_NAME.name());
+        list = intent.getStringExtra(Keys.KEY_LIST.name());
+        note = intent.getStringExtra(Keys.KEY_NOTE.name());
+        numStocks = intent.getIntExtra(Keys.KEY_NUM_STOCKS.name(),0);
+        expireDate = intent.getStringExtra(Keys.KEY_EXPIRE_DATE.name());
 
         this.tvName.setText(name);
         this.tvList.setText(list);
@@ -105,12 +97,12 @@ public class ItemViewInListActivity extends AppCompatActivity {
                 Intent intent = new Intent(ItemViewInListActivity.this, SettingsItemInListActivity.class);
                 Intent info = getIntent();
 
-                intent.putExtra(KEY_NAME, info.getStringExtra(ItemListAdapter.KEY_NAME));
-                intent.putExtra(KEY_LIST, info.getStringExtra(ItemListAdapter.KEY_LIST));
-                intent.putExtra(KEY_NOTE, info.getStringExtra(ItemListAdapter.KEY_NOTE));
-                intent.putExtra(KEY_NUM_STOCKS, info.getIntExtra(ItemListAdapter.KEY_NUM_STOCKS,0));
-                intent.putExtra(KEY_EXPIRE_DATE, info.getStringExtra(ItemListAdapter.KEY_EXPIRE_DATE));
-                intent.putExtra(KEY_ID, info.getIntExtra(ItemListAdapter.KEY_ID,0));
+                intent.putExtra(Keys.KEY_NAME.name(), info.getStringExtra(Keys.KEY_NAME.name()));
+                intent.putExtra(Keys.KEY_LIST.name(), info.getStringExtra(Keys.KEY_LIST.name()));
+                intent.putExtra(Keys.KEY_NOTE.name(), info.getStringExtra(Keys.KEY_NOTE.name()));
+                intent.putExtra(Keys.KEY_NUM_STOCKS.name(), info.getIntExtra(Keys.KEY_NUM_STOCKS.name(),0));
+                intent.putExtra(Keys.KEY_EXPIRE_DATE.name(), info.getStringExtra(Keys.KEY_EXPIRE_DATE.name()));
+                intent.putExtra(Keys.KEY_ITEM_ID.name(), info.getIntExtra(Keys.KEY_ITEM_ID.name(),0));
 
                 v.getContext().startActivity(intent);
 
@@ -128,12 +120,12 @@ public class ItemViewInListActivity extends AppCompatActivity {
 
                 Intent info = getIntent();
 
-                intent.putExtra(KEY_NAME, info.getStringExtra(EditItemInListActivity.KEY_NAME));
-                intent.putExtra(KEY_LIST, info.getStringExtra(EditItemInListActivity.KEY_LIST));
-                intent.putExtra(KEY_NOTE, info.getStringExtra(EditItemInListActivity.KEY_NOTE));
-                intent.putExtra(KEY_NUM_STOCKS, info.getIntExtra(EditItemInListActivity.KEY_NUM_STOCKS,0));
-                intent.putExtra(KEY_EXPIRE_DATE, info.getStringExtra(EditItemInListActivity.KEY_EXPIRE_DATE));
-                intent.putExtra(KEY_ID, info.getIntExtra(EditItemInListActivity.KEY_ID,0));
+                intent.putExtra(Keys.KEY_NAME.name(), info.getStringExtra(Keys.KEY_NAME.name()));
+                intent.putExtra(Keys.KEY_LIST.name(), info.getStringExtra(Keys.KEY_LIST.name()));
+                intent.putExtra(Keys.KEY_NOTE.name(), info.getStringExtra(Keys.KEY_NOTE.name()));
+                intent.putExtra(Keys.KEY_NUM_STOCKS.name(), info.getIntExtra(Keys.KEY_NUM_STOCKS.name(),0));
+                intent.putExtra(Keys.KEY_EXPIRE_DATE.name(), info.getStringExtra(Keys.KEY_EXPIRE_DATE.name()));
+                intent.putExtra(Keys.KEY_ITEM_ID.name(), info.getIntExtra(Keys.KEY_ITEM_ID.name(),0));
 
 //                Toast.makeText(getApplicationContext(), info.getStringExtra(EditItemActivity.KEY_NAME), Toast.LENGTH_SHORT).show();
 

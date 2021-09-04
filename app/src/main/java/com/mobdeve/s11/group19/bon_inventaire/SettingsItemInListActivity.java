@@ -25,13 +25,6 @@ import java.util.ArrayList;
 
 public class SettingsItemInListActivity extends AppCompatActivity {
 
-    public static final String KEY_NAME = "KEY_NAME";
-    public static final String KEY_LIST = "KEY_LIST";
-    public static final String KEY_NUM_STOCKS = "KEY_NUM_STOCKS";
-    public static final String KEY_EXPIRE_DATE = "KEY_EXPIRE_DATE";
-    public static final String KEY_NOTE = "KEY_NOTE";
-    public static final String KEY_ID = "KEY_ID";
-
     private TextView tvEdit;
     private TextView tvDelete;
     private ImageButton ibBack;
@@ -69,12 +62,12 @@ public class SettingsItemInListActivity extends AppCompatActivity {
                 Intent intent = new Intent(SettingsItemInListActivity.this, EditItemInListActivity.class);
                 Intent info = getIntent();
 
-                intent.putExtra(KEY_NAME, info.getStringExtra(ItemViewActivity.KEY_NAME));
-                intent.putExtra(KEY_LIST, info.getStringExtra(ItemViewActivity.KEY_LIST));
-                intent.putExtra(KEY_NOTE, info.getStringExtra(ItemViewActivity.KEY_NOTE));
-                intent.putExtra(KEY_NUM_STOCKS, info.getIntExtra(ItemViewActivity.KEY_NUM_STOCKS,0));
-                intent.putExtra(KEY_EXPIRE_DATE, info.getStringExtra(ItemViewActivity.KEY_EXPIRE_DATE));
-                intent.putExtra(KEY_ID, info.getIntExtra(ItemViewActivity.KEY_ID,0));
+                intent.putExtra(Keys.KEY_NAME.name(), info.getStringExtra(Keys.KEY_NAME.name()));
+                intent.putExtra(Keys.KEY_LIST.name(), info.getStringExtra(Keys.KEY_LIST.name()));
+                intent.putExtra(Keys.KEY_NOTE.name(), info.getStringExtra(Keys.KEY_NOTE.name()));
+                intent.putExtra(Keys.KEY_NUM_STOCKS.name(), info.getIntExtra(Keys.KEY_NUM_STOCKS.name(),0));
+                intent.putExtra(Keys.KEY_EXPIRE_DATE.name(), info.getStringExtra(Keys.KEY_EXPIRE_DATE.name()));
+                intent.putExtra(Keys.KEY_ITEM_ID.name(), info.getIntExtra(Keys.KEY_ITEM_ID.name(),0));
 
                 startActivity(intent);
                 finish();
@@ -89,12 +82,12 @@ public class SettingsItemInListActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = getIntent();
 
-                String name =  intent.getStringExtra(ItemViewActivity.KEY_NAME);
-                String list = intent.getStringExtra(ItemViewActivity.KEY_LIST);
-                String note = intent.getStringExtra(ItemViewActivity.KEY_NOTE);
-                int numStocks = intent.getIntExtra(ItemViewActivity.KEY_NUM_STOCKS,0);
-                String expireDate = intent.getStringExtra(ItemViewActivity.KEY_EXPIRE_DATE);
-                int id = intent.getIntExtra(ItemViewActivity.KEY_ID,0);
+                String name = intent.getStringExtra(Keys.KEY_NAME.name());
+                String list = intent.getStringExtra(Keys.KEY_LIST.name());
+                String note = intent.getStringExtra(Keys.KEY_NOTE.name());
+                int numStocks = intent.getIntExtra(Keys.KEY_NUM_STOCKS.name(),0);
+                String expireDate = intent.getStringExtra(Keys.KEY_EXPIRE_DATE.name());
+                int id = intent.getIntExtra(Keys.KEY_ITEM_ID.name(),0);
 
                 Item item = new Item(name,list, note, numStocks,expireDate, id);
                 retrieveItem(item);
@@ -149,12 +142,12 @@ public class SettingsItemInListActivity extends AppCompatActivity {
                             Toast.makeText(getApplicationContext(), "Successfully Deleted from the database", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(SettingsItemInListActivity.this,ItemListActivity.class);
 
-                            intent.putExtra(KEY_NAME, item.getItemName());
-                            intent.putExtra(KEY_LIST, item.getItemList());
-                            intent.putExtra(KEY_NUM_STOCKS, item.getItemNumStocks());
-                            intent.putExtra(KEY_EXPIRE_DATE, item.getItemExpireDate().toString());
-                            intent.putExtra(KEY_NOTE, item.getItemNote());
-                            intent.putExtra(KEY_ID, item.getItemID());
+                            intent.putExtra(Keys.KEY_NAME.name(), item.getItemName());
+                            intent.putExtra(Keys.KEY_LIST.name(), item.getItemList());
+                            intent.putExtra(Keys.KEY_NUM_STOCKS.name(), item.getItemNumStocks());
+                            intent.putExtra(Keys.KEY_EXPIRE_DATE.name(), item.getItemExpireDate());
+                            intent.putExtra(Keys.KEY_NOTE.name(), item.getItemNote());
+                            intent.putExtra(Keys.KEY_ITEM_ID.name(), item.getItemID());
 
                             setResult(Activity.RESULT_OK, intent);
                             startActivity(intent);
