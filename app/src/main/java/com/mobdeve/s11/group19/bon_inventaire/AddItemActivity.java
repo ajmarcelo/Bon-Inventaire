@@ -1,19 +1,23 @@
 package com.mobdeve.s11.group19.bon_inventaire;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.gms.common.util.ArrayUtils;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -31,11 +35,13 @@ public class AddItemActivity extends AppCompatActivity {
     private ImageButton ibSave;
     private ImageButton ibCancel;
     private EditText etName;
-    private EditText etList;
+    AutoCompleteTextView etList;
+    private ArrayList<List> userLists;
+    private String[] dropdown;
     private EditText etNumStocks;
     private EditText etExpireDate;
     private EditText etNote;
-
+    private ProgressBar pbAddItem;
     private FirebaseAuth mAuth;
     private FirebaseDatabase mDatabase;
 
@@ -58,13 +64,15 @@ public class AddItemActivity extends AppCompatActivity {
     private void initConfiguration() {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
+        this.userLists = new ArrayList<List>();
         this.etName = findViewById(R.id.et_add_item_name);
-        this.etList = findViewById(R.id.et_add_item_list);
         this.etNumStocks = findViewById(R.id.et_add_item_num_stocks);
         this.etExpireDate = findViewById(R.id.et_add_item_expire_date);
         this.etNote = findViewById(R.id.et_add_item_note);
+        this.pbAddItem = findViewById(R.id.pb_add_item);
+        this.etList = (AutoCompleteTextView) findViewById(R.id.et_add_item_list);
 
+        //Date Picker
         Calendar calendar = Calendar.getInstance();
         final int year = calendar.get(Calendar.YEAR);
         final int month = calendar.get(Calendar.MONTH);
@@ -89,6 +97,33 @@ public class AddItemActivity extends AppCompatActivity {
         String list =  intent.getStringExtra(Keys.KEY_LIST.name());
 
         this.etList.setText(list);
+
+        //List Dropdown
+        mDatabase.getReference(Collections.users.name())
+                .child(mAuth.getUid()).child(Collections.lists.name())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot snapshot) {
+                        GenericTypeIndicator<ArrayList<List>> t = new GenericTypeIndicator<ArrayList<List>>() {};
+                        userLists =  snapshot.getValue(t);
+                        ArrayAdapter<String> adapterList = new ArrayAdapter<String>(AddItemActivity.this, R.layout.dropdown_item, dropdownList(userLists));
+                        etList.setThreshold(1);
+                        etList.setAdapter(adapterList);
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                    }
+                });
+
+    }
+
+    private String[] dropdownList (ArrayList<List> userLists) {
+        int n = userLists.size();
+        dropdown = new String[userLists.size()];
+        for(int i = 0; i < n; i++) {
+            dropdown[i] = userLists.get(i).getListName();
+        }
+        return dropdown;
     }
 
     private void initSave() {
@@ -99,14 +134,15 @@ public class AddItemActivity extends AppCompatActivity {
                 String name = etName.getText().toString();
                 String list = etList.getText().toString();
                 String numStocks = etNumStocks.getText().toString();
-                //int numStocks = Integer.parseInt(etNumStocks.getText().toString());
                 String expireDate = etExpireDate.getText().toString();
                 String note = etNote.getText().toString();
                 int id = 0;
 
-                if (!checkField(name,numStocks)) {
+                if (!checkField(name, list, numStocks)) {
                     //database
-                    Item item = new Item(name,list, note, Integer.parseInt(numStocks),expireDate, id);
+                    if(list.isEmpty())
+                        list = "Unlisted";
+                    Item item = new Item(name, list, note, Integer.parseInt(numStocks),expireDate, id);
                     retrieveItem(item);
                 }
                 else
@@ -115,7 +151,7 @@ public class AddItemActivity extends AppCompatActivity {
         });
     }
 
-    private boolean checkField(String name, String numStocks) {
+    private boolean checkField(String name, String list, String numStocks) {
         boolean hasError = false;
 
         if(name.isEmpty()) {
@@ -123,6 +159,12 @@ public class AddItemActivity extends AppCompatActivity {
             this.etName.requestFocus();
             hasError = true;
         }
+        if(!list.isEmpty())
+            if(!ArrayUtils.contains(dropdown, list)) {
+                this.etList.setError("List Not Created");
+                this.etList.requestFocus();
+                hasError = true;
+            }
 
         if(numStocks.isEmpty()) {
             this.etNumStocks.setError("Required Field");
@@ -144,7 +186,7 @@ public class AddItemActivity extends AppCompatActivity {
 
     public void retrieveItem(Item item) {
         Toast.makeText(getApplicationContext(), "Adding item to the database...", Toast.LENGTH_SHORT).show();
-
+        pbAddItem.setVisibility(View.VISIBLE);
         mDatabase.getReference(Collections.users.name())
                 .child(mAuth.getCurrentUser().getUid()).child(Collections.items.name())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -153,16 +195,18 @@ public class AddItemActivity extends AppCompatActivity {
                         GenericTypeIndicator<ArrayList<Item>> t = new GenericTypeIndicator<ArrayList<Item>>() {};
                         ArrayList<Item> allItem = snapshot.getValue(t);
 
-                        if(allItem == null){
+                        if(allItem == null) {
                             allItem = new ArrayList<Item>();
                             allItem.add(0,item);
                             storeItem(allItem);
                         }
-                        else if(!isSameItem(allItem,item)){
+
+                        else if(!isSameItem(allItem,item)) {
                             item.setItemID(allItem.size());
                             allItem.add(0,item);
                             storeItem(allItem);
                         }
+
                         else {
                             Toast.makeText(getApplicationContext(), "Item already created", Toast.LENGTH_SHORT).show();
                         }

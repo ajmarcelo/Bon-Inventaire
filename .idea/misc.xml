@@ -19,11 +19,13 @@
         <entry key="app/src/main/res/layout/activity_settings_account.xml" value="0.13728470111448834" />
         <entry key="app/src/main/res/layout/activity_settings_item.xml" value="0.13728470111448834" />
         <entry key="app/src/main/res/layout/activity_settings_list.xml" value="0.13728470111448834" />
-        <entry key="app/src/main/res/layout/activity_view_all_items.xml" value="0.13728470111448834" />
+        <entry key="app/src/main/res/layout/activity_view_all_items.xml" value="0.375" />
         <entry key="app/src/main/res/layout/activity_view_all_lists.xml" value="0.13728470111448834" />
-        <entry key="app/src/main/res/layout/activity_view_list_items.xml" value="0.13728470111448834" />
+        <entry key="app/src/main/res/layout/activity_view_list_items.xml" value="0.5" />
         <entry key="app/src/main/res/layout/all_item_list.xml" value="0.13728470111448834" />
         <entry key="app/src/main/res/layout/all_list_list.xml" value="0.13728470111448834" />
+        <entry key="app/src/main/res/layout/dropdown_item.xml" value="0.75" />
+        <entry key="app/src/main/res/layout/list_dropdown.xml" value="0.18115942028985507" />
         <entry key="app/src/main/res/layout/per_item_list.xml" value="0.13728470111448834" />
       </map>
     </option>

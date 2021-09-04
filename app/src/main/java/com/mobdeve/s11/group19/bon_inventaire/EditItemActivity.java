@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -39,16 +41,16 @@ public class EditItemActivity extends AppCompatActivity {
     private ImageButton ibSave;
     private ImageButton ibCancel;
     private EditText etName;
-    private EditText etList;
+    private AutoCompleteTextView etList;
     private EditText etNumStocks;
     private EditText etExpireDate;
     private EditText etNote;
+    private ArrayList<List> userLists;
+    private String[] dropdown;
     private ProgressBar pbEditItem;
 
     private FirebaseAuth mAuth;
     private FirebaseDatabase mDatabase;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,14 +71,13 @@ public class EditItemActivity extends AppCompatActivity {
     private void initConfiguration() {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
+        this.userLists = new ArrayList<List>();
         this.etName = findViewById(R.id.et_edit_item_name);
-        this.etList = findViewById(R.id.et_edit_item_list);
         this.etNumStocks = findViewById(R.id.et_edit_item_num_stocks);
         this.etExpireDate = findViewById(R.id.et_edit_item_expire_date);
         this.etNote = findViewById(R.id.et_edit_item_note);
         this.pbEditItem = findViewById(R.id.pb_edit_item);
-
+        this.etList = (AutoCompleteTextView) findViewById(R.id.et_edit_item_list);
         Intent intent = getIntent();
 
         String name = intent.getStringExtra(Keys.KEY_NAME.name());
@@ -112,7 +113,34 @@ public class EditItemActivity extends AppCompatActivity {
             }
         });
 
+        //List Dropdown
+        mDatabase.getReference(Collections.users.name())
+                .child(mAuth.getUid()).child(Collections.lists.name())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot snapshot) {
+                        GenericTypeIndicator<ArrayList<List>> t = new GenericTypeIndicator<ArrayList<List>>() {};
+                        userLists =  snapshot.getValue(t);
 
+                        ArrayAdapter<String> adapterList = new ArrayAdapter<String>(EditItemActivity.this, R.layout.dropdown_item, dropdownList(userLists));
+                        etList.setThreshold(1);
+                        etList.setAdapter(adapterList);
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                    }
+                });
+
+
+    }
+
+    private String[] dropdownList (ArrayList<List> userLists) {
+        int n = userLists.size();
+        dropdown = new String[userLists.size()];
+        for(int i = 0; i < n; i++) {
+            dropdown[i] = userLists.get(i).getListName();
+        }
+        return dropdown;
     }
 
     private void initSave() {

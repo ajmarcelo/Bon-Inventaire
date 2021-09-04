@@ -194,7 +194,6 @@ public class ItemListActivity extends AppCompatActivity {
     }
 
     private void initListItemsEdit() {
-//        this.fabListItemsSettings = findViewById(R.id.fab_list_items_settings);
         this.fabListItemsSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
