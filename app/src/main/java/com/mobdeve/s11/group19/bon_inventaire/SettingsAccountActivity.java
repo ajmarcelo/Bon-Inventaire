@@ -1,26 +1,24 @@
 package com.mobdeve.s11.group19.bon_inventaire;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
+import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.GenericTypeIndicator;
-import com.google.firebase.database.ValueEventListener;
-
-import java.util.ArrayList;
 
 public class SettingsAccountActivity extends AppCompatActivity {
 
@@ -28,7 +26,9 @@ public class SettingsAccountActivity extends AppCompatActivity {
     private TextView tvDelete;
     private ImageButton ibLogout;
     private ImageButton ibBack;
-
+    private Dialog dialog;
+    private Button btnDeleteAccountContinue;
+    private Button btnDeleteAccountCancel;
     private FirebaseAuth mAuth;
     private FirebaseDatabase mDatabase;
 
@@ -36,7 +36,9 @@ public class SettingsAccountActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings_account);
+        this.tvDelete = findViewById(R.id.tv_settings_account_delete);
 
+        initConfirmationDialogBox();
         initFirebase();
         initConfiguration();
         initEdit();
@@ -45,6 +47,17 @@ public class SettingsAccountActivity extends AppCompatActivity {
         initBack();
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
+    private void initConfirmationDialogBox() {
+        dialog = new Dialog(SettingsAccountActivity.this);
+        dialog.setContentView(R.layout.confirmation_delete_account);
+        dialog.getWindow().setBackgroundDrawable(getDrawable(R.drawable.dialog_bg));
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.setCancelable(false);
+        dialog.getWindow().getAttributes().windowAnimations = R.style.confirmation;
+        btnDeleteAccountCancel = dialog.findViewById(R.id.btn_confirm_delete_account_cancel);
+        btnDeleteAccountContinue = dialog.findViewById(R.id.btn_confirm_delete_account_continue);
+    }
     private void initFirebase() {
         this.mAuth = FirebaseAuth.getInstance();
         this.mDatabase = FirebaseDatabase.getInstance();
@@ -68,8 +81,14 @@ public class SettingsAccountActivity extends AppCompatActivity {
     }
 
     private void initDelete() {
-        this.tvDelete = findViewById(R.id.tv_settings_account_delete);
         this.tvDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.show();
+            }
+        });
+
+        this.btnDeleteAccountContinue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(SettingsAccountActivity.this, MainActivity.class);
@@ -88,9 +107,14 @@ public class SettingsAccountActivity extends AppCompatActivity {
                                 });
                             }
                         });
-
-
                 startActivity(intent);
+            }
+        });
+
+        this.btnDeleteAccountCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
             }
         });
     }

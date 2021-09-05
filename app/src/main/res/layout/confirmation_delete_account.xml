@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cl_confirm_delete_account"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:layout_editor_absoluteX="0dp"
+    tools:layout_editor_absoluteY="1dp"
+    >
+
+
+    <TextView
+        android:id="@+id/tv_confirm_delete_account_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/great_vibes"
+        android:text=" Are you sure? "
+        android:textColor="#000000"
+        android:textSize="48sp"
+        android:textStyle="normal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+
+    <TextView
+        android:id="@+id/tv_confirm_delete_account_msg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/belleza"
+        android:text="Would you like to continue on deleting your account?"
+        android:textColor="#000000"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="@+id/tv_confirm_delete_account_title"
+        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintStart_toStartOf="@+id/tv_confirm_delete_account_title"
+        app:layout_constraintTop_toBottomOf="@+id/tv_confirm_delete_account_title" />
+
+    <Button
+        android:id="@+id/btn_confirm_delete_account_cancel"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="24dp"
+        android:background="#737373"
+        android:fontFamily="@font/belleza"
+        android:text="Cancel"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/gl_confirm_delete_account"
+        app:layout_constraintStart_toStartOf="@+id/tv_confirm_delete_account_msg"
+        app:layout_constraintTop_toBottomOf="@+id/tv_confirm_delete_account_msg" />
+
+    <Button
+        android:id="@+id/btn_confirm_delete_account_continue"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/button_yellow"
+        android:fontFamily="@font/belleza"
+        android:padding="5dp"
+        android:text="Continue"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_confirm_delete_account_cancel"
+        app:layout_constraintEnd_toEndOf="@+id/tv_confirm_delete_account_msg"
+        app:layout_constraintStart_toStartOf="@+id/gl_confirm_delete_account"
+        app:layout_constraintTop_toTopOf="@+id/btn_confirm_delete_account_cancel" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/gl_confirm_delete_account"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintGuide_begin="205dp"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="0dp"
+        android:layout_height="150dp"
+        android:background="#8993B9"
+        android:paddingStart="100dp"
+        android:paddingTop="35dp"
+        android:paddingEnd="100dp"
+        android:paddingBottom="35dp"
+        android:scaleType="centerInside"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/question_mark" />
+</androidx.constraintlayout.widget.ConstraintLayout>
