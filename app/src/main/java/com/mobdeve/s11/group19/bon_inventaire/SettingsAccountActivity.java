@@ -3,6 +3,7 @@ package com.mobdeve.s11.group19.bon_inventaire;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,7 +52,7 @@ public class SettingsAccountActivity extends AppCompatActivity {
     private void initConfirmationDialogBox() {
         dialog = new Dialog(SettingsAccountActivity.this);
         dialog.setContentView(R.layout.confirmation_delete_account);
-        dialog.getWindow().setBackgroundDrawable(getDrawable(R.drawable.dialog_bg));
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
         dialog.setCancelable(false);
         dialog.getWindow().getAttributes().windowAnimations = R.style.confirmation;
