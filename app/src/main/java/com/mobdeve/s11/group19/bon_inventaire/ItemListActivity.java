@@ -120,7 +120,7 @@ public class ItemListActivity extends AppCompatActivity {
     }
 
     private void initRecyclerView () {
-        Toast.makeText(getApplicationContext(), "Retrieving items from the database...", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getApplicationContext(), "Retrieving items from the database...", Toast.LENGTH_SHORT).show();
 
         mDatabase.getReference(Collections.users.name())
                 .child(mAuth.getCurrentUser().getUid()).child(Collections.items.name())

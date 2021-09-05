@@ -83,7 +83,7 @@ public class ListActivity extends AppCompatActivity {
     }
 
     public void initRecyclerView() {
-        Toast.makeText(getApplicationContext(), "Retrieving list from the database...", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getApplicationContext(), "Retrieving list from the database...", Toast.LENGTH_SHORT).show();
 
         mDatabase.getReference(Collections.users.name())
                 .child(mAuth.getCurrentUser().getUid()).child(Collections.lists.name())

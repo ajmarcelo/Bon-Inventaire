@@ -93,8 +93,7 @@ public class AddListActivity extends AppCompatActivity {
     }
 
     public void retrieveList(List list) {
-        Toast.makeText(getApplicationContext(), "Adding list to the database...", Toast.LENGTH_SHORT).show();
-        this.pbAddList.setVisibility(View.VISIBLE);
+//        Toast.makeText(getApplicationContext(), "Adding list...", Toast.LENGTH_SHORT).show();
         mdatabase.getReference(Collections.users.name())
                 .child(mAuth.getCurrentUser().getUid()).child(Collections.lists.name())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -104,16 +103,18 @@ public class AddListActivity extends AppCompatActivity {
                         ArrayList<List> allList = snapshot.getValue(t);
 
                         if(!isSameList(allList,list)){
+                            pbAddList.setVisibility(View.VISIBLE);
                             list.setListID(allList.size());
                             allList.add(1,list);
                             storeList(allList);
                         } else {
-                            Toast.makeText(getApplicationContext(), "List already created", Toast.LENGTH_SHORT).show();
+                            etName.setError("List with same name already exist");
+                            etName.requestFocus();
                         }
                     }
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        Toast.makeText(getApplicationContext(), "Can't retrieve data", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Can't retrieve lists", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -137,7 +138,7 @@ public class AddListActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if(task.isSuccessful()) {
-                            Toast.makeText(getApplicationContext(), "Successfully Added to the database", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "List Successfully Added", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent();
 
                             intent.putExtra(Keys.KEY_LIST.name(), allList.get(1).getListName());
@@ -147,7 +148,7 @@ public class AddListActivity extends AppCompatActivity {
                             setResult(Activity.RESULT_OK, intent);
                             finish();
                         } else {
-                            Toast.makeText(getApplicationContext(), "Can't Add to the database", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "List NOT Added", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });

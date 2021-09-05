@@ -199,16 +199,10 @@ public class AddItemActivity extends AppCompatActivity {
                             allItem = new ArrayList<Item>();
                             allItem.add(0,item);
                             storeItem(allItem);
-                        }
-
-                        else if(!isSameItem(allItem,item)) {
+                        } else {
                             item.setItemID(allItem.size());
                             allItem.add(0,item);
                             storeItem(allItem);
-                        }
-
-                        else {
-                            Toast.makeText(getApplicationContext(), "Item already created", Toast.LENGTH_SHORT).show();
                         }
                     }
                     @Override
@@ -218,18 +212,18 @@ public class AddItemActivity extends AppCompatActivity {
                 });
     }
 
-    private boolean isSameItem(ArrayList<Item> allItem, Item item){
-        for(int i = 0; i < allItem.size(); i++) {
-            Item tempItem = allItem.get(i);
-            if(tempItem.getItemName().equals(item.getItemName())){
-                if(tempItem.getItemList().equals(item.getItemList())){
-                    Toast.makeText(getApplicationContext(), "Item is on another List", Toast.LENGTH_SHORT).show();
-                }
-                return true;
-            }
-        }
-        return false;
-    }
+//    private boolean isSameItem(ArrayList<Item> allItem, Item item){
+//        for(int i = 0; i < allItem.size(); i++) {
+//            Item tempItem = allItem.get(i);
+//            if(tempItem.getItemName().equals(item.getItemName())){
+//                if(tempItem.getItemList().equals(item.getItemList())){
+//                    Toast.makeText(getApplicationContext(), "Item is on another List", Toast.LENGTH_SHORT).show();
+//                }
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
 
     private void storeItem(ArrayList<Item> allItem) {
 
