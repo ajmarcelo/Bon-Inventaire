@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageButton;
@@ -22,6 +23,7 @@ import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class SettingsListActivity extends AppCompatActivity {
 
@@ -89,7 +91,8 @@ public class SettingsListActivity extends AppCompatActivity {
                 if (name.length() > 0 && description.length() > 0) {
                     //database
                     List list = new List(name,description,id);
-                    retrieveList(list);
+//                    retrieveList(list);
+                    deleteList(list);
                 }
                 else
                     Toast.makeText(getApplicationContext(), "List cannot be deleted...", Toast.LENGTH_SHORT).show();
@@ -97,125 +100,195 @@ public class SettingsListActivity extends AppCompatActivity {
         });
     }
 
-    public void retrieveList(List list) {
-        Toast.makeText(getApplicationContext(), "Adding item to the database...", Toast.LENGTH_SHORT).show();
+    public void deleteList(List list){
 
         mDatabase.getReference(Collections.users.name())
-                .child(mAuth.getCurrentUser().getUid()).child(Collections.lists.name())
+                .child(mAuth.getCurrentUser().getUid())
+                .child(Collections.lists.name())
+                .orderByChild("listID")
+                .equalTo(list.getListID())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        GenericTypeIndicator<ArrayList<List>> t = new GenericTypeIndicator<ArrayList<List>>() {};
-                        ArrayList<List> allList = snapshot.getValue(t);
-
-                        int index = findIndex(allList,list);
-
-                        String listName = allList.get(index).getListName();
-                        allList.remove(index);
-
-                        storeItem(allList,listName, list);
-
+                        for (DataSnapshot child : snapshot.getChildren()) {
+                            Log.d("List Parent: ", child.getKey());
+                            mDatabase.getReference(Collections.users.name())
+                                    .child(mAuth.getCurrentUser().getUid())
+                                    .child(Collections.lists.name())
+                                    .child(child.getKey())
+                                    .removeValue();
+                        }
+                        updateItems(list);
                     }
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        Toast.makeText(getApplicationContext(), "Can't retrieve data", Toast.LENGTH_SHORT).show();
+                        Log.d("DatabaseError: ", error.toString());
                     }
                 });
     }
 
-    private int findIndex(ArrayList<List> allList, List list){
-        int sentinel = 0;
-        for(int i = 0; i < allList.size(); i++) {
-            List tempList = allList.get(i);
-            if(tempList.getListID() == list.getListID()){
-                return i;
-            }
-        }
-        return sentinel;
-    }
+    public void updateItems(List list){
 
-    private void storeItem(ArrayList<List> allList, String listName, List list) {
+        Intent intent = getIntent();
+
+        String oldList =  intent.getStringExtra(Keys.KEY_LIST.name());
+
+        HashMap editedList = new HashMap();
+        editedList.put("itemList", "Unlisted");
 
         mDatabase.getReference(Collections.users.name())
-                .child(mAuth.getCurrentUser().getUid()).child(Collections.lists.name())
-                .setValue(allList)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if(task.isSuccessful()) {
-                            retrieveItem(allList, listName, list);
-
-                        } else {
-                            Toast.makeText(getApplicationContext(), "Can't Edit to the database", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-    }
-
-    public void retrieveItem(ArrayList<List> allList, String listName, List list) {
-        Toast.makeText(getApplicationContext(), "Editing item to the database...", Toast.LENGTH_SHORT).show();
-
-        mDatabase.getReference(Collections.users.name())
-                .child(mAuth.getCurrentUser().getUid()).child(Collections.items.name())
+                .child(mAuth.getCurrentUser().getUid())
+                .child(Collections.items.name())
+                .orderByChild("itemList")
+                .equalTo(oldList)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        GenericTypeIndicator<ArrayList<Item>> t = new GenericTypeIndicator<ArrayList<Item>>() {};
-                        ArrayList<Item> allItem = snapshot.getValue(t);
+                        for (DataSnapshot child : snapshot.getChildren()) {
+                            Log.d("Item Parent: ", child.getKey());
+                            mDatabase.getReference(Collections.users.name())
+                                    .child(mAuth.getCurrentUser().getUid())
+                                    .child(Collections.items.name())
+                                    .child(child.getKey())
+                                    .updateChildren(editedList);
+                        }
+                        Intent intent = new Intent(SettingsListActivity.this, ListActivity.class);
 
-                        if(!(allItem == null || allItem.isEmpty()))
-                            allItem = moveList(allItem,listName);
+                        intent.putExtra(Keys.KEY_LIST.name(), list.getListName());
+                        intent.putExtra(Keys.KEY_DESCRIPTION.name(), list.getListDescription());
+                        intent.putExtra(Keys.KEY_LIST_ID.name(), list.getListID());
 
-                        storeItem(allList, allItem, list);
-
+                        setResult(Activity.RESULT_OK, intent);
+                        startActivity(intent);
+                        finish();
                     }
+
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        Toast.makeText(getApplicationContext(), "Can't retrieve data", Toast.LENGTH_SHORT).show();
+                        Log.d("DatabaseError: ", error.toString());
                     }
                 });
     }
 
-    private ArrayList<Item> moveList(ArrayList<Item> allItem, String listName){
-        ArrayList<Item> tempAllItem = allItem;
-
-        for(int i = 0; i < allItem.size(); i++) {
-            Item tempItem = allItem.get(i);
-            if(tempItem.getItemList().equals(listName)){
-                tempItem.setItemList("Unlisted");
-                tempAllItem.set(i,tempItem);
-            }
-        }
-
-        return tempAllItem;
-    }
-
-    private void storeItem(ArrayList<List> allList, ArrayList<Item> allItem, List list) {
-
-        mDatabase.getReference(Collections.users.name())
-                .child(mAuth.getCurrentUser().getUid()).child(Collections.items.name())
-                .setValue(allItem)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if(task.isSuccessful()) {
-
-                            Toast.makeText(getApplicationContext(), "Successfully Added to the database", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(SettingsListActivity.this, ListActivity.class);
-
-                            intent.putExtra(Keys.KEY_LIST.name(), list.getListName());
-                            intent.putExtra(Keys.KEY_DESCRIPTION.name(), list.getListDescription());
-                            intent.putExtra(Keys.KEY_LIST_ID.name(), list.getListID());
-
-                            setResult(Activity.RESULT_OK, intent);
-                            startActivity(intent);
-                            finish();
-                        } else {
-                            Toast.makeText(getApplicationContext(), "Can't Add to the database", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-    }
+//    public void retrieveList(List list) {
+//        Toast.makeText(getApplicationContext(), "Adding item to the database...", Toast.LENGTH_SHORT).show();
+//
+//        mDatabase.getReference(Collections.users.name())
+//                .child(mAuth.getCurrentUser().getUid()).child(Collections.lists.name())
+//                .addListenerForSingleValueEvent(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                        GenericTypeIndicator<ArrayList<List>> t = new GenericTypeIndicator<ArrayList<List>>() {};
+//                        ArrayList<List> allList = snapshot.getValue(t);
+//
+//                        int index = findIndex(allList,list);
+//
+//                        String listName = allList.get(index).getListName();
+//                        allList.remove(index);
+//
+//                        storeItem(allList,listName, list);
+//
+//                    }
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError error) {
+//                        Toast.makeText(getApplicationContext(), "Can't retrieve data", Toast.LENGTH_SHORT).show();
+//                    }
+//                });
+//    }
+//
+//    private int findIndex(ArrayList<List> allList, List list){
+//        int sentinel = 0;
+//        for(int i = 0; i < allList.size(); i++) {
+//            List tempList = allList.get(i);
+//            if(tempList.getListID() == list.getListID()){
+//                return i;
+//            }
+//        }
+//        return sentinel;
+//    }
+//
+//    private void storeItem(ArrayList<List> allList, String listName, List list) {
+//
+//        mDatabase.getReference(Collections.users.name())
+//                .child(mAuth.getCurrentUser().getUid()).child(Collections.lists.name())
+//                .setValue(allList)
+//                .addOnCompleteListener(new OnCompleteListener<Void>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<Void> task) {
+//                        if(task.isSuccessful()) {
+//                            retrieveItem(allList, listName, list);
+//
+//                        } else {
+//                            Toast.makeText(getApplicationContext(), "Can't Edit to the database", Toast.LENGTH_SHORT).show();
+//                        }
+//                    }
+//                });
+//    }
+//
+//    public void retrieveItem(ArrayList<List> allList, String listName, List list) {
+//        Toast.makeText(getApplicationContext(), "Editing item to the database...", Toast.LENGTH_SHORT).show();
+//
+//        mDatabase.getReference(Collections.users.name())
+//                .child(mAuth.getCurrentUser().getUid()).child(Collections.items.name())
+//                .addListenerForSingleValueEvent(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                        GenericTypeIndicator<ArrayList<Item>> t = new GenericTypeIndicator<ArrayList<Item>>() {};
+//                        ArrayList<Item> allItem = snapshot.getValue(t);
+//
+//                        if(!(allItem == null || allItem.isEmpty()))
+//                            allItem = moveList(allItem,listName);
+//
+//                        storeItem(allList, allItem, list);
+//
+//                    }
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError error) {
+//                        Toast.makeText(getApplicationContext(), "Can't retrieve data", Toast.LENGTH_SHORT).show();
+//                    }
+//                });
+//    }
+//
+//    private ArrayList<Item> moveList(ArrayList<Item> allItem, String listName){
+//        ArrayList<Item> tempAllItem = allItem;
+//
+//        for(int i = 0; i < allItem.size(); i++) {
+//            Item tempItem = allItem.get(i);
+//            if(tempItem.getItemList().equals(listName)){
+//                tempItem.setItemList("Unlisted");
+//                tempAllItem.set(i,tempItem);
+//            }
+//        }
+//
+//        return tempAllItem;
+//    }
+//
+//    private void storeItem(ArrayList<List> allList, ArrayList<Item> allItem, List list) {
+//
+//        mDatabase.getReference(Collections.users.name())
+//                .child(mAuth.getCurrentUser().getUid()).child(Collections.items.name())
+//                .setValue(allItem)
+//                .addOnCompleteListener(new OnCompleteListener<Void>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<Void> task) {
+//                        if(task.isSuccessful()) {
+//
+//                            Toast.makeText(getApplicationContext(), "Successfully Added to the database", Toast.LENGTH_SHORT).show();
+//                            Intent intent = new Intent(SettingsListActivity.this, ListActivity.class);
+//
+//                            intent.putExtra(Keys.KEY_LIST.name(), list.getListName());
+//                            intent.putExtra(Keys.KEY_DESCRIPTION.name(), list.getListDescription());
+//                            intent.putExtra(Keys.KEY_LIST_ID.name(), list.getListID());
+//
+//                            setResult(Activity.RESULT_OK, intent);
+//                            startActivity(intent);
+//                            finish();
+//                        } else {
+//                            Toast.makeText(getApplicationContext(), "Can't Add to the database", Toast.LENGTH_SHORT).show();
+//                        }
+//                    }
+//                });
+//    }
 
     private void initBack() {
         this.ibBack = findViewById(R.id.ib_settings_list_back);

@@ -40,12 +40,12 @@ public class ItemViewActivity extends AppCompatActivity {
     private void loadData() {
         Intent intent = getIntent();
 
-        String name =  intent.getStringExtra(EditItemActivity.KEY_NAME);
-        String list = intent.getStringExtra(EditItemActivity.KEY_LIST);
-        int numStocks = intent.getIntExtra(EditItemActivity.KEY_NUM_STOCKS,0);
-        String expireDate = intent.getStringExtra(EditItemActivity.KEY_EXPIRE_DATE);
-        String note = intent.getStringExtra(EditItemActivity.KEY_NOTE);
-        int id = intent.getIntExtra(EditItemActivity.KEY_ID,0);
+        String name =  intent.getStringExtra(Keys.KEY_NAME.name());
+        String list = intent.getStringExtra(Keys.KEY_LIST.name());
+        int numStocks = intent.getIntExtra(Keys.KEY_NUM_STOCKS.name(),0);
+        String expireDate = intent.getStringExtra(Keys.KEY_EXPIRE_DATE.name());
+        String note = intent.getStringExtra(Keys.KEY_NOTE.name());
+        int id = intent.getIntExtra(Keys.KEY_ITEM_ID.name(),0);
 
         tvName.setText(name);
         tvList.setText(list);

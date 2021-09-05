@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.DatePicker;
@@ -25,15 +26,9 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 
 public class EditItemInListActivity extends AppCompatActivity {
-
-    public static final String KEY_NAME = "KEY_NAME";
-    public static final String KEY_LIST = "KEY_LIST";
-    public static final String KEY_NUM_STOCKS = "KEY_NUM_STOCKS";
-    public static final String KEY_EXPIRE_DATE = "KEY_EXPIRE_DATE";
-    public static final String KEY_NOTE = "KEY_NOTE";
-    public static final String KEY_ID = "KEY_ID";
 
     private ImageButton ibSave;
     private ImageButton ibCancel;
@@ -128,7 +123,8 @@ public class EditItemInListActivity extends AppCompatActivity {
 
                 if (!checkField(name,Integer.parseInt(numStocks))) {
                     Item item = new Item(name,list, note, Integer.parseInt(numStocks),expireDate, id);
-                    retrieveItem(item);
+//                    retrieveItem(item);
+                    updateItems(item);
 
                 }
                 else
@@ -164,67 +160,112 @@ public class EditItemInListActivity extends AppCompatActivity {
         return hasError;
     }
 
-    public void retrieveItem(Item item) {
-        Toast.makeText(getApplicationContext(), "Adding item to the database...", Toast.LENGTH_SHORT).show();
+    public void updateItems(Item item){
+
+        HashMap editedItem = new HashMap();
+        editedItem.put("itemExpireDate", item.getItemExpireDate());
+        editedItem.put("itemList", item.getItemList());
+        editedItem.put("itemName", item.getItemName());
+        editedItem.put("itemNote", item.getItemNote());
+        editedItem.put("itemNumStocks", item.getItemNumStocks());
 
         mDatabase.getReference(Collections.users.name())
-                .child(mAuth.getCurrentUser().getUid()).child(Collections.items.name())
+                .child(mAuth.getCurrentUser().getUid())
+                .child(Collections.items.name())
+                .orderByChild("itemID")
+                .equalTo(item.getItemID())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        GenericTypeIndicator<ArrayList<Item>> t = new GenericTypeIndicator<ArrayList<Item>>() {};
-                        ArrayList<Item> allItem = snapshot.getValue(t);
+                        for (DataSnapshot child : snapshot.getChildren()) {
+                            Log.d("Item Parent: ", child.getKey());
+                            mDatabase.getReference(Collections.users.name())
+                                    .child(mAuth.getCurrentUser().getUid())
+                                    .child(Collections.items.name())
+                                    .child(child.getKey())
+                                    .updateChildren(editedItem);
+                        }
+                        Intent intent = new Intent();
 
-                        int index = findIndex(allItem,item);
-                        allItem.set(index, item);
-                        storeItem(allItem, index);
+                        intent.putExtra(Keys.KEY_NAME.name(), item.getItemName());
+                        intent.putExtra(Keys.KEY_LIST.name(), item.getItemList());
+                        intent.putExtra(Keys.KEY_NUM_STOCKS.name(), item.getItemNumStocks());
+                        intent.putExtra(Keys.KEY_EXPIRE_DATE.name(), item.getItemExpireDate());
+                        intent.putExtra(Keys.KEY_NOTE.name(), item.getItemNote());
+                        intent.putExtra(Keys.KEY_ITEM_ID.name(), item.getItemID());
 
+                        setResult(Activity.RESULT_OK, intent);
+                        finish();
                     }
+
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        Toast.makeText(getApplicationContext(), "Can't retrieve data", Toast.LENGTH_SHORT).show();
+                        Log.d("DatabaseError: ", error.toString());
                     }
                 });
     }
 
-    private int findIndex(ArrayList<Item> allItem, Item item){
-        int sentinel = 0;
-        for(int i = 0; i < allItem.size(); i++) {
-            Item tempItem = allItem.get(i);
-            if(tempItem.getItemID() == item.getItemID()){
-                return i;
-            }
-        }
-        return sentinel;
-    }
-
-    private void storeItem(ArrayList<Item> allItem, int index) {
-
-        mDatabase.getReference(Collections.users.name())
-                .child(mAuth.getCurrentUser().getUid()).child(Collections.items.name())
-                .setValue(allItem)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if(task.isSuccessful()) {
-                            Toast.makeText(getApplicationContext(), "Successfully Added to the database", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent();
-
-                            intent.putExtra(KEY_NAME, allItem.get(index).getItemName());
-                            intent.putExtra(KEY_LIST, allItem.get(index).getItemList());
-                            intent.putExtra(KEY_NUM_STOCKS, allItem.get(index).getItemNumStocks());
-                            intent.putExtra(KEY_EXPIRE_DATE, allItem.get(index).getItemExpireDate().toString());
-                            intent.putExtra(KEY_NOTE, allItem.get(index).getItemNote());
-                            intent.putExtra(KEY_ID, allItem.get(index).getItemID());
-
-                            setResult(Activity.RESULT_OK, intent);
-                            finish();
-                        } else {
-                            Toast.makeText(getApplicationContext(), "Can't Add to the database", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-    }
+//    public void retrieveItem(Item item) {
+//        Toast.makeText(getApplicationContext(), "Adding item to the database...", Toast.LENGTH_SHORT).show();
+//
+//        mDatabase.getReference(Collections.users.name())
+//                .child(mAuth.getCurrentUser().getUid()).child(Collections.items.name())
+//                .addListenerForSingleValueEvent(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                        GenericTypeIndicator<ArrayList<Item>> t = new GenericTypeIndicator<ArrayList<Item>>() {};
+//                        ArrayList<Item> allItem = snapshot.getValue(t);
+//
+//                        int index = findIndex(allItem,item);
+//                        allItem.set(index, item);
+//                        storeItem(allItem, index);
+//
+//                    }
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError error) {
+//                        Toast.makeText(getApplicationContext(), "Can't retrieve data", Toast.LENGTH_SHORT).show();
+//                    }
+//                });
+//    }
+//
+//    private int findIndex(ArrayList<Item> allItem, Item item){
+//        int sentinel = 0;
+//        for(int i = 0; i < allItem.size(); i++) {
+//            Item tempItem = allItem.get(i);
+//            if(tempItem.getItemID() == item.getItemID()){
+//                return i;
+//            }
+//        }
+//        return sentinel;
+//    }
+//
+//    private void storeItem(ArrayList<Item> allItem, int index) {
+//
+//        mDatabase.getReference(Collections.users.name())
+//                .child(mAuth.getCurrentUser().getUid()).child(Collections.items.name())
+//                .setValue(allItem)
+//                .addOnCompleteListener(new OnCompleteListener<Void>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<Void> task) {
+//                        if(task.isSuccessful()) {
+//                            Toast.makeText(getApplicationContext(), "Successfully Added to the database", Toast.LENGTH_SHORT).show();
+//                            Intent intent = new Intent();
+//
+//                            intent.putExtra(KEY_NAME, allItem.get(index).getItemName());
+//                            intent.putExtra(KEY_LIST, allItem.get(index).getItemList());
+//                            intent.putExtra(KEY_NUM_STOCKS, allItem.get(index).getItemNumStocks());
+//                            intent.putExtra(KEY_EXPIRE_DATE, allItem.get(index).getItemExpireDate().toString());
+//                            intent.putExtra(KEY_NOTE, allItem.get(index).getItemNote());
+//                            intent.putExtra(KEY_ID, allItem.get(index).getItemID());
+//
+//                            setResult(Activity.RESULT_OK, intent);
+//                            finish();
+//                        } else {
+//                            Toast.makeText(getApplicationContext(), "Can't Add to the database", Toast.LENGTH_SHORT).show();
+//                        }
+//                    }
+//                });
+//    }
 
     private void initCancel() {
         this.ibCancel = findViewById(R.id.ib_edit_item_cancel);

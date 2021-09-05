@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
@@ -27,6 +28,7 @@ import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class SettingsItemActivity extends AppCompatActivity {
 
@@ -95,73 +97,112 @@ public class SettingsItemActivity extends AppCompatActivity {
                 int id = intent.getIntExtra(Keys.KEY_ITEM_ID.name(),0);
 
                 Item item = new Item(name,list, note, numStocks,expireDate, id);
-                retrieveItem(item);
+//                retrieveItem(item);
+                deleteItem(item);
             }
         });
     }
 
-    public void retrieveItem(Item item) {
-        Toast.makeText(getApplicationContext(), "Deleting item to the database...", Toast.LENGTH_SHORT).show();
+    public void deleteItem(Item item){
 
         mDatabase.getReference(Collections.users.name())
-                .child(mAuth.getCurrentUser().getUid()).child(Collections.items.name())
+                .child(mAuth.getCurrentUser().getUid())
+                .child(Collections.items.name())
+                .orderByChild("itemID")
+                .equalTo(item.getItemID())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        GenericTypeIndicator<ArrayList<Item>> t = new GenericTypeIndicator<ArrayList<Item>>() {};
-                        ArrayList<Item> allItem = snapshot.getValue(t);
+                        for (DataSnapshot child : snapshot.getChildren()) {
+                            Log.d("Item Parent: ", child.getKey());
+                            mDatabase.getReference(Collections.users.name())
+                                    .child(mAuth.getCurrentUser().getUid())
+                                    .child(Collections.items.name())
+                                    .child(child.getKey())
+                                    .removeValue();
+                        }
+                        Intent intent = new Intent();
 
-                        int index = findIndex(allItem,item);
-                        allItem.remove(index);
+                        intent.putExtra(Keys.KEY_NAME.name(), item.getItemName());
+                        intent.putExtra(Keys.KEY_LIST.name(), item.getItemList());
+                        intent.putExtra(Keys.KEY_NUM_STOCKS.name(), item.getItemNumStocks());
+                        intent.putExtra(Keys.KEY_EXPIRE_DATE.name(), item.getItemExpireDate());
+                        intent.putExtra(Keys.KEY_NOTE.name(), item.getItemNote());
+                        intent.putExtra(Keys.KEY_ITEM_ID.name(), item.getItemID());
 
-                        storeItem(allItem,item);
-
+                        setResult(Activity.RESULT_OK, intent);
+                        finish();
                     }
+
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        Toast.makeText(getApplicationContext(), "Can't retrieve data", Toast.LENGTH_SHORT).show();
+                        Log.d("DatabaseError: ", error.toString());
                     }
                 });
     }
 
-    private int findIndex(ArrayList<Item> allItem, Item item){
-        int sentinel = 0;
-        for(int i = 0; i < allItem.size(); i++) {
-            Item tempItem = allItem.get(i);
-            if(tempItem.getItemID() == item.getItemID()){
-                return i;
-            }
-        }
-        return sentinel;
-    }
-
-    private void storeItem(ArrayList<Item> allItem, Item item) {
-
-        mDatabase.getReference(Collections.users.name())
-                .child(mAuth.getCurrentUser().getUid()).child(Collections.items.name())
-                .setValue(allItem)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if(task.isSuccessful()) {
-                            Toast.makeText(getApplicationContext(), "Successfully Deleted from the database", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent();
-
-                            intent.putExtra(Keys.KEY_NAME.name(), item.getItemName());
-                            intent.putExtra(Keys.KEY_LIST.name(), item.getItemList());
-                            intent.putExtra(Keys.KEY_NUM_STOCKS.name(), item.getItemNumStocks());
-                            intent.putExtra(Keys.KEY_EXPIRE_DATE.name(), item.getItemExpireDate());
-                            intent.putExtra(Keys.KEY_NOTE.name(), item.getItemNote());
-                            intent.putExtra(Keys.KEY_ITEM_ID.name(), item.getItemID());
-
-                            setResult(Activity.RESULT_OK, intent);
-                            finish();
-                        } else {
-                            Toast.makeText(getApplicationContext(), "Can't delete to the database", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-    }
+//    public void retrieveItem(Item item) {
+//        Toast.makeText(getApplicationContext(), "Deleting item to the database...", Toast.LENGTH_SHORT).show();
+//
+//        mDatabase.getReference(Collections.users.name())
+//                .child(mAuth.getCurrentUser().getUid()).child(Collections.items.name())
+//                .addListenerForSingleValueEvent(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                        GenericTypeIndicator<ArrayList<Item>> t = new GenericTypeIndicator<ArrayList<Item>>() {};
+//                        ArrayList<Item> allItem = snapshot.getValue(t);
+//
+//                        int index = findIndex(allItem,item);
+//                        allItem.remove(index);
+//
+//                        storeItem(allItem,item);
+//
+//                    }
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError error) {
+//                        Toast.makeText(getApplicationContext(), "Can't retrieve data", Toast.LENGTH_SHORT).show();
+//                    }
+//                });
+//    }
+//
+//    private int findIndex(ArrayList<Item> allItem, Item item){
+//        int sentinel = 0;
+//        for(int i = 0; i < allItem.size(); i++) {
+//            Item tempItem = allItem.get(i);
+//            if(tempItem.getItemID() == item.getItemID()){
+//                return i;
+//            }
+//        }
+//        return sentinel;
+//    }
+//
+//    private void storeItem(ArrayList<Item> allItem, Item item) {
+//
+//        mDatabase.getReference(Collections.users.name())
+//                .child(mAuth.getCurrentUser().getUid()).child(Collections.items.name())
+//                .setValue(allItem)
+//                .addOnCompleteListener(new OnCompleteListener<Void>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<Void> task) {
+//                        if(task.isSuccessful()) {
+//                            Toast.makeText(getApplicationContext(), "Successfully Deleted from the database", Toast.LENGTH_SHORT).show();
+//                            Intent intent = new Intent();
+//
+//                            intent.putExtra(Keys.KEY_NAME.name(), item.getItemName());
+//                            intent.putExtra(Keys.KEY_LIST.name(), item.getItemList());
+//                            intent.putExtra(Keys.KEY_NUM_STOCKS.name(), item.getItemNumStocks());
+//                            intent.putExtra(Keys.KEY_EXPIRE_DATE.name(), item.getItemExpireDate());
+//                            intent.putExtra(Keys.KEY_NOTE.name(), item.getItemNote());
+//                            intent.putExtra(Keys.KEY_ITEM_ID.name(), item.getItemID());
+//
+//                            setResult(Activity.RESULT_OK, intent);
+//                            finish();
+//                        } else {
+//                            Toast.makeText(getApplicationContext(), "Can't delete to the database", Toast.LENGTH_SHORT).show();
+//                        }
+//                    }
+//                });
+//    }
 
     private void initBack() {
         this.ibBack = findViewById(R.id.ib_settings_item_back);
