@@ -9,8 +9,4 @@ public enum Keys {
     KEY_ITEM_ID,
     KEY_LIST_ID,
     KEY_DESCRIPTION,
-    KEY_ID,
-    KEY_INDEX,
-    KEY_TITLE,
-    KEY_MSG
 }

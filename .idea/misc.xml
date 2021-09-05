@@ -3,6 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/_SchoolRelated/MOBDEVE/Bon-Inventaire/app/src/main/res/layout/activity_edit_list.xml" value="0.21875" />
+        <entry key="..\:/_SchoolRelated/MOBDEVE/Bon-Inventaire/app/src/main/res/layout/activity_home.xml" value="0.21875" />
+        <entry key="..\:/_SchoolRelated/MOBDEVE/Bon-Inventaire/app/src/main/res/layout/activity_item_view.xml" value="0.21875" />
+        <entry key="..\:/_SchoolRelated/MOBDEVE/Bon-Inventaire/app/src/main/res/layout/activity_register.xml" value="0.21875" />
+        <entry key="..\:/_SchoolRelated/MOBDEVE/Bon-Inventaire/app/src/main/res/layout/activity_settings_account.xml" value="0.21875" />
         <entry key="app/src/main/res/drawable/border_blue.xml" value="0.29384615384615387" />
         <entry key="app/src/main/res/drawable/border_gray.xml" value="0.29384615384615387" />
         <entry key="app/src/main/res/drawable/border_purple.xml" value="0.29384615384615387" />
