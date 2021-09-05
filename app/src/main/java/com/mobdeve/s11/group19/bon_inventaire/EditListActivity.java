@@ -90,7 +90,7 @@ public class EditListActivity extends AppCompatActivity {
                     //database
                     List list = new List(name,description,id);
 //                    retrieveList(list);
-                    updateList(list);
+                    checkList(list);
                 }
                 else
                     Toast.makeText(getApplicationContext(), "Name must not be empty.", Toast.LENGTH_SHORT).show();
@@ -108,6 +108,36 @@ public class EditListActivity extends AppCompatActivity {
         }
 
         return hasError;
+    }
+
+    public void checkList(List list){
+
+        mDatabase.getReference(Collections.users.name())
+                .child(mAuth.getCurrentUser().getUid())
+                .child(Collections.lists.name())
+                .orderByChild("listName")
+                .equalTo(list.getListName())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        boolean notSameList = true;
+                        for (DataSnapshot child : snapshot.getChildren()) {
+                            Log.d("List Parent: ", child.getKey());
+                            notSameList = false;
+                        }
+                        if(notSameList){
+                            pbEditList.setVisibility(View.VISIBLE);
+                            updateList(list);
+                        } else {
+                            etName.setError("List with same name already exist");
+                            etName.requestFocus();
+                        }
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.d("DatabaseError: ", error.toString());
+                    }
+                });
     }
 
     public void updateList(List list){
