@@ -1,8 +1,14 @@
 package com.mobdeve.s11.group19.bon_inventaire;
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
@@ -16,6 +22,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
 
 import com.google.android.gms.common.util.ArrayUtils;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -27,10 +34,17 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 public class AddItemActivity extends AppCompatActivity {
+
+    public static final String CHANNEL_NAME = "Bon_Inventaire";
+    public static final String CHANNEL_ID = "BI_Notify";
+    public static final long MILISECOND_IN_24HRS = 86400000;
 
     private ImageButton ibSave;
     private ImageButton ibCancel;
@@ -114,7 +128,6 @@ public class AddItemActivity extends AppCompatActivity {
                     public void onCancelled(@NonNull DatabaseError error) {
                     }
                 });
-
     }
 
     private String[] dropdownList (ArrayList<List> userLists) {
@@ -127,6 +140,8 @@ public class AddItemActivity extends AppCompatActivity {
     }
 
     private void initSave() {
+        String initDate = etExpireDate.getText().toString();
+
         this.ibSave = findViewById(R.id.ib_add_item_save);
         this.ibSave.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -145,7 +160,8 @@ public class AddItemActivity extends AppCompatActivity {
                     if(list.isEmpty())
                         list = "Unlisted";
                     Item item = new Item(name, list, note, Integer.parseInt(numStocks),expireDate, id);
-                    retrieveItem(item);
+//                    retrieveItem(item);
+                    retrieveItem(item, initDate);
                 }
                 else
                     Toast.makeText(getApplicationContext(), "Adding Item Failed", Toast.LENGTH_SHORT).show();
@@ -186,7 +202,8 @@ public class AddItemActivity extends AppCompatActivity {
         return hasError;
     }
 
-    public void retrieveItem(Item item) {
+//    public void retrieveItem(Item item) {
+    public void retrieveItem(Item item, String initDate) {
         Toast.makeText(getApplicationContext(), "Adding item to the database...", Toast.LENGTH_SHORT).show();
         pbAddItem.setVisibility(View.VISIBLE);
         mDatabase.getReference(Collections.users.name())
@@ -200,11 +217,13 @@ public class AddItemActivity extends AppCompatActivity {
                         if(allItem == null) {
                             allItem = new ArrayList<Item>();
                             allItem.add(0,item);
-                            storeItem(allItem);
+//                            storeItem(allItem);
+                            storeItem(allItem, initDate);
                         } else {
                             item.setItemID(allItem.size());
                             allItem.add(0,item);
-                            storeItem(allItem);
+//                            storeItem(allItem);
+                            storeItem(allItem, initDate);
                         }
                     }
                     @Override
@@ -227,8 +246,8 @@ public class AddItemActivity extends AppCompatActivity {
 //        return false;
 //    }
 
-    private void storeItem(ArrayList<Item> allItem) {
-
+//    private void storeItem(ArrayList<Item> allItem) {
+    private void storeItem(ArrayList<Item> allItem, String initDate) {
         mDatabase.getReference(Collections.users.name())
                 .child(mAuth.getCurrentUser().getUid()).child(Collections.items.name())
                 .setValue(allItem)
@@ -245,6 +264,11 @@ public class AddItemActivity extends AppCompatActivity {
                             intent.putExtra(Keys.KEY_EXPIRE_DATE.name(), allItem.get(0).getItemExpireDate());
                             intent.putExtra(Keys.KEY_NOTE.name(), allItem.get(0).getItemNote());
                             intent.putExtra(Keys.KEY_ITEM_ID.name(), allItem.get(0).getItemID());
+
+                            checkDate(allItem.get(0).getItemID(), allItem.get(0).getItemExpireDate().toString(),
+                                initDate);
+
+                            Toast.makeText(AddItemActivity.this, "DONE", Toast.LENGTH_SHORT).show();
 
                             setResult(Activity.RESULT_OK, intent);
                             finish();
@@ -263,5 +287,106 @@ public class AddItemActivity extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    private void createNotifChannel () {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT);
+
+            channel.enableVibration(true);
+            channel.enableLights(true);
+            NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            manager.createNotificationChannel(channel);
+        }
+    }
+
+    private long getExpiryDateInMs (long expDate, long dateNow) {
+        long betweenMS = expDate - dateNow;
+        long expAlarm = dateNow + betweenMS + 10000;
+        //TODO
+//        Toast.makeText(AddItemActivity.this, "BET: " + betweenMS, Toast.LENGTH_SHORT).show();
+        return expAlarm;
+    }
+
+    private void checkDate (int itemId, String expDate, String oldDate) {
+        String oldExpDate = oldDate;
+        String newExpDate = expDate;
+
+        if (!(oldExpDate.equals(newExpDate)))
+            initNotifExp("Item expiring soon!", etName.getText().toString() + " will expire in ", itemId, newExpDate);
+    }
+
+    private void initNotifExp (String title, String body, int itemId, String expDate) {
+        createNotifChannel();
+
+        Date expDateInput = null;
+        try {
+            expDateInput = new SimpleDateFormat("MM/dd/yyyy").parse(expDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        long timeNow = System.currentTimeMillis();
+        long expDateMS = expDateInput.getTime();
+        long temp = expDateMS;
+        while (temp > timeNow) {
+            temp -= MILISECOND_IN_24HRS;
+        }
+        long timeInMS = timeNow - temp;
+        expDateMS += timeInMS;
+
+//        Toast.makeText(AddItemActivity.this, "NOW: " + timeNow, Toast.LENGTH_SHORT).show();
+
+        long expDate1Day = expDateMS - MILISECOND_IN_24HRS;
+        long timeAlarm = getExpiryDateInMs(expDate1Day, timeNow);
+
+//        Toast.makeText(AddItemActivity.this, "1Day: " + expDate1Day, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(AddItemActivity.this, "ALARM: " + timeAlarm, Toast.LENGTH_SHORT).show();
+
+        String reqCode1d = Integer.toString(itemId) + "1";
+        String reqCode3d = Integer.toString(itemId) + "3";
+        String reqCode7d = Integer.toString(itemId) + "7";
+
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+
+        Intent intent1d = new Intent(AddItemActivity.this, NotificationAlarm.class);
+        intent1d.putExtra(Keys.KEY_TITLE.name(), title);
+        intent1d.putExtra(Keys.KEY_MSG.name(), body + "one (1) day");
+        intent1d.putExtra(Keys.KEY_CHANNEL_ID.name(), CHANNEL_ID);
+
+        PendingIntent pendInt1d = PendingIntent.getBroadcast(AddItemActivity.this,
+                Integer.parseInt(reqCode1d), intent1d, 0);
+
+        alarmManager.set(AlarmManager.RTC_WAKEUP, timeAlarm, pendInt1d);
+
+        if (expDateMS - (MILISECOND_IN_24HRS * 3) > timeNow) {
+            long expDate3Days = expDateMS - (MILISECOND_IN_24HRS * 3);
+            timeAlarm = getExpiryDateInMs(expDate3Days, timeNow);
+
+            Intent intent3d = new Intent(AddItemActivity.this, NotificationAlarm.class);
+            intent3d.putExtra(Keys.KEY_TITLE.name(), title);
+            intent3d.putExtra(Keys.KEY_MSG.name(), body + "three (3) days");
+            intent3d.putExtra(Keys.KEY_CHANNEL_ID.name(), CHANNEL_ID);
+
+            PendingIntent pendInt3d = PendingIntent.getBroadcast(AddItemActivity.this,
+                    Integer.parseInt(reqCode3d), intent3d, 0);
+
+            alarmManager.set(AlarmManager.RTC_WAKEUP, timeAlarm, pendInt3d);
+        }
+
+        if (expDateMS - (MILISECOND_IN_24HRS * 7) > timeNow) {
+            long expDate7Days = expDateMS - (MILISECOND_IN_24HRS * 7);
+            timeAlarm = getExpiryDateInMs(expDate7Days, timeNow);
+
+            Intent intent7d = new Intent(AddItemActivity.this, NotificationAlarm.class);
+            intent7d.putExtra(Keys.KEY_TITLE.name(), title);
+            intent7d.putExtra(Keys.KEY_MSG.name(), body + "seven (7) days");
+            intent7d.putExtra(Keys.KEY_CHANNEL_ID.name(), CHANNEL_ID);
+
+            PendingIntent pendInt7d = PendingIntent.getBroadcast(AddItemActivity.this,
+                    Integer.parseInt(reqCode7d), intent7d, 0);
+
+            alarmManager.set(AlarmManager.RTC_WAKEUP, timeAlarm, pendInt7d);
+        }
     }
 }
