@@ -1,13 +1,13 @@
 package com.mobdeve.s11.group19.bon_inventaire;
 
 import android.app.Activity;
-import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.DatePicker;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -19,9 +19,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.Calendar;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class EditItemInListActivity extends AppCompatActivity {
@@ -29,10 +30,18 @@ public class EditItemInListActivity extends AppCompatActivity {
     private ImageButton ibSave;
     private ImageButton ibCancel;
     private EditText etName;
-    private EditText etList;
+    private AutoCompleteTextView etList;
     private EditText etNumStocks;
     private EditText etExpireDate;
     private EditText etNote;
+
+    private ArrayList<List> userLists;
+    private String[] dropdown;
+
+    private String initialName;
+    private String initialList;
+    private String initialNote;
+    private int initialNumStocks;
 
     private FirebaseAuth mAuth;
     private FirebaseDatabase mDatabase;
@@ -58,49 +67,58 @@ public class EditItemInListActivity extends AppCompatActivity {
     private void initConfiguration() {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
+        this.userLists = new ArrayList<List>();
         this.etName = findViewById(R.id.et_edit_item_name);
         this.etList = findViewById(R.id.et_edit_item_list);
         this.etNumStocks = findViewById(R.id.et_edit_item_num_stocks);
         this.etExpireDate = findViewById(R.id.et_edit_item_expire_date);
         this.etNote = findViewById(R.id.et_edit_item_note);
-
+        this.etList = (AutoCompleteTextView) findViewById(R.id.et_edit_item_list);
         Intent intent = getIntent();
 
-        String name = intent.getStringExtra(Keys.KEY_NAME.name());
-        String list = intent.getStringExtra(Keys.KEY_LIST.name());
-        String note = intent.getStringExtra(Keys.KEY_NOTE.name());
-        int numStocks = intent.getIntExtra(Keys.KEY_NUM_STOCKS.name(),0);
+        initialName = intent.getStringExtra(Keys.KEY_NAME.name());
+        initialList = intent.getStringExtra(Keys.KEY_LIST.name());
+        initialNote = intent.getStringExtra(Keys.KEY_NOTE.name());
+        initialNumStocks = intent.getIntExtra(Keys.KEY_NUM_STOCKS.name(),0);
         String expireDate = intent.getStringExtra(Keys.KEY_EXPIRE_DATE.name());
         int id = intent.getIntExtra(Keys.KEY_ITEM_ID.name(),0);
 
-        this.etName.setText(name);
-        this.etList.setText(list);
-        this.etNote.setText(note);
-        this.etNumStocks.setText(Integer.toString(numStocks));
+        this.etName.setText(initialName);
+        this.etList.setText(initialList);
+        this.etNote.setText(initialNote);
+        this.etNumStocks.setText(Integer.toString(initialNumStocks));
         this.etExpireDate.setText(expireDate);
+        etExpireDate.setFocusable(false);
 
-        Calendar calendar = Calendar.getInstance();
-        final int year = calendar.get(Calendar.YEAR);
-        final int month = calendar.get(Calendar.MONTH);
-        final int day = calendar.get(Calendar.DAY_OF_MONTH);
-
-        etExpireDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                DatePickerDialog datePickerDialog = new DatePickerDialog(EditItemInListActivity.this, R.style.DialogTheme, new DatePickerDialog.OnDateSetListener() {
+        //List Dropdown
+        mDatabase.getReference(Collections.users.name())
+                .child(mAuth.getUid()).child(Collections.lists.name())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
-                    public void onDateSet(DatePicker datePick, int year, int month, int day) {
-                        month = month + 1;
-                        String date = month+"/"+day+"/"+year;
-                        etExpireDate.setText(date);
+                    public void onDataChange(DataSnapshot snapshot) {
+                        GenericTypeIndicator<ArrayList<List>> t = new GenericTypeIndicator<ArrayList<List>>() {};
+                        userLists =  snapshot.getValue(t);
+
+                        ArrayAdapter<String> adapterList = new ArrayAdapter<String>(EditItemInListActivity.this, R.layout.dropdown_item, dropdownList(userLists));
+                        etList.setThreshold(1);
+                        etList.setAdapter(adapterList);
                     }
-                }, year, month, day);
-                datePickerDialog.show();
-            }
-        });
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                    }
+                });
 
+        if(expireDate.isEmpty())
+            etExpireDate.setHint("No Date");
+    }
 
+    private String[] dropdownList (ArrayList<List> userLists) {
+        int n = userLists.size();
+        dropdown = new String[userLists.size()];
+        for(int i = 0; i < n; i++) {
+            dropdown[i] = userLists.get(i).getListName();
+        }
+        return dropdown;
     }
 
     private void initSave() {
@@ -118,7 +136,7 @@ public class EditItemInListActivity extends AppCompatActivity {
                 String note = etNote.getText().toString();
                 int id = intent.getIntExtra(Keys.KEY_ITEM_ID.name(),0);
 
-                if (!checkField(name,Integer.parseInt(numStocks))) {
+                if (!checkField(name,list,Integer.parseInt(numStocks),note)) {
                     Item item = new Item(name,list, note, Integer.parseInt(numStocks),expireDate, id);
 //                    retrieveItem(item);
                     updateItems(item);
@@ -130,8 +148,13 @@ public class EditItemInListActivity extends AppCompatActivity {
         });
     }
 
-    private boolean checkField(String name, int numStocks) {
+    private boolean checkField(String name, String list, int numStocks, String note) {
         boolean hasError = false;
+
+        if(name.equals(initialName) && (numStocks == initialNumStocks) && list.equals(initialList) && note.equals(initialNote)) {
+            Toast.makeText(getApplicationContext(), "No Changes Has Been Made", Toast.LENGTH_SHORT).show();
+            hasError = true;
+        }
 
         if(name.isEmpty()) {
             this.etName.setError("Required Field");
