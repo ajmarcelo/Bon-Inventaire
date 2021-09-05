@@ -138,6 +138,8 @@ public class EditItemInListActivity extends AppCompatActivity {
                 int id = intent.getIntExtra(Keys.KEY_ITEM_ID.name(),0);
 
                 if (!checkField(name,list,Integer.parseInt(numStocks),note)) {
+                    if(list.isEmpty())
+                        list = "Unlisted";
                     Item item = new Item(name,list, note, Integer.parseInt(numStocks),expireDate, id);
 //                    retrieveItem(item);
                     updateItems(item);
