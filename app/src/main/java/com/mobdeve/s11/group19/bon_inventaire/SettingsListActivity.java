@@ -1,28 +1,29 @@
 package com.mobdeve.s11.group19.bon_inventaire;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class SettingsListActivity extends AppCompatActivity {
@@ -31,6 +32,10 @@ public class SettingsListActivity extends AppCompatActivity {
     private TextView tvDelete;
     private ImageButton ibBack;
 
+    private Dialog dialog;
+    private Button btnDeleteListContinue;
+    private Button btnDeleteListCancel;
+
     private FirebaseAuth mAuth;
     private FirebaseDatabase mDatabase;
 
@@ -38,12 +43,26 @@ public class SettingsListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings_list);
+        this.tvDelete = findViewById(R.id.tv_settings_list_delete);
 
+        initConfirmationDialogBox();
         initFirebase();
         initConfiguration();
         initEdit();
         initDelete();
         initBack();
+    }
+
+    @SuppressLint("UseCompatLoadingForDrawables")
+    private void initConfirmationDialogBox() {
+        dialog = new Dialog(SettingsListActivity.this);
+        dialog.setContentView(R.layout.confirmation_delete_list);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.setCancelable(false);
+        dialog.getWindow().getAttributes().windowAnimations = R.style.confirmation;
+        btnDeleteListCancel = dialog.findViewById(R.id.btn_confirm_delete_list_cancel);
+        btnDeleteListContinue = dialog.findViewById(R.id.btn_confirm_delete_list_continue);
     }
 
     private void initFirebase() {
@@ -78,8 +97,14 @@ public class SettingsListActivity extends AppCompatActivity {
     }
 
     private void initDelete() {
-        this.tvDelete = findViewById(R.id.tv_settings_list_delete);
         this.tvDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.show();
+            }
+        });
+
+        this.btnDeleteListContinue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = getIntent();
@@ -88,7 +113,7 @@ public class SettingsListActivity extends AppCompatActivity {
                 String description = intent.getStringExtra(Keys.KEY_DESCRIPTION.name());
                 int id = intent.getIntExtra(Keys.KEY_LIST_ID.name(),0);
 
-                if (name.length() > 0 && description.length() > 0) {
+                if (name.length() > 0) {
                     //database
                     List list = new List(name,description,id);
 //                    retrieveList(list);
@@ -96,6 +121,13 @@ public class SettingsListActivity extends AppCompatActivity {
                 }
                 else
                     Toast.makeText(getApplicationContext(), "List cannot be deleted...", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        this.btnDeleteListCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
             }
         });
     }
@@ -300,5 +332,11 @@ public class SettingsListActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        dialog.dismiss();
     }
 }

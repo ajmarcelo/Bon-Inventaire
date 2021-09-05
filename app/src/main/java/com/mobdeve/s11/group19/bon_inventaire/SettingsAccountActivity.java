@@ -103,7 +103,6 @@ public class SettingsAccountActivity extends AppCompatActivity {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         Toast.makeText(getApplicationContext(), "Account Deleted", Toast.LENGTH_SHORT).show();
-
                                     }
                                 });
                             }

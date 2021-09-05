@@ -29,6 +29,8 @@
         <entry key="app/src/main/res/layout/all_item_list.xml" value="0.13728470111448834" />
         <entry key="app/src/main/res/layout/all_list_list.xml" value="0.13728470111448834" />
         <entry key="app/src/main/res/layout/confirmation_delete_account.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/confirmation_delete_item.xml" value="0.25104166666666666" />
+        <entry key="app/src/main/res/layout/confirmation_delete_list.xml" value="0.25104166666666666" />
         <entry key="app/src/main/res/layout/dropdown_item.xml" value="0.75" />
         <entry key="app/src/main/res/layout/list_dropdown.xml" value="0.18115942028985507" />
         <entry key="app/src/main/res/layout/per_item_list.xml" value="0.13728470111448834" />

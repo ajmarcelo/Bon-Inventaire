@@ -10,10 +10,9 @@
 
 
     <TextView
-        android:id="@+id/tv_confirm_delete_account_title"
+        android:id="@+id/tv_confirm_delete_list_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:fontFamily="@font/great_vibes"
         android:text=" Are you sure? "
         android:textColor="#000000"
@@ -21,33 +20,33 @@
         android:textStyle="normal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/iv_confirm_delete_account_header" />
+        app:layout_constraintTop_toBottomOf="@+id/iv_confirm_delete_list_header" />
 
     <TextView
-        android:id="@+id/tv_confirm_delete_account_msg"
+        android:id="@+id/tv_confirm_delete_list_msg"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="24dp"
         android:fontFamily="@font/belleza"
-        android:text="Would you like to continue on deleting your account?"
+        android:text="Would you like to continue on deleting the list?"
         android:textAlignment="center"
         android:textColor="#000000"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_confirm_delete_account_title" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_confirm_delete_list_warning" />
 
     <Button
-        android:id="@+id/btn_confirm_delete_account_cancel"
+        android:id="@+id/btn_confirm_delete_list_cancel"
         style="?android:attr/borderlessButtonStyle"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="40dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="16dp"
         android:background="@drawable/container_gray"
         android:fontFamily="@font/belleza"
         android:text="Cancel"
@@ -55,19 +54,19 @@
         android:textColor="#FFFFFF"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/gl_confirm_delete_account"
+        app:layout_constraintEnd_toStartOf="@+id/gl_confirm_delete_list"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_confirm_delete_account_msg" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_confirm_delete_list_msg" />
 
     <Button
-        android:id="@+id/btn_confirm_delete_account_continue"
+        android:id="@+id/btn_confirm_delete_list_continue"
         style="?android:attr/borderlessButtonStyle"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="40dp"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="16dp"
         android:background="@drawable/container_yellow"
         android:fontFamily="@font/belleza"
         android:text="Continue"
@@ -76,11 +75,11 @@
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/gl_confirm_delete_account"
-        app:layout_constraintTop_toBottomOf="@+id/tv_confirm_delete_account_msg" />
+        app:layout_constraintStart_toStartOf="@+id/gl_confirm_delete_list"
+        app:layout_constraintTop_toBottomOf="@+id/tv_confirm_delete_list_msg" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/gl_confirm_delete_account"
+        android:id="@+id/gl_confirm_delete_list"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -89,7 +88,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
-        android:id="@+id/iv_confirm_delete_account_header"
+        android:id="@+id/iv_confirm_delete_list_header"
         android:layout_width="0dp"
         android:layout_height="150dp"
         android:background="#30638E"
@@ -103,4 +102,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/question_mark" />
+
+    <TextView
+        android:id="@+id/tv_confirm_delete_list_warning"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="24dp"
+        android:fontFamily="@font/belleza"
+        android:text='Deleting this list will move its items to "Unlisted".'
+        android:textAlignment="center"
+        android:textColor="#BF6847"
+        android:textStyle="bold|italic"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_confirm_delete_list_title" />
 </androidx.constraintlayout.widget.ConstraintLayout>

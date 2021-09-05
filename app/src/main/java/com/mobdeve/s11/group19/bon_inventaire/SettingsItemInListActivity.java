@@ -1,34 +1,37 @@
 package com.mobdeve.s11.group19.bon_inventaire;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
-
-import java.util.ArrayList;
 
 public class SettingsItemInListActivity extends AppCompatActivity {
 
     private TextView tvEdit;
     private TextView tvDelete;
     private ImageButton ibBack;
+
+    private Dialog dialog;
+    private Button btnDeleteItemInListContinue;
+    private Button btnDeleteItemInListCancel;
 
     private FirebaseAuth mAuth;
     private FirebaseDatabase mDatabase;
@@ -37,12 +40,26 @@ public class SettingsItemInListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings_item);
+        this.tvDelete = findViewById(R.id.tv_settings_item_delete);
 
+        initConfirmationDialogBox();
         initFirebase();
         initConfiguration();
         initEdit();
         initDelete();
         initBack();
+    }
+
+    @SuppressLint("UseCompatLoadingForDrawables")
+    private void initConfirmationDialogBox() {
+        dialog = new Dialog(SettingsItemInListActivity.this);
+        dialog.setContentView(R.layout.confirmation_delete_item);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.setCancelable(false);
+        dialog.getWindow().getAttributes().windowAnimations = R.style.confirmation;
+        btnDeleteItemInListCancel = dialog.findViewById(R.id.btn_confirm_delete_item_cancel);
+        btnDeleteItemInListContinue = dialog.findViewById(R.id.btn_confirm_delete_item_continue);
     }
 
     private void initFirebase() {
@@ -77,8 +94,14 @@ public class SettingsItemInListActivity extends AppCompatActivity {
     }
 
     private void initDelete() {
-        this.tvDelete = findViewById(R.id.tv_settings_item_delete);
         this.tvDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.show();
+            }
+        });
+
+        this.btnDeleteItemInListContinue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = getIntent();
@@ -93,6 +116,12 @@ public class SettingsItemInListActivity extends AppCompatActivity {
                 Item item = new Item(name,list, note, numStocks,expireDate, id);
 //                retrieveItem(item);
                 deleteItem(item);
+            }
+        });
+        this.btnDeleteItemInListCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
             }
         });
     }
