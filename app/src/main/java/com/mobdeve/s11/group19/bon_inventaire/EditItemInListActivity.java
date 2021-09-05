@@ -1,7 +1,11 @@
 package com.mobdeve.s11.group19.bon_inventaire;
 
 import android.app.Activity;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -14,6 +18,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -24,8 +29,12 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 
 public class EditItemInListActivity extends AppCompatActivity {
+
+    public static final String CHANNEL_NAME = "Bon_Inventaire";
+    public static final String CHANNEL_ID = "BI_Notify";
 
     private ImageButton ibSave;
     private ImageButton ibCancel;
@@ -122,6 +131,8 @@ public class EditItemInListActivity extends AppCompatActivity {
     }
 
     private void initSave() {
+        String initStock = etNumStocks.getText().toString();
+
         this.ibSave = findViewById(R.id.ib_edit_item_save);
         this.ibSave.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -142,7 +153,7 @@ public class EditItemInListActivity extends AppCompatActivity {
                         list = "Unlisted";
                     Item item = new Item(name,list, note, Integer.parseInt(numStocks),expireDate, id);
 //                    retrieveItem(item);
-                    updateItems(item);
+                    updateItems(item, initStock);
 
                 }
                 else
@@ -183,7 +194,7 @@ public class EditItemInListActivity extends AppCompatActivity {
         return hasError;
     }
 
-    public void updateItems(Item item){
+    public void updateItems(Item item, String initStock){
 
         HashMap editedItem = new HashMap();
         editedItem.put("itemExpireDate", item.getItemExpireDate());
@@ -217,6 +228,8 @@ public class EditItemInListActivity extends AppCompatActivity {
                         intent.putExtra(Keys.KEY_NOTE.name(), item.getItemNote());
                         intent.putExtra(Keys.KEY_ITEM_ID.name(), item.getItemID());
 
+                        checkDecrease(initStock);
+
                         setResult(Activity.RESULT_OK, intent);
                         finish();
                     }
@@ -227,6 +240,56 @@ public class EditItemInListActivity extends AppCompatActivity {
                     }
                 });
     }
+
+    private void initCancel() {
+        this.ibCancel = findViewById(R.id.ib_edit_item_cancel);
+        this.ibCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+    }
+
+    private void createNotifChannel () {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT);
+
+            channel.enableVibration(true);
+            channel.enableLights(true);
+            NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            manager.createNotificationChannel(channel);
+        }
+    }
+
+    private void checkDecrease (String oldStock) {
+        String newNumStocks = etNumStocks.getText().toString();
+        String oldNumStocks = oldStock;
+
+        if (Integer.parseInt(newNumStocks) < Integer.parseInt(oldNumStocks)) {
+            if (Integer.parseInt(newNumStocks) == 0)
+                initNotifStock("Out of stock!", etName.getText().toString() + " is out of stock.");
+            else if (Integer.parseInt(newNumStocks) == 1)
+                initNotifStock("Low on stock!", etName.getText().toString() + " is low on stock.");
+        }
+    }
+
+    private void initNotifStock (String title, String body) {
+        createNotifChannel();
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID);
+        builder.setAutoCancel(true)
+                .setSmallIcon(R.drawable.app_name_logo)
+                .setContentTitle(title)
+                .setContentText(body);
+
+        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        manager.notify(new Random().nextInt(), builder.build());
+
+        //TODO
+        Toast.makeText(EditItemInListActivity.this, "Stock notification done", Toast.LENGTH_SHORT).show();
+    }
+}
 
 //    public void retrieveItem(Item item) {
 //        Toast.makeText(getApplicationContext(), "Adding item to the database...", Toast.LENGTH_SHORT).show();
@@ -289,14 +352,3 @@ public class EditItemInListActivity extends AppCompatActivity {
 //                    }
 //                });
 //    }
-
-    private void initCancel() {
-        this.ibCancel = findViewById(R.id.ib_edit_item_cancel);
-        this.ibCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-    }
-}
