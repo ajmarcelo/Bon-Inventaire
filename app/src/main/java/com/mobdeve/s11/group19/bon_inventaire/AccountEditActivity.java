@@ -108,7 +108,7 @@ public class AccountEditActivity extends AppCompatActivity {
         boolean hasError = false;
 
         if(newPassword.isEmpty() && confirmNewPassword.isEmpty() && name.equals(initialName)) {
-            Toast.makeText(AccountEditActivity.this, "No User Information To Be Updated", Toast.LENGTH_SHORT).show();
+            Toast.makeText(AccountEditActivity.this, "No Changes Has Been Made", Toast.LENGTH_SHORT).show();
             hasError = true;
         }
 

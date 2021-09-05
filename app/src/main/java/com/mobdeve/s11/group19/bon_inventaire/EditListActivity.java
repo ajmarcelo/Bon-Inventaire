@@ -12,22 +12,15 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 public class EditListActivity extends AppCompatActivity {
 
@@ -42,6 +35,9 @@ public class EditListActivity extends AppCompatActivity {
     private ProgressBar pbEditList;
     private FirebaseAuth mAuth;
     private FirebaseDatabase mDatabase;
+
+    private String initialName;
+    private String initialDescription;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,11 +64,11 @@ public class EditListActivity extends AppCompatActivity {
         this.pbEditList = findViewById(R.id.pb_edit_list);
         Intent intent = getIntent();
 
-        String name =  intent.getStringExtra(Keys.KEY_LIST.name());
-        String description = intent.getStringExtra(Keys.KEY_DESCRIPTION.name());
+        this.initialName =  intent.getStringExtra(Keys.KEY_LIST.name());
+        this.initialDescription = intent.getStringExtra(Keys.KEY_DESCRIPTION.name());
 
-        etName.setText(name);
-        etDescription.setText(description);
+        etName.setText(initialName);
+        etDescription.setText(initialDescription);
     }
 
     private void initSave() {
@@ -82,26 +78,32 @@ public class EditListActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = getIntent();
 
-                String name = etName.getText().toString();
-                String description = etDescription.getText().toString();
+                String name = etName.getText().toString().trim();
+                name = name.substring(0,1).toUpperCase() + name.substring(1).toLowerCase();
+                String description = etDescription.getText().toString().trim();
                 int id = intent.getIntExtra(Keys.KEY_LIST_ID.name(),0);
 
-                if (!checkField(name)) {
+                if (!checkField(name, description)) {
                     //database
                     List list = new List(name,description,id);
 //                    retrieveList(list);
                     checkList(list);
                 }
-                else
-                    Toast.makeText(getApplicationContext(), "Name must not be empty.", Toast.LENGTH_SHORT).show();
+//                else
+//                    Toast.makeText(getApplicationContext(), "Name must not be empty.", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private boolean checkField(String name) {
+    private boolean checkField(String newName, String newDesc) {
         boolean hasError = false;
 
-        if(name.isEmpty()) {
+        if(newName.equals(initialName) && newDesc.equals(initialDescription)) {
+            Toast.makeText(EditListActivity.this, "No Changes Has Been Made", Toast.LENGTH_SHORT).show();
+            hasError = true;
+        }
+
+        if(newName.isEmpty()) {
             this.etName.setError("Required Field");
             this.etName.requestFocus();
             hasError = true;
@@ -125,10 +127,11 @@ public class EditListActivity extends AppCompatActivity {
                             Log.d("List Parent: ", child.getKey());
                             notSameList = false;
                         }
-                        if(notSameList){
+                        if(notSameList || !(list.getListDescription()).equals(initialDescription)){
                             pbEditList.setVisibility(View.VISIBLE);
                             updateList(list);
-                        } else {
+                        }
+                        else if(!notSameList) {
                             etName.setError("List with same name already exist");
                             etName.requestFocus();
                         }
