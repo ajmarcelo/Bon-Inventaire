@@ -39,6 +39,11 @@ public class EditItemActivity extends AppCompatActivity {
     private String[] dropdown;
     private ProgressBar pbEditItem;
 
+    private String initialName;
+    private String initialList;
+    private String initialNote;
+    private int initialNumStocks;
+
     private FirebaseAuth mAuth;
     private FirebaseDatabase mDatabase;
 
@@ -70,17 +75,17 @@ public class EditItemActivity extends AppCompatActivity {
         this.etList = (AutoCompleteTextView) findViewById(R.id.et_edit_item_list);
         Intent intent = getIntent();
 
-        String name = intent.getStringExtra(Keys.KEY_NAME.name());
-        String list = intent.getStringExtra(Keys.KEY_LIST.name());
-        String note = intent.getStringExtra(Keys.KEY_NOTE.name());
-        int numStocks = intent.getIntExtra(Keys.KEY_NUM_STOCKS.name(),0);
+        this.initialName = intent.getStringExtra(Keys.KEY_NAME.name());
+        this.initialList = intent.getStringExtra(Keys.KEY_LIST.name());
+        this.initialNote = intent.getStringExtra(Keys.KEY_NOTE.name());
+        this.initialNumStocks = intent.getIntExtra(Keys.KEY_NUM_STOCKS.name(),0);
         String expireDate = intent.getStringExtra(Keys.KEY_EXPIRE_DATE.name());
         int id = intent.getIntExtra(Keys.KEY_ITEM_ID.name(),0);
 
-        this.etName.setText(name);
-        this.etList.setText(list);
-        this.etNote.setText(note);
-        this.etNumStocks.setText(Integer.toString(numStocks));
+        this.etName.setText(initialName);
+        this.etList.setText(initialList);
+        this.etNote.setText(initialNote);
+        this.etNumStocks.setText(Integer.toString(initialNumStocks));
         this.etExpireDate.setText(expireDate);
         etExpireDate.setFocusable(false);
 
@@ -102,7 +107,8 @@ public class EditItemActivity extends AppCompatActivity {
                     }
                 });
 
-
+        if(expireDate.isEmpty())
+            etExpireDate.setHint("No Date");
     }
 
     private String[] dropdownList (ArrayList<List> userLists) {
@@ -129,7 +135,7 @@ public class EditItemActivity extends AppCompatActivity {
                 String note = etNote.getText().toString();
                 int id = intent.getIntExtra(Keys.KEY_ITEM_ID.name(),0);
 
-                if (!checkField(name,Integer.parseInt(numStocks))) {
+                if (!checkField(name,list, Integer.parseInt(numStocks),note)) {
                     Item item = new Item(name,list, note, Integer.parseInt(numStocks),expireDate, id);
 //                    retrieveItem(item);
                     updateItems(item);
@@ -140,8 +146,13 @@ public class EditItemActivity extends AppCompatActivity {
         });
     }
 
-    private boolean checkField(String name, int numStocks) {
+    private boolean checkField(String name, String list, int numStocks, String note) {
         boolean hasError = false;
+
+        if(name.equals(initialName) && (numStocks == initialNumStocks) && list.equals(initialList) && note.equals(initialNote)) {
+            Toast.makeText(getApplicationContext(), "No Changes Has Been Made", Toast.LENGTH_SHORT).show();
+            hasError = true;
+        }
 
         if(name.isEmpty()) {
             this.etName.setError("Required Field");
