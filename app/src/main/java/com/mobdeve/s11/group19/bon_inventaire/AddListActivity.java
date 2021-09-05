@@ -65,7 +65,8 @@ public class AddListActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String name = etName.getText().toString();
-                name = name.substring(0,1).toUpperCase() + name.substring(1).toLowerCase();
+                if(!name.isEmpty())
+                    name = name.substring(0,1).toUpperCase() + name.substring(1).toLowerCase();
                 String description = etDescription.getText().toString();
                 int id = 0;
 

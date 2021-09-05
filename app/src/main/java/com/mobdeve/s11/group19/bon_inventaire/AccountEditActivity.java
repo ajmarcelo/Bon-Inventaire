@@ -94,6 +94,8 @@ public class AccountEditActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String name = etName.getText().toString().trim();
+                if(!name.isEmpty())
+                    name = name.substring(0,1).toUpperCase() + name.substring(1).toLowerCase();
                 String newPassword = etNewPassword.getText().toString().trim();
                 String confirmNewPassword = etConfirmNewPassword.getText().toString().trim();
                 String currentPassword = etCurrentPassword.getText().toString().trim();

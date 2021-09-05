@@ -75,6 +75,8 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String name = etName.getText().toString().trim();
+                if(!name.isEmpty())
+                    name = name.substring(0,1).toUpperCase() + name.substring(1).toLowerCase();
                 String email = etEmail.getText().toString().trim();
                 String password = etPassword.getText().toString().trim();
                 String confirmPassword = etConfirmPassword.getText().toString().trim();

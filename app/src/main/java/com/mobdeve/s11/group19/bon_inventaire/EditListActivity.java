@@ -79,7 +79,8 @@ public class EditListActivity extends AppCompatActivity {
                 Intent intent = getIntent();
 
                 String name = etName.getText().toString().trim();
-                name = name.substring(0,1).toUpperCase() + name.substring(1).toLowerCase();
+                if(!name.isEmpty())
+                    name = name.substring(0,1).toUpperCase() + name.substring(1).toLowerCase();
                 String description = etDescription.getText().toString().trim();
                 int id = intent.getIntExtra(Keys.KEY_LIST_ID.name(),0);
 
