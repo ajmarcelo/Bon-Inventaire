@@ -269,7 +269,7 @@ public class AddItemActivity extends AppCompatActivity {
                             checkDate(allItem.get(0).getItemID(), allItem.get(0).getItemExpireDate().toString(),
                                 initDate);
                             //TODO
-//                            Toast.makeText(AddItemActivity.this, "DONE", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(AddItemActivity.this, "DONE", Toast.LENGTH_SHORT).show();
 
                             setResult(Activity.RESULT_OK, intent);
                             finish();
@@ -344,20 +344,22 @@ public class AddItemActivity extends AppCompatActivity {
         String reqCode3d = Integer.toString(itemId) + "3";
         String reqCode7d = Integer.toString(itemId) + "7";
 
+//        Log.d("EXPMS", "Expiry date: " + expDateMS);
+//        Log.d("EXPMS", "Minus 7 days: " + (expDateMS - (MILISECOND_IN_24HRS * 7)));
+//        Log.d("EXPMS", "Time now: " + timeNow);
+
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-//
-//        Intent intent1d = new Intent(AddItemActivity.this, NotificationAlarm.class);
-//        intent1d.putExtra(Keys.KEY_TITLE.name(), title);
-//        intent1d.putExtra(Keys.KEY_MSG.name(), body + "one (1) day");
-//        intent1d.putExtra(Keys.KEY_CHANNEL_ID.name(), CHANNEL_ID);
-//
-//        PendingIntent pendInt1d = PendingIntent.getBroadcast(AddItemActivity.this,
-//                Integer.parseInt(reqCode1d), intent1d, 0);
-//
-//        alarmManager.set(AlarmManager.RTC_WAKEUP, timeAlarm, pendInt1d);
-        Log.d("EXPMS", "Expiry date: " + expDateMS);
-        Log.d("EXPMS", "Minus 3 days: " + (expDateMS - (MILISECOND_IN_24HRS * 3)));
-        Log.d("EXPMS", "Time now: " + timeNow);
+
+        Intent intent1d = new Intent(AddItemActivity.this, NotificationAlarm.class);
+        intent1d.putExtra(Keys.KEY_TITLE.name(), title);
+        intent1d.putExtra(Keys.KEY_MSG.name(), body + "one (1) day");
+        intent1d.putExtra(Keys.KEY_CHANNEL_ID.name(), CHANNEL_ID);
+
+        PendingIntent pendInt1d = PendingIntent.getBroadcast(AddItemActivity.this,
+                Integer.parseInt(reqCode1d), intent1d, 0);
+
+        alarmManager.set(AlarmManager.RTC_WAKEUP, timeAlarm, pendInt1d);
+
         if (expDateMS - (MILISECOND_IN_24HRS * 3) >= timeNow) {
             long expDate3Days = expDateMS - (MILISECOND_IN_24HRS * 3);
             timeAlarm = getExpiryDateInMs(expDate3Days, timeNow);
