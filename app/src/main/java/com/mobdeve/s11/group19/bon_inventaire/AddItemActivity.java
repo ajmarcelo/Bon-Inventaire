@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
@@ -267,8 +268,8 @@ public class AddItemActivity extends AppCompatActivity {
 
                             checkDate(allItem.get(0).getItemID(), allItem.get(0).getItemExpireDate().toString(),
                                 initDate);
-
-                            Toast.makeText(AddItemActivity.this, "DONE", Toast.LENGTH_SHORT).show();
+                            //TODO
+//                            Toast.makeText(AddItemActivity.this, "DONE", Toast.LENGTH_SHORT).show();
 
                             setResult(Activity.RESULT_OK, intent);
                             finish();
@@ -302,7 +303,7 @@ public class AddItemActivity extends AppCompatActivity {
 
     private long getExpiryDateInMs (long expDate, long dateNow) {
         long betweenMS = expDate - dateNow;
-        long expAlarm = dateNow + betweenMS + 10000;
+        long expAlarm = dateNow + betweenMS + 4000;
         //TODO
 //        Toast.makeText(AddItemActivity.this, "BET: " + betweenMS, Toast.LENGTH_SHORT).show();
         return expAlarm;
@@ -334,32 +335,30 @@ public class AddItemActivity extends AppCompatActivity {
         }
         long timeInMS = timeNow - temp;
         expDateMS += timeInMS;
-
 //        Toast.makeText(AddItemActivity.this, "NOW: " + timeNow, Toast.LENGTH_SHORT).show();
-
         long expDate1Day = expDateMS - MILISECOND_IN_24HRS;
         long timeAlarm = getExpiryDateInMs(expDate1Day, timeNow);
-
 //        Toast.makeText(AddItemActivity.this, "1Day: " + expDate1Day, Toast.LENGTH_SHORT).show();
 //        Toast.makeText(AddItemActivity.this, "ALARM: " + timeAlarm, Toast.LENGTH_SHORT).show();
-
         String reqCode1d = Integer.toString(itemId) + "1";
         String reqCode3d = Integer.toString(itemId) + "3";
         String reqCode7d = Integer.toString(itemId) + "7";
 
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-
-        Intent intent1d = new Intent(AddItemActivity.this, NotificationAlarm.class);
-        intent1d.putExtra(Keys.KEY_TITLE.name(), title);
-        intent1d.putExtra(Keys.KEY_MSG.name(), body + "one (1) day");
-        intent1d.putExtra(Keys.KEY_CHANNEL_ID.name(), CHANNEL_ID);
-
-        PendingIntent pendInt1d = PendingIntent.getBroadcast(AddItemActivity.this,
-                Integer.parseInt(reqCode1d), intent1d, 0);
-
-        alarmManager.set(AlarmManager.RTC_WAKEUP, timeAlarm, pendInt1d);
-
-        if (expDateMS - (MILISECOND_IN_24HRS * 3) > timeNow) {
+//
+//        Intent intent1d = new Intent(AddItemActivity.this, NotificationAlarm.class);
+//        intent1d.putExtra(Keys.KEY_TITLE.name(), title);
+//        intent1d.putExtra(Keys.KEY_MSG.name(), body + "one (1) day");
+//        intent1d.putExtra(Keys.KEY_CHANNEL_ID.name(), CHANNEL_ID);
+//
+//        PendingIntent pendInt1d = PendingIntent.getBroadcast(AddItemActivity.this,
+//                Integer.parseInt(reqCode1d), intent1d, 0);
+//
+//        alarmManager.set(AlarmManager.RTC_WAKEUP, timeAlarm, pendInt1d);
+        Log.d("EXPMS", "Expiry date: " + expDateMS);
+        Log.d("EXPMS", "Minus 3 days: " + (expDateMS - (MILISECOND_IN_24HRS * 3)));
+        Log.d("EXPMS", "Time now: " + timeNow);
+        if (expDateMS - (MILISECOND_IN_24HRS * 3) >= timeNow) {
             long expDate3Days = expDateMS - (MILISECOND_IN_24HRS * 3);
             timeAlarm = getExpiryDateInMs(expDate3Days, timeNow);
 
@@ -374,7 +373,7 @@ public class AddItemActivity extends AppCompatActivity {
             alarmManager.set(AlarmManager.RTC_WAKEUP, timeAlarm, pendInt3d);
         }
 
-        if (expDateMS - (MILISECOND_IN_24HRS * 7) > timeNow) {
+        if (expDateMS - (MILISECOND_IN_24HRS * 7) >= timeNow) {
             long expDate7Days = expDateMS - (MILISECOND_IN_24HRS * 7);
             timeAlarm = getExpiryDateInMs(expDate7Days, timeNow);
 
