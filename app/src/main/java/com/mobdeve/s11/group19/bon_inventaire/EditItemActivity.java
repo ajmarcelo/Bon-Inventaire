@@ -294,7 +294,7 @@ public class EditItemActivity extends AppCompatActivity {
                 Intent intent = new Intent(this, HomeActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 PendingIntent pendingIntent = PendingIntent.getActivity(this, 1000, intent, 0);
-                initNotifStock("Low on stock!", etName.getText().toString() + " is low on stock.", pendingIntent);
+                initNotifStock("Low on stock!", body + etName.getText().toString() + " is low on stock.", pendingIntent);
             }
         }
         else {
