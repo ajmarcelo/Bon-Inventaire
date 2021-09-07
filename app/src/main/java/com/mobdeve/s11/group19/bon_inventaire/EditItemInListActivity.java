@@ -1,8 +1,10 @@
 package com.mobdeve.s11.group19.bon_inventaire;
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -19,6 +21,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -131,8 +134,6 @@ public class EditItemInListActivity extends AppCompatActivity {
     }
 
     private void initSave() {
-        String initStock = etNumStocks.getText().toString();
-
         this.ibSave = findViewById(R.id.ib_edit_item_save);
         this.ibSave.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -153,7 +154,7 @@ public class EditItemInListActivity extends AppCompatActivity {
                         list = "Unlisted";
                     Item item = new Item(name,list, note, Integer.parseInt(numStocks),expireDate, id);
 //                    retrieveItem(item);
-                    updateItems(item, initStock);
+                    updateItems(item);
 
                 }
                 else
@@ -194,7 +195,7 @@ public class EditItemInListActivity extends AppCompatActivity {
         return hasError;
     }
 
-    public void updateItems(Item item, String initStock){
+    public void updateItems(Item item){
 
         HashMap editedItem = new HashMap();
         editedItem.put("itemExpireDate", item.getItemExpireDate());
@@ -228,7 +229,7 @@ public class EditItemInListActivity extends AppCompatActivity {
                         intent.putExtra(Keys.KEY_NOTE.name(), item.getItemNote());
                         intent.putExtra(Keys.KEY_ITEM_ID.name(), item.getItemID());
 
-                        checkDecrease(initStock);
+                        getUserName(item.getItemName(), item.getItemID(), item.getItemNumStocks());
 
                         setResult(Activity.RESULT_OK, intent);
                         finish();
@@ -251,6 +252,23 @@ public class EditItemInListActivity extends AppCompatActivity {
         });
     }
 
+    private void getUserName(String itemName, int itemId, int numStocks) {
+        mDatabase.getReference(Collections.users.name())
+                .child(mAuth.getCurrentUser().getUid()).child(Collections.name.name())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        String name = snapshot.getValue().toString();
+                        checkDecrease("Bonjour, " + name + "! " + itemName + " is out of stock.", numStocks, itemId);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Toast.makeText(getApplicationContext(), "Can't retrieve data", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
     private void createNotifChannel () {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT);
@@ -262,28 +280,78 @@ public class EditItemInListActivity extends AppCompatActivity {
         }
     }
 
-    private void checkDecrease (String oldStock) {
-        String newNumStocks = etNumStocks.getText().toString();
-        String oldNumStocks = oldStock;
+    private void checkDecrease (String body, int newNumStocks, int itemId) {
+        String oldNumStocks = Integer.toString(this.initialNumStocks);
+        String reqCodeRepeat = Integer.toString(itemId) + "999";
 
-        if (Integer.parseInt(newNumStocks) < Integer.parseInt(oldNumStocks)) {
-            if (Integer.parseInt(newNumStocks) == 0)
-                initNotifStock("Out of stock!", etName.getText().toString() + " is out of stock.");
-            else if (Integer.parseInt(newNumStocks) == 1)
-                initNotifStock("Low on stock!", etName.getText().toString() + " is low on stock.");
+        if (newNumStocks < Integer.parseInt(oldNumStocks)) {
+            if (newNumStocks == 0) {
+                initNotifStockRepeat(body, itemId);
+            }
+            else if (newNumStocks == 1) {
+                Intent intent = new Intent(this, HomeActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                PendingIntent pendingIntent = PendingIntent.getActivity(this, Integer.parseInt(reqCodeRepeat), intent, 0);
+                initNotifStock("Low on stock!", etName.getText().toString() + " is low on stock.", pendingIntent);
+            }
+        }
+        else {
+            cancelNotifStockRepeat(body, itemId);
         }
     }
 
-    private void initNotifStock (String title, String body) {
+    private void cancelNotifStockRepeat (String body, int itemId) {
+        createNotifChannel();
+
+        String reqCodeRepeat = Integer.toString(itemId) + "999";
+
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+
+        Intent intent = new Intent(EditItemInListActivity.this, NotificationAlarm.class);
+        intent.putExtra(Keys.KEY_TITLE.name(), "Out of stock!");
+        intent.putExtra(Keys.KEY_MSG.name(), body);
+        intent.putExtra(Keys.KEY_CHANNEL_ID.name(), CHANNEL_ID);
+
+        PendingIntent pendInt0d = PendingIntent.getBroadcast(EditItemInListActivity.this,
+                Integer.parseInt(reqCodeRepeat), intent, 0);
+
+        alarmManager.cancel(pendInt0d);
+    }
+
+    private void initNotifStockRepeat (String body, int itemId) {
+        createNotifChannel();
+
+        String reqCodeRepeat = Integer.toString(itemId) + "999";
+
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+
+        Intent intent = new Intent(EditItemInListActivity.this, NotificationAlarm.class);
+        intent.putExtra(Keys.KEY_TITLE.name(), "Out of stock!");
+        intent.putExtra(Keys.KEY_MSG.name(), body);
+        intent.putExtra(Keys.KEY_CHANNEL_ID.name(), CHANNEL_ID);
+
+        PendingIntent pendInt0d = PendingIntent.getBroadcast(EditItemInListActivity.this,
+                Integer.parseInt(reqCodeRepeat), intent, 0);
+
+        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, 1000 * 30,
+                1000 * 30, pendInt0d);
+
+//        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, 1000 * 5,
+//                MILISECOND_IN_24HRS * 3, pendInt0d);
+    }
+
+    private void initNotifStock (String title, String body, PendingIntent pendingIntent) {
         createNotifChannel();
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID);
         builder.setAutoCancel(true)
                 .setSmallIcon(R.drawable.app_name_logo)
+                .setContentIntent(pendingIntent)
                 .setContentTitle(title)
                 .setContentText(body);
 
-        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+//        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManagerCompat manager = NotificationManagerCompat.from(this);
         manager.notify(new Random().nextInt(), builder.build());
 
         //TODO
