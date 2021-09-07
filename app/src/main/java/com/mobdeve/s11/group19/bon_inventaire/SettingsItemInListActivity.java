@@ -153,6 +153,7 @@ public class SettingsItemInListActivity extends AppCompatActivity {
         });
     }
 
+    //TODO
     /**
      * Retrieves the items of the current user.
      * @param item
@@ -182,10 +183,10 @@ public class SettingsItemInListActivity extends AppCompatActivity {
     }
 
     /**
-     * Looks for the index of the item to be deleted.
-     * @param allItem
-     * @param item
-     * @return
+     * Looks for the index of the list to be deleted.
+     * @param allItem   The arraylist of items to be iterated into
+     * @param item      The item to be found in the list
+     * @return          Returns the index if the item is in the list and zero (sentinel) if not
      */
     private int findIndex(ArrayList<Item> allItem, Item item){
         int sentinel = 0;
@@ -198,10 +199,11 @@ public class SettingsItemInListActivity extends AppCompatActivity {
         return sentinel;
     }
 
+    //TODO
     /**
      * Stores the updated items of the user after an item is deleted
-     * @param allItem
-     * @param item
+     * @param allItem   The arraylist containing all current items
+     * @param item      The
      */
     private void storeItem(ArrayList<Item> allItem, Item item) {
 

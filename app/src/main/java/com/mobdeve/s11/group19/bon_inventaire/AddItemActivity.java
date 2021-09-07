@@ -143,7 +143,7 @@ public class AddItemActivity extends AppCompatActivity {
 
     /**
      * Gets the name of the lists from the current user's lists retrieved from the database.
-     * @param userList
+     * @param userList The Arraylist containing all current lists of the curerntly logged in user
      * @return
      */
     private String[] dropdownList (ArrayList<List> userList) {
@@ -177,7 +177,6 @@ public class AddItemActivity extends AppCompatActivity {
                     if(list.isEmpty())
                         list = "Unlisted";
                     Item item = new Item(name, list, note, Integer.parseInt(numStocks),expireDate, id);
-//                    retrieveItem(item);
                     retrieveItem(item);
                 }
                 else
@@ -188,10 +187,10 @@ public class AddItemActivity extends AppCompatActivity {
 
     /**
      * Checks if the input for each field is valid.
-     * @param name
-     * @param list
-     * @param numStocks
-     * @return
+     * @param name          The name inputted by the user
+     * @param list          The list inputted by the user
+     * @param numStocks     The number of stocks inputted by the user
+     * @return              Returns true if there is an error in the input fields. Otherwise, it returns false
      */
     private boolean checkField(String name, String list, String numStocks) {
         boolean hasError = false;
@@ -228,7 +227,7 @@ public class AddItemActivity extends AppCompatActivity {
 
     /**
      * Retrieves the items of the user from the database
-     * @param item
+     * @param item  The item to be added in the database
      */
     public void retrieveItem(Item item) {
         Toast.makeText(getApplicationContext(), "Adding item to the database...", Toast.LENGTH_SHORT).show();
@@ -258,6 +257,7 @@ public class AddItemActivity extends AppCompatActivity {
                 });
     }
 
+    //TODO
     /**
      * Stores the updated items to the database.
      * @param allItem
@@ -310,10 +310,10 @@ public class AddItemActivity extends AppCompatActivity {
 
     /**
      * Gets the name of the user to be used for the greeting message in the notification.
-     * @param itemId
-     * @param expDate
-     * @param itemName
-     * @param numStocks
+     * @param itemId        The ID of the current item to be added
+     * @param expDate       The expiration date of the current item to be added
+     * @param itemName      The name of the current item to be added
+     * @param numStocks     The number of stocks of the current item to be added
      */
     private void getUserName(int itemId, String expDate, String itemName, int numStocks) {
         mDatabase.getReference(Collections.users.name())
@@ -334,6 +334,9 @@ public class AddItemActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Creates a notification channel for the notifications
+     */
     private void createNotifChannel () {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT);
@@ -345,14 +348,26 @@ public class AddItemActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Gets the pre-expiration dates for the item in milliseconds
+     * (e.g. getting the day before the expiration date for the 1-day-before-expiration-date notification)
+     * @param expDate   The exact expiration date of the item in milliseconds
+     * @param dateNow   The exact date/time now in milliseconds
+     * @return          Returns the computed date in milliseconds
+     */
     private long getExpiryDateInMs (long expDate, long dateNow) {
         long betweenMS = expDate - dateNow;
         long expAlarm = dateNow + betweenMS + 4000;
-        //TODO
-//        Toast.makeText(AddItemActivity.this, "BET: " + betweenMS, Toast.LENGTH_SHORT).show();
+
         return expAlarm;
     }
 
+    /**
+     * Sets the repeating notification for items whose stock is set to 0
+     * @param body          The body of the notification to be displayed
+     * @param numStocks     The number of stocks of the curernt item to be added
+     * @param itemId        The ID of the current item to be added
+     */
     private void initNotifStockRepeat (String body, int numStocks, int itemId) {
         if (numStocks == 0) {
             String reqCodeRepeat = Integer.toString(itemId) + "999";
@@ -379,6 +394,12 @@ public class AddItemActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Sets the expiration notifications for items
+     * @param body      The body of the notification to be displayed
+     * @param itemId    The ID of the current item to be added
+     * @param expDate   The expiration date of the current item to be added
+     */
     private void initNotifExp (String body, int itemId, String expDate) {
         String expiredMsg = " has expired";
         String expireSoonMsg = " will expire in ";
@@ -388,6 +409,7 @@ public class AddItemActivity extends AppCompatActivity {
 
         createNotifChannel();
 
+        // Converts the expiration date from string to a date object
         Date expDateInput = null;
         try {
             expDateInput = new SimpleDateFormat("MM/dd/yyyy").parse(expDate);
@@ -395,6 +417,7 @@ public class AddItemActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+        // Calculates the time difference between the dates regardless of the day
         long timeNow = System.currentTimeMillis();
         long expDateMS = expDateInput.getTime();
         long temp = expDateMS;
@@ -404,20 +427,16 @@ public class AddItemActivity extends AppCompatActivity {
         long timeInMS = timeNow - temp;
         expDateMS += timeInMS;
         long timeAlarm;
-//        Toast.makeText(AddItemActivity.this, "NOW: " + timeNow, Toast.LENGTH_SHORT).show();
-//        Toast.makeText(AddItemActivity.this, "1Day: " + expDate1Day, Toast.LENGTH_SHORT).show();
-//        Toast.makeText(AddItemActivity.this, "ALARM: " + timeAlarm, Toast.LENGTH_SHORT).show();
+
+        // Sets the unique ID's for the intents
         String reqCode0d = Integer.toString(itemId) + "0";
         String reqCode1d = Integer.toString(itemId) + "1";
         String reqCode3d = Integer.toString(itemId) + "3";
         String reqCode7d = Integer.toString(itemId) + "7";
 
-//        Log.d("EXPMS", "Expiry date: " + expDateMS);
-//        Log.d("EXPMS", "Minus 7 days: " + (expDateMS - (MILISECOND_IN_24HRS * 7)));
-//        Log.d("EXPMS", "Time now: " + timeNow)
-
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
+        // If the expiration date is today
         if (expDateMS == timeNow) {
             Intent intentRedirect0d = new Intent(this, HomeActivity.class);
             intentRedirect0d.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -435,6 +454,7 @@ public class AddItemActivity extends AppCompatActivity {
             alarmManager.set(AlarmManager.RTC_WAKEUP, timeNow, pendInt0d);
         }
 
+        // If the expiration date is tomorrow
         if (expDateMS - MILISECOND_IN_24HRS >= timeNow) {
             long expDate1Day = expDateMS - MILISECOND_IN_24HRS;
             timeAlarm = getExpiryDateInMs(expDate1Day, timeNow);
@@ -455,6 +475,7 @@ public class AddItemActivity extends AppCompatActivity {
             alarmManager.set(AlarmManager.RTC_WAKEUP, timeAlarm, pendInt1d);
         }
 
+        // If the expiration date is in 3 days
         if (expDateMS - (MILISECOND_IN_24HRS * 3) >= timeNow) {
             long expDate3Days = expDateMS - (MILISECOND_IN_24HRS * 3);
             timeAlarm = getExpiryDateInMs(expDate3Days, timeNow);
@@ -475,6 +496,7 @@ public class AddItemActivity extends AppCompatActivity {
             alarmManager.set(AlarmManager.RTC_WAKEUP, timeAlarm, pendInt3d);
         }
 
+        // If the expiration date is in 7 days
         if (expDateMS - (MILISECOND_IN_24HRS * 7) >= timeNow) {
             long expDate7Days = expDateMS - (MILISECOND_IN_24HRS * 7);
             timeAlarm = getExpiryDateInMs(expDate7Days, timeNow);

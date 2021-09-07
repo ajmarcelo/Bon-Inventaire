@@ -125,11 +125,11 @@ public class AccountEditActivity extends AppCompatActivity {
 
     /**
      * Checks if the input for each field is valid and if an information has changed.
-     * @param name
-     * @param newPassword
-     * @param confirmNewPassword
-     * @param currentPassword
-     * @return
+     * @param name                  The name inputted by the user
+     * @param newPassword           The new password inputted by the user
+     * @param confirmNewPassword    The new password inputted and confirmed by the user
+     * @param currentPassword       The current password of the user
+     * @return                      Returns true if there is an error in the input fields. Otherwise, it returns false
      */
     private boolean checkField(String name, String newPassword, String confirmNewPassword, String currentPassword) {
         boolean hasError = false;
@@ -170,9 +170,9 @@ public class AccountEditActivity extends AppCompatActivity {
 
     /**
      * Updates the information of the user.
-     * @param newName
-     * @param newPassword
-     * @param currentPassword
+     * @param newName           The new name inputted by the user
+     * @param newPassword       The new password inputted by the user
+     * @param currentPassword   The current password of the user
      */
     private void updateUser(String newName, String newPassword, String currentPassword) {
         this.pbAccountEdit.setVisibility(View.VISIBLE);

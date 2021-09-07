@@ -104,7 +104,7 @@ public class EditListActivity extends AppCompatActivity {
 
     /**
      * Checks if the input for each field is valid and if an information has changed.
-     * @param newName
+     * @param newName   The
      * @param newDesc
      * @return
      */

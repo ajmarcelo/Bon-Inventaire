@@ -135,7 +135,7 @@ public class EditItemInListActivity extends AppCompatActivity {
 
     /**
      * Gets the name of the lists from the current user's lists retrieved from the database.
-     * @param userList
+     * @param userList The Arraylist containing all current lists of the curerntly logged in user
      * @return
      */
     private String[] dropdownList (ArrayList<List> userList) {
@@ -170,7 +170,6 @@ public class EditItemInListActivity extends AppCompatActivity {
                     if(list.isEmpty())
                         list = "Unlisted";
                     Item item = new Item(name,list, note, Integer.parseInt(numStocks),expireDate, id);
-//                    retrieveItem(item);
                     updateItems(item);
 
                 }
@@ -182,11 +181,11 @@ public class EditItemInListActivity extends AppCompatActivity {
 
     /**
      * Checks if the input for each field is valid and if an information has changed.
-     * @param name
-     * @param list
-     * @param numStocks
-     * @param note
-     * @return
+     * @param name          The name inputted by the user
+     * @param list          The list inputted by the user
+     * @param numStocks     The number of stocks inputted by the user
+     * @param note          The note inputted by the user
+     * @return              Returns true if there is an error in the input fields. Otherwise, it returns false
      */
     private boolean checkField(String name, String list, int numStocks, String note) {
         boolean hasError = false;
@@ -222,7 +221,7 @@ public class EditItemInListActivity extends AppCompatActivity {
 
     /**
      * Updates the information of the item.
-     * @param item
+     * @param item  The item to be updated
      */
     public void updateItems(Item item){
 
@@ -286,9 +285,9 @@ public class EditItemInListActivity extends AppCompatActivity {
 
     /**
      * Gets the name of the user to be used for the greeting message in the notification.
-     * @param itemName
-     * @param itemId
-     * @param numStocks
+     * @param itemName      The name of the current item to be edited
+     * @param itemId        The ID of the current item to be edited
+     * @param numStocks     The number of stocks of the current item to be edited
      */
     private void getUserName(String itemName, int itemId, int numStocks) {
         mDatabase.getReference(Collections.users.name())
@@ -307,6 +306,9 @@ public class EditItemInListActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Creates a notification channel for the notifications
+     */
     private void createNotifChannel () {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT);
@@ -318,6 +320,13 @@ public class EditItemInListActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Checks if the number of stocks decreased. If it did, it will send out a notification.
+     * Otherwise, it cancels any existing repeating notifications
+     * @param body          The body of the notification to be displayed
+     * @param newNumStocks  The new number of stocks of the curernt item to be edited
+     * @param itemId        The ID of the current item to be edited
+     */
     private void checkDecrease (String body, int newNumStocks, int itemId) {
         String oldNumStocks = Integer.toString(this.initialNumStocks);
         String reqCodeRepeat = Integer.toString(itemId) + "999";
@@ -338,6 +347,11 @@ public class EditItemInListActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Removes the repeating notification set for an item
+     * @param body      The body of the notification to be displayed
+     * @param itemId    The ID of the current item to be deleted
+     */
     private void cancelNotifStockRepeat (String body, int itemId) {
         createNotifChannel();
 
@@ -356,6 +370,11 @@ public class EditItemInListActivity extends AppCompatActivity {
         alarmManager.cancel(pendInt0d);
     }
 
+    /**
+     * Sets the repeating notification for items whose stock is set to 0
+     * @param body          The body of the notification to be displayed
+     * @param itemId        The ID of the current item to be added
+     */
     private void initNotifStockRepeat (String body, int itemId) {
         createNotifChannel();
 
@@ -378,6 +397,12 @@ public class EditItemInListActivity extends AppCompatActivity {
 //                MILISECOND_IN_24HRS * 3, pendInt0d);
     }
 
+    /**
+     * Sets the notification for stocks with low stocks (i.e 1 stock left)
+     * @param title         The title of the notification to be displayed
+     * @param body          The body of the notification to be displayed
+     * @param pendingIntent The pending intent to open the app when the notification is clicked
+     */
     private void initNotifStock (String title, String body, PendingIntent pendingIntent) {
         createNotifChannel();
 
@@ -388,11 +413,7 @@ public class EditItemInListActivity extends AppCompatActivity {
                 .setContentTitle(title)
                 .setContentText(body);
 
-//        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationManagerCompat manager = NotificationManagerCompat.from(this);
         manager.notify(new Random().nextInt(), builder.build());
-
-        //TODO
-        Toast.makeText(EditItemInListActivity.this, "Stock notification done", Toast.LENGTH_SHORT).show();
     }
 }

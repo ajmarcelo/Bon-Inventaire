@@ -41,7 +41,6 @@ public class SettingsItemActivity extends AppCompatActivity {
 
     public static final String CHANNEL_NAME = "Bon_Inventaire";
     public static final String CHANNEL_ID = "BI_Notify";
-    public static final long MILISECOND_IN_24HRS = 86400000;
 
     private TextView tvEdit;
     private TextView tvDelete;
@@ -68,6 +67,9 @@ public class SettingsItemActivity extends AppCompatActivity {
         initBack();
     }
 
+    /**
+     * Initializes the dialog box confirmation for deleting the user's account.
+     */
     @SuppressLint("UseCompatLoadingForDrawables")
     private void initConfirmationDialogBox() {
         dialog = new Dialog(SettingsItemActivity.this);
@@ -80,16 +82,25 @@ public class SettingsItemActivity extends AppCompatActivity {
         btnDeleteItemContinue = dialog.findViewById(R.id.btn_confirm_delete_item_continue);
     }
 
+    /**
+     * Retrieve an instance of the database using getInstance().
+     */
     private void initFirebase() {
         this.mAuth = FirebaseAuth.getInstance();
         this.mDatabase = FirebaseDatabase.getInstance();
     }
 
+    /**
+     * Set the flags of the window, as per the WindowManager.LayoutParams flags.
+     */
     private void initConfiguration() {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
+    /**
+     * Initializes the intent for the next activity (editing the current user's item information).
+     */
     private void initEdit() {
         this.tvEdit = findViewById(R.id.tv_settings_item_edit);
         this.tvEdit.setOnClickListener(new View.OnClickListener() {
@@ -111,7 +122,11 @@ public class SettingsItemActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Initializes the deletion of the current user's account.
+     */
     private void initDelete() {
+        //Triggers the dialog box for the confirmation for deleting the current user's item
         this.tvDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -119,6 +134,7 @@ public class SettingsItemActivity extends AppCompatActivity {
             }
         });
 
+        //Proceeds to deleting the item in the database
         this.btnDeleteItemContinue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -133,12 +149,11 @@ public class SettingsItemActivity extends AppCompatActivity {
 
                 Item item = new Item(name,list, note, numStocks,expireDate, id);
                 retrieveItem(item);
-//                deleteItem(item);
-
                 getUserName(id, name);
             }
         });
 
+        //Cancels the deletion of the item of the user
         this.btnDeleteItemCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -147,6 +162,9 @@ public class SettingsItemActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Creates a notification channel for the notifications
+     */
     private void createNotifChannel () {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT);
@@ -158,6 +176,9 @@ public class SettingsItemActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Gets the name of the current user for the following notification-related functions
+     */
     private void getUserName(int itemId, String itemName) {
         mDatabase.getReference(Collections.users.name())
                 .child(mAuth.getCurrentUser().getUid()).child(Collections.name.name())
@@ -177,6 +198,11 @@ public class SettingsItemActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Removes the repeating notification set for an item
+     * @param body      The body of the notification to be displayed
+     * @param itemId    The ID of the current item to be deleted
+     */
     private void cancelNotifStockRepeat (String body, int itemId) {
         createNotifChannel();
 
@@ -195,6 +221,11 @@ public class SettingsItemActivity extends AppCompatActivity {
         alarmManager.cancel(pendInt0d);
     }
 
+    /**
+     * Removes the expiration notification set for an item on its exact expiration date
+     * @param body      The body of the notification to be displayed
+     * @param itemId    The ID of the current item to be deleted
+     */
     private void cancelNotifExp (String body, int itemId) {
         String expiredMsg = " has expired";
         String expiredTitle = "Item expired";
@@ -218,6 +249,11 @@ public class SettingsItemActivity extends AppCompatActivity {
         alarmManager.cancel(pendInt0d);
     }
 
+    /**
+     * Removes the three (3) expiration notifications set for an item before its exact expiration date
+     * @param body      The body of the notification to be displayed
+     * @param itemId    The ID of the current item to be deleted
+     */
     private void cancelNotifExpOthers (String body, int itemId) {
         String expireSoonMsg = " will expire in ";
         String expireSoonTitle = "Item expiring soon!";
@@ -273,44 +309,11 @@ public class SettingsItemActivity extends AppCompatActivity {
         alarmManager.cancel(pendInt7d);
     }
 
-//    public void deleteItem(Item item){
-//
-//        mDatabase.getReference(Collections.users.name())
-//                .child(mAuth.getCurrentUser().getUid())
-//                .child(Collections.items.name())
-//                .orderByChild("itemID")
-//                .equalTo(item.getItemID())
-//                .addListenerForSingleValueEvent(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                        for (DataSnapshot child : snapshot.getChildren()) {
-//                            Log.d("Item Parent: ", child.getKey());
-//                            mDatabase.getReference(Collections.users.name())
-//                                    .child(mAuth.getCurrentUser().getUid())
-//                                    .child(Collections.items.name())
-//                                    .child(child.getKey())
-//                                    .removeValue();
-//                        }
-//                        Intent intent = new Intent();
-//
-//                        intent.putExtra(Keys.KEY_NAME.name(), item.getItemName());
-//                        intent.putExtra(Keys.KEY_LIST.name(), item.getItemList());
-//                        intent.putExtra(Keys.KEY_NUM_STOCKS.name(), item.getItemNumStocks());
-//                        intent.putExtra(Keys.KEY_EXPIRE_DATE.name(), item.getItemExpireDate());
-//                        intent.putExtra(Keys.KEY_NOTE.name(), item.getItemNote());
-//                        intent.putExtra(Keys.KEY_ITEM_ID.name(), item.getItemID());
-//
-//                        setResult(Activity.RESULT_OK, intent);
-//                        finish();
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError error) {
-//                        Log.d("DatabaseError: ", error.toString());
-//                    }
-//                });
-//    }
-
+    //TODO
+    /**
+     * Retrieves the items of the current user.
+     * @param item
+     */
     public void retrieveItem(Item item) {
         Toast.makeText(getApplicationContext(), "Deleting item to the database...", Toast.LENGTH_SHORT).show();
 
@@ -335,6 +338,12 @@ public class SettingsItemActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Looks for the index of the list to be deleted.
+     * @param allItem   The arraylist of items to be iterated into
+     * @param item      The item to be found in the list
+     * @return          Returns the index if the item is in the list and zero (sentinel) if not
+     */
     private int findIndex(ArrayList<Item> allItem, Item item){
         int sentinel = 0;
         for(int i = 0; i < allItem.size(); i++) {
@@ -345,7 +354,12 @@ public class SettingsItemActivity extends AppCompatActivity {
         }
         return sentinel;
     }
-
+    //TODO
+    /**
+     * Storing the items from the deleted list to the "Unlisted" list.
+     * @param allItem
+     * @param item
+     */
     private void storeItem(ArrayList<Item> allItem, Item item) {
 
         mDatabase.getReference(Collections.users.name())
@@ -374,6 +388,9 @@ public class SettingsItemActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Initializes the intent for the next activity (navigating back).
+     */
     private void initBack() {
         this.ibBack = findViewById(R.id.ib_settings_item_back);
         this.ibBack.setOnClickListener(new View.OnClickListener() {
@@ -384,6 +401,9 @@ public class SettingsItemActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Dismisses the dialog box.
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();

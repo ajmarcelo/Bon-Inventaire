@@ -12,6 +12,11 @@ import java.util.Random;
 
 public class NotificationAlarm extends BroadcastReceiver {
 
+    /**
+     * Receives the intents from activies that call the broadcast class to show notifications
+     * @param context   The context for the notification
+     * @param intent    The intent with extras to show in the notification
+     */
     @Override
     public void onReceive(Context context, Intent intent) {
         String title = intent.getStringExtra(Keys.KEY_TITLE.name());

@@ -98,8 +98,8 @@ public class AddListActivity extends AppCompatActivity {
 
     /**
      * Checks if the input for the list name field is valid.
-     * @param name
-     * @return
+     * @param name  The list name inputted by the user
+     * @return      Returns true if there is an error in the input field. Otherwise, it returns false
      */
     private boolean checkField(String name) {
         boolean hasError = false;
@@ -113,12 +113,12 @@ public class AddListActivity extends AppCompatActivity {
         return hasError;
     }
 
+    //TODO
     /**
      * Retrieves the lists of the current user.
-     * @param list
+     * @param list  The list to be retrieved in the
      */
     public void retrieveList(List list) {
-//        Toast.makeText(getApplicationContext(), "Adding list...", Toast.LENGTH_SHORT).show();
         mDatabase.getReference(Collections.users.name())
                 .child(mAuth.getCurrentUser().getUid()).child(Collections.lists.name())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -146,8 +146,8 @@ public class AddListActivity extends AppCompatActivity {
 
     /**
      * Checks if the inputted list by the user already exists.
-     * @param allList
-     * @param list
+     * @param allList   The arraylist of current lists
+     * @param list      The list the user inputted in the field
      * @return
      */
     private boolean isSameList(ArrayList<List> allList, List list){
@@ -162,7 +162,7 @@ public class AddListActivity extends AppCompatActivity {
 
     /**
      * Stores the lists to the database.
-     * @param allList
+     * @param allList   The arraylist of current lists
      */
     private void storeList(ArrayList<List> allList) {
         mDatabase.getReference(Collections.users.name())
