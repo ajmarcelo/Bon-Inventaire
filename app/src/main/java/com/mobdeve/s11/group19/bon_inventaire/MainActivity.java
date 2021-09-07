@@ -13,6 +13,10 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton ibRegister;
     private ImageButton ibLogin;
 
+    /**
+     * Initializes the activity.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         if (!isTaskRoot()
@@ -30,10 +34,16 @@ public class MainActivity extends AppCompatActivity {
         initLogin();
     }
 
+    /**
+     * Set the flags of the window, as per the WindowManager.LayoutParams flags.
+     */
     private void initConfiguration() {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
+    /**
+     * Initializes the intent for the next activity (account registration).
+     */
     private void initRegister() {
         this.ibRegister = findViewById(R.id.ib_main_register);
         this.ibRegister.setOnClickListener(new View.OnClickListener() {
@@ -46,6 +56,9 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Initializes the intent for the next activity (login account).
+     */
     private void initLogin() {
         this.ibLogin = findViewById(R.id.ib_main_login);
         this.ibLogin.setOnClickListener(new View.OnClickListener() {

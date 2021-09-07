@@ -43,6 +43,10 @@ public class SettingsListActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseDatabase mDatabase;
 
+    /**
+     * For initializing activity.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +61,9 @@ public class SettingsListActivity extends AppCompatActivity {
         initBack();
     }
 
+    /**
+     * Initializes the dialog box confirmation for deleting a list.
+     */
     @SuppressLint("UseCompatLoadingForDrawables")
     private void initConfirmationDialogBox() {
         dialog = new Dialog(SettingsListActivity.this);
@@ -69,16 +76,25 @@ public class SettingsListActivity extends AppCompatActivity {
         btnDeleteListContinue = dialog.findViewById(R.id.btn_confirm_delete_list_continue);
     }
 
+    /**
+     * Retrieve an instance of the database using getInstance().
+     */
     private void initFirebase() {
         this.mAuth = FirebaseAuth.getInstance();
         this.mDatabase = FirebaseDatabase.getInstance();
     }
 
+    /**
+     * Set the flags of the window, as per the WindowManager.LayoutParams flags.
+     */
     private void initConfiguration() {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
+    /**
+     * Initializes the intent for the next activity (editing the list information).
+     */
     private void initEdit() {
         this.tvEdit = findViewById(R.id.tv_settings_list_edit);
         this.tvEdit.setOnClickListener(new View.OnClickListener() {
@@ -88,7 +104,6 @@ public class SettingsListActivity extends AppCompatActivity {
 
                 Intent info = getIntent();
                 Toast.makeText(getApplicationContext(), info.getStringExtra(Keys.KEY_LIST.name()), Toast.LENGTH_SHORT).show();
-
 
                 intent.putExtra(Keys.KEY_LIST.name(), info.getStringExtra(Keys.KEY_LIST.name()));
                 intent.putExtra(Keys.KEY_DESCRIPTION.name(), info.getStringExtra(Keys.KEY_DESCRIPTION.name()));
@@ -100,7 +115,11 @@ public class SettingsListActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Initializes the deletion of a list.
+     */
     private void initDelete() {
+        //Triggers the dialog box for the confirmation for deleting the list
         this.tvDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -108,6 +127,7 @@ public class SettingsListActivity extends AppCompatActivity {
             }
         });
 
+        //Proceeds to deleting the list in the database
         this.btnDeleteListContinue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -118,16 +138,15 @@ public class SettingsListActivity extends AppCompatActivity {
                 int id = intent.getIntExtra(Keys.KEY_LIST_ID.name(),0);
 
                 if (name.length() > 0) {
-                    //database
                     List list = new List(name,description,id);
                     retrieveList(list);
-//                    deleteList(list);
                 }
                 else
                     Toast.makeText(getApplicationContext(), "List cannot be deleted...", Toast.LENGTH_SHORT).show();
             }
         });
 
+        //Cancels the deletion of the list
         this.btnDeleteListCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -136,33 +155,12 @@ public class SettingsListActivity extends AppCompatActivity {
         });
     }
 
-//    public void deleteList(List list){
-//
-//        mDatabase.getReference(Collections.users.name())
-//                .child(mAuth.getCurrentUser().getUid())
-//                .child(Collections.lists.name())
-//                .orderByChild("listID")
-//                .equalTo(list.getListID())
-//                .addListenerForSingleValueEvent(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                        for (DataSnapshot child : snapshot.getChildren()) {
-//                            Log.d("List Parent: ", child.getKey());
-//                            mDatabase.getReference(Collections.users.name())
-//                                    .child(mAuth.getCurrentUser().getUid())
-//                                    .child(Collections.lists.name())
-//                                    .child(child.getKey())
-//                                    .removeValue();
-//                        }
-//                        updateItems(list);
-//                    }
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError error) {
-//                        Log.d("DatabaseError: ", error.toString());
-//                    }
-//                });
-//    }
-
+    /**
+     * Updates the list name of the items under the currently updated list.
+     * Since the list is deleted, the items under the deleted list will be
+     * moved to the "Unlisted" list.
+     * @param list
+     */
     public void updateItems(List list){
 
         Intent intent = getIntent();
@@ -206,9 +204,11 @@ public class SettingsListActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Retrieves the lists of the current user.
+     * @param list
+     */
     public void retrieveList(List list) {
-        Toast.makeText(getApplicationContext(), "Adding item to the database...", Toast.LENGTH_SHORT).show();
-
         mDatabase.getReference(Collections.users.name())
                 .child(mAuth.getCurrentUser().getUid()).child(Collections.lists.name())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -230,6 +230,12 @@ public class SettingsListActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Looks for the index of the list to be deleted.
+     * @param allList
+     * @param list
+     * @return
+     */
     private int findIndex(ArrayList<List> allList, List list){
         int sentinel = 0;
         for(int i = 0; i < allList.size(); i++) {
@@ -241,6 +247,11 @@ public class SettingsListActivity extends AppCompatActivity {
         return sentinel;
     }
 
+    /**
+     * Storing the items from the deleted list to the "Unlisted" list.
+     * @param allList
+     * @param list
+     */
     private void storeItem(ArrayList<List> allList, List list) {
 
         mDatabase.getReference(Collections.users.name())
@@ -257,72 +268,10 @@ public class SettingsListActivity extends AppCompatActivity {
                     }
                 });
     }
-//
-//    public void retrieveItem(ArrayList<List> allList, String listName, List list) {
-//        Toast.makeText(getApplicationContext(), "Editing item to the database...", Toast.LENGTH_SHORT).show();
-//
-//        mDatabase.getReference(Collections.users.name())
-//                .child(mAuth.getCurrentUser().getUid()).child(Collections.items.name())
-//                .addListenerForSingleValueEvent(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                        GenericTypeIndicator<ArrayList<Item>> t = new GenericTypeIndicator<ArrayList<Item>>() {};
-//                        ArrayList<Item> allItem = snapshot.getValue(t);
-//
-//                        if(!(allItem == null || allItem.isEmpty()))
-//                            allItem = moveList(allItem,listName);
-//
-//                        storeItem(allList, allItem, list);
-//
-//                    }
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError error) {
-//                        Toast.makeText(getApplicationContext(), "Can't retrieve data", Toast.LENGTH_SHORT).show();
-//                    }
-//                });
-//    }
-//
-//    private ArrayList<Item> moveList(ArrayList<Item> allItem, String listName){
-//        ArrayList<Item> tempAllItem = allItem;
-//
-//        for(int i = 0; i < allItem.size(); i++) {
-//            Item tempItem = allItem.get(i);
-//            if(tempItem.getItemList().equals(listName)){
-//                tempItem.setItemList("Unlisted");
-//                tempAllItem.set(i,tempItem);
-//            }
-//        }
-//
-//        return tempAllItem;
-//    }
-//
-//    private void storeItem(ArrayList<List> allList, ArrayList<Item> allItem, List list) {
-//
-//        mDatabase.getReference(Collections.users.name())
-//                .child(mAuth.getCurrentUser().getUid()).child(Collections.items.name())
-//                .setValue(allItem)
-//                .addOnCompleteListener(new OnCompleteListener<Void>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<Void> task) {
-//                        if(task.isSuccessful()) {
-//
-//                            Toast.makeText(getApplicationContext(), "Successfully Added to the database", Toast.LENGTH_SHORT).show();
-//                            Intent intent = new Intent(SettingsListActivity.this, ListActivity.class);
-//
-//                            intent.putExtra(Keys.KEY_LIST.name(), list.getListName());
-//                            intent.putExtra(Keys.KEY_DESCRIPTION.name(), list.getListDescription());
-//                            intent.putExtra(Keys.KEY_LIST_ID.name(), list.getListID());
-//
-//                            setResult(Activity.RESULT_OK, intent);
-//                            startActivity(intent);
-//                            finish();
-//                        } else {
-//                            Toast.makeText(getApplicationContext(), "Can't Add to the database", Toast.LENGTH_SHORT).show();
-//                        }
-//                    }
-//                });
-//    }
 
+    /**
+     * Initializes the intent for the next activity (navigating back).
+     */
     private void initBack() {
         this.ibBack = findViewById(R.id.ib_settings_list_back);
         this.ibBack.setOnClickListener(new View.OnClickListener() {
@@ -335,6 +284,9 @@ public class SettingsListActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Dismisses the dialog box.
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();

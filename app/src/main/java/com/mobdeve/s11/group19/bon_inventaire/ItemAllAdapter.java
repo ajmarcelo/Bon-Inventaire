@@ -24,7 +24,7 @@ public class ItemAllAdapter extends RecyclerView.Adapter<ItemAllViewHolder> {
     }
 
     /**
-     * creates a new ViewHolder object whenever the RecyclerView needs for showing all items.
+     * Creates a new ViewHolder object whenever the RecyclerView needs for showing all items.
      * This is the moment when the row layout is inflated, passed to the ViewHolder
      * object and each child view can be found and stored.
      * @param parent

@@ -31,13 +31,22 @@ public class AddListActivity extends AppCompatActivity {
     private EditText etName;
     private EditText etDescription;
     private ProgressBar pbAddList;
-    private FirebaseAuth mAuth;
-    private FirebaseDatabase mdatabase;
 
+    private FirebaseAuth mAuth;
+    private FirebaseDatabase mDatabase;
+
+    /**
+     * Initializes the activity.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_list);
+
+        this.etName = findViewById(R.id.et_add_list_name);
+        this.etDescription = findViewById(R.id.et_add_list_description);
+        this.pbAddList = findViewById(R.id.pb_add_list);
 
         initFirebase();
         initConfiguration();
@@ -45,20 +54,25 @@ public class AddListActivity extends AppCompatActivity {
         initCancel();
     }
 
+    /**
+     * Retrieve an instance of the database using getInstance().
+     */
     private void initFirebase() {
         this.mAuth = FirebaseAuth.getInstance();
-        this.mdatabase = FirebaseDatabase.getInstance();
+        this.mDatabase = FirebaseDatabase.getInstance();
     }
 
+    /**
+     * Set the flags of the window, as per the WindowManager.LayoutParams flags.
+     */
     private void initConfiguration() {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
-        this.etName = findViewById(R.id.et_add_list_name);
-        this.etDescription = findViewById(R.id.et_add_list_description);
-        this.pbAddList = findViewById(R.id.pb_add_list);
     }
 
+    /**
+     * Initializes the adding of a list.
+     */
     private void initSave() {
         this.ibSave = findViewById(R.id.ib_add_list_save);
         this.ibSave.setOnClickListener(new View.OnClickListener() {
@@ -82,6 +96,11 @@ public class AddListActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Checks if the input for the list name field is valid.
+     * @param name
+     * @return
+     */
     private boolean checkField(String name) {
         boolean hasError = false;
 
@@ -94,9 +113,13 @@ public class AddListActivity extends AppCompatActivity {
         return hasError;
     }
 
+    /**
+     * Retrieves the lists of the current user.
+     * @param list
+     */
     public void retrieveList(List list) {
 //        Toast.makeText(getApplicationContext(), "Adding list...", Toast.LENGTH_SHORT).show();
-        mdatabase.getReference(Collections.users.name())
+        mDatabase.getReference(Collections.users.name())
                 .child(mAuth.getCurrentUser().getUid()).child(Collections.lists.name())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -121,6 +144,12 @@ public class AddListActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Checks if the inputted list by the user already exists.
+     * @param allList
+     * @param list
+     * @return
+     */
     private boolean isSameList(ArrayList<List> allList, List list){
         for(int i = 0; i < allList.size(); i++) {
             List tempList = allList.get(i);
@@ -131,9 +160,12 @@ public class AddListActivity extends AppCompatActivity {
         return false;
     }
 
+    /**
+     * Stores the list to the database.
+     * @param allList
+     */
     private void storeList(ArrayList<List> allList) {
-
-        mdatabase.getReference(Collections.users.name())
+        mDatabase.getReference(Collections.users.name())
                 .child(mAuth.getCurrentUser().getUid()).child(Collections.lists.name())
                 .setValue(allList)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -156,6 +188,9 @@ public class AddListActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Initializes the cancellation of the activity (adding of list).
+     */
     private void initCancel() {
         this.ibCancel = findViewById(R.id.ib_add_list_cancel);
         this.ibCancel.setOnClickListener(new View.OnClickListener() {

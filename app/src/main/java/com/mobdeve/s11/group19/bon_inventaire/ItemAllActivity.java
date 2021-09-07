@@ -39,9 +39,12 @@ public class ItemAllActivity extends AppCompatActivity {
     private FloatingActionButton fabAllItemsAdd;
     private ImageButton ibCancel;
     private TextView tvAllItemsNoItems;
+
     private FirebaseAuth mAuth;
     private FirebaseDatabase mDatabase;
-
+    /**
+     * A launcher for a previously-prepared call to start the process of executing an ActivityResultContract
+     */
     private ActivityResultLauncher allItemsAddActivityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
@@ -49,25 +52,6 @@ public class ItemAllActivity extends AppCompatActivity {
                 @Override
                 public void onActivityResult(ActivityResult result) {
                     if(result.getResultCode() == Activity.RESULT_OK){
-//                        Intent intent = result.getData();
-//
-//                        String name = intent.getStringExtra(Keys.KEY_NAME.name());
-//                        String list = intent.getStringExtra(Keys.KEY_LIST.name());
-//                        String note = intent.getStringExtra(Keys.KEY_NOTE.name());
-//                        int numStocks = intent.getIntExtra(Keys.KEY_NUM_STOCKS.name(),0);
-//                        String expireDate = intent.getStringExtra(Keys.KEY_EXPIRE_DATE.name());
-//                        int id = intent.getIntExtra(Keys.KEY_ITEM_ID.name(),0);
-//
-//                        if(dataItem.get(0).getItemName().equals(""))
-//                            dataItem.remove(0);
-//
-//                        rvAllItems.setVisibility(View.VISIBLE);
-//                        tvAllItemsNoItems.setVisibility(View.GONE);
-//
-//                        dataItem.add(0 , new Item(name, list, note, numStocks, expireDate, id));
-//                        itemAllAdapter.notifyItemChanged(0);
-//                        itemAllAdapter.notifyItemRangeChanged(0, itemAllAdapter.getItemCount());
-//                        itemAllAdapter.notifyDataSetChanged();
                         getDataFromDatabase();
 
                         rvAllItems.setVisibility(View.VISIBLE);
@@ -77,6 +61,10 @@ public class ItemAllActivity extends AppCompatActivity {
             }
     );
 
+    /**
+     * Initializes the activity.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,19 +77,26 @@ public class ItemAllActivity extends AppCompatActivity {
         initCancel();
     }
 
+    /**
+     * Retrieve an instance of the database using getInstance().
+     */
     private void initFirebase() {
         this.mAuth = FirebaseAuth.getInstance();
         this.mDatabase = FirebaseDatabase.getInstance();
     }
 
+    /**
+     * Set the flags of the window, as per the WindowManager.LayoutParams flags.
+     */
     private void initConfiguration() {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
+    /**
+     * Initializes the recycler view of the activity.
+     */
     private void initRecyclerView () {
-//        Toast.makeText(getApplicationContext(), "Retrieving items from the database...", Toast.LENGTH_SHORT).show();
-
         mDatabase.getReference(Collections.users.name())
                 .child(mAuth.getCurrentUser().getUid()).child(Collections.items.name())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -138,7 +133,9 @@ public class ItemAllActivity extends AppCompatActivity {
     }
 
 
-
+    /**
+     * Initializes the intent for the next activity (adding an item).
+     */
     private void initAllItemsAdd() {
         this.fabAllItemsAdd = findViewById(R.id.fab_all_items_add);
         this.fabAllItemsAdd.setOnClickListener(new View.OnClickListener() {
@@ -151,6 +148,9 @@ public class ItemAllActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Initializes the intent for the next activity (navigating back).
+     */
     private void initCancel() {
         this.ibCancel = findViewById(R.id.ib_all_items_back);
         this.ibCancel.setOnClickListener(new View.OnClickListener() {
@@ -165,6 +165,12 @@ public class ItemAllActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Called when an activity launched exits, giving the requestCode started it with and the resultCode it returned.
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -172,6 +178,9 @@ public class ItemAllActivity extends AppCompatActivity {
             getDataFromDatabase();
     }
 
+    /**
+     * Retrieves the data from the database and sets the retrieved data to the current data.
+     */
     private void getDataFromDatabase(){
         mDatabase.getReference(Collections.users.name())
                 .child(mAuth.getCurrentUser().getUid()).child(Collections.items.name())

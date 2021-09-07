@@ -24,40 +24,26 @@ import java.util.HashMap;
 
 public class EditListActivity extends AppCompatActivity {
 
-    public static final String KEY_LIST = "KEY_LIST";
-    public static final String KEY_DESCRIPTION = "KEY_DESCRIPTION";
-    public static final String KEY_ID = "KEY_ID";
-
     private ImageButton ibSave;
     private ImageButton ibCancel;
     private EditText etName;
     private EditText etDescription;
     private ProgressBar pbEditList;
-    private FirebaseAuth mAuth;
-    private FirebaseDatabase mDatabase;
 
     private String initialName;
     private String initialDescription;
 
+    private FirebaseAuth mAuth;
+    private FirebaseDatabase mDatabase;
+
+    /**
+     * Initializes the activity.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_list);
-
-        initFirebase();
-        initConfiguration();
-        initSave();
-        initCancel();
-    }
-
-    private void initFirebase() {
-        this.mAuth = FirebaseAuth.getInstance();
-        this.mDatabase = FirebaseDatabase.getInstance();
-    }
-
-    private void initConfiguration() {
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         this.etName = findViewById(R.id.et_edit_list_name);
         this.etDescription = findViewById(R.id.et_edit_list_description);
@@ -69,8 +55,32 @@ public class EditListActivity extends AppCompatActivity {
 
         etName.setText(initialName);
         etDescription.setText(initialDescription);
+
+        initFirebase();
+        initConfiguration();
+        initSave();
+        initCancel();
     }
 
+    /**
+     * Retrieve an instance of the database using getInstance().
+     */
+    private void initFirebase() {
+        this.mAuth = FirebaseAuth.getInstance();
+        this.mDatabase = FirebaseDatabase.getInstance();
+    }
+
+    /**
+     * Set the flags of the window, as per the WindowManager.LayoutParams flags.
+     */
+    private void initConfiguration() {
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+    }
+
+    /**
+     * Initializes the editing of a list.
+     */
     private void initSave() {
         this.ibSave = findViewById(R.id.ib_edit_list_save);
         this.ibSave.setOnClickListener(new View.OnClickListener() {
@@ -85,17 +95,19 @@ public class EditListActivity extends AppCompatActivity {
                 int id = intent.getIntExtra(Keys.KEY_LIST_ID.name(),0);
 
                 if (!checkField(name, description)) {
-                    //database
                     List list = new List(name,description,id);
-//                    retrieveList(list);
                     checkList(list);
                 }
-//                else
-//                    Toast.makeText(getApplicationContext(), "Name must not be empty.", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
+    /**
+     * Checks if the input for each field is valid and if an information has changed.
+     * @param newName
+     * @param newDesc
+     * @return
+     */
     private boolean checkField(String newName, String newDesc) {
         boolean hasError = false;
 
@@ -113,6 +125,10 @@ public class EditListActivity extends AppCompatActivity {
         return hasError;
     }
 
+    /**
+     * Checks if the updated list name has the same name with one of the existing lists of the current user.
+     * @param list
+     */
     public void checkList(List list){
 
         mDatabase.getReference(Collections.users.name())
@@ -144,6 +160,10 @@ public class EditListActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Updates the information of the list.
+     * @param list
+     */
     public void updateList(List list){
 
         HashMap editedList = new HashMap();
@@ -175,6 +195,10 @@ public class EditListActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Updates the list name of the items under the currently updated list.
+     * @param list
+     */
     public void updateItems(List list){
 
         Intent intent = getIntent();
@@ -202,9 +226,9 @@ public class EditListActivity extends AppCompatActivity {
                         }
                         Intent intent = new Intent(EditListActivity.this, ItemListActivity.class);
 
-                        intent.putExtra(KEY_LIST, list.getListName());
-                        intent.putExtra(KEY_DESCRIPTION, list.getListDescription());
-                        intent.putExtra(KEY_ID, list.getListID());
+                        intent.putExtra(Keys.KEY_LIST.name(), list.getListName());
+                        intent.putExtra(Keys.KEY_DESCRIPTION.name(), list.getListDescription());
+                        intent.putExtra(Keys.KEY_ID.name(), list.getListID());
 
                         setResult(Activity.RESULT_OK, intent);
                         startActivity(intent);
@@ -218,128 +242,9 @@ public class EditListActivity extends AppCompatActivity {
                 });
     }
 
-
-//    public void retrieveList(List list) {
-//        Toast.makeText(getApplicationContext(), "Adding item to the database...", Toast.LENGTH_SHORT).show();
-//        pbEditList.setVisibility(View.VISIBLE);
-//        mDatabase.getReference(Collections.users.name())
-//                .child(mAuth.getCurrentUser().getUid()).child(Collections.lists.name())
-//                .addListenerForSingleValueEvent(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                        GenericTypeIndicator<ArrayList<List>> t = new GenericTypeIndicator<ArrayList<List>>() {};
-//                        ArrayList<List> allList = snapshot.getValue(t);
-//
-//                        int index = findIndex(allList,list);
-//
-//                        String oldList = allList.get(index).getListName();
-//                        allList.set(index, list);
-//                        String newList = allList.get(index).getListName();
-//
-//                        storeItem(allList,oldList,newList,index);
-//
-//                    }
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError error) {
-//                        Toast.makeText(getApplicationContext(), "Can't retrieve data", Toast.LENGTH_SHORT).show();
-//                    }
-//                });
-//    }
-//
-//    private int findIndex(ArrayList<List> allList, List list){
-//        int sentinel = 0;
-//        for(int i = 0; i < allList.size(); i++) {
-//            List tempList = allList.get(i);
-//            if(tempList.getListID() == list.getListID()){
-//                return i;
-//            }
-//        }
-//        return sentinel;
-//    }
-//
-//    private void storeItem(ArrayList<List> allList, String oldList, String newName, int index) {
-//
-//        mDatabase.getReference(Collections.users.name())
-//                .child(mAuth.getCurrentUser().getUid()).child(Collections.lists.name())
-//                .setValue(allList)
-//                .addOnCompleteListener(new OnCompleteListener<Void>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<Void> task) {
-//                        if(task.isSuccessful()) {
-//                            retrieveItem(allList, oldList, newName, index);
-//
-//                        } else {
-//                            Toast.makeText(getApplicationContext(), "Can't Edit to the database", Toast.LENGTH_SHORT).show();
-//                        }
-//                    }
-//                });
-//    }
-//
-//    public void retrieveItem(ArrayList<List> allList, String oldList, String newList, int index) {
-//        Toast.makeText(getApplicationContext(), "Editing item to the database...", Toast.LENGTH_SHORT).show();
-//
-//        mDatabase.getReference(Collections.users.name())
-//                .child(mAuth.getCurrentUser().getUid()).child(Collections.items.name())
-//                .addListenerForSingleValueEvent(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                        GenericTypeIndicator<ArrayList<Item>> t = new GenericTypeIndicator<ArrayList<Item>>() {};
-//                        ArrayList<Item> allItem = snapshot.getValue(t);
-//
-//                        if(!(allItem == null || allItem.isEmpty()))
-//                            allItem = renameList(allItem,oldList,newList);
-//
-//                        storeItem(allList, allItem, index);
-//
-//                    }
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError error) {
-//                        Toast.makeText(getApplicationContext(), "Can't retrieve data", Toast.LENGTH_SHORT).show();
-//                    }
-//                });
-//    }
-//
-//    private ArrayList<Item> renameList(ArrayList<Item> allItem, String oldList, String newList){
-//        ArrayList<Item> tempAllItem = allItem;
-//
-//        for(int i = 0; i < allItem.size(); i++) {
-//            Item tempItem = allItem.get(i);
-//            if(tempItem.getItemList().equals(oldList)){
-//                tempItem.setItemList(newList);
-//                tempAllItem.set(i,tempItem);
-//            }
-//        }
-//
-//        return tempAllItem;
-//    }
-//
-//    private void storeItem(ArrayList<List> allList, ArrayList<Item> allItem, int index) {
-//
-//        mDatabase.getReference(Collections.users.name())
-//                .child(mAuth.getCurrentUser().getUid()).child(Collections.items.name())
-//                .setValue(allItem)
-//                .addOnCompleteListener(new OnCompleteListener<Void>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<Void> task) {
-//                        if(task.isSuccessful()) {
-//
-//                            Toast.makeText(getApplicationContext(), "Successfully Added to the database", Toast.LENGTH_SHORT).show();
-//                            Intent intent = new Intent(EditListActivity.this, ItemListActivity.class);
-//
-//                            intent.putExtra(KEY_LIST, allList.get(index).getListName());
-//                            intent.putExtra(KEY_DESCRIPTION, allList.get(index).getListDescription());
-//                            intent.putExtra(KEY_ID, allList.get(index).getListID());
-//
-//                            setResult(Activity.RESULT_OK, intent);
-//                            startActivity(intent);
-//                            finish();
-//                        } else {
-//                            Toast.makeText(getApplicationContext(), "Can't Add to the database", Toast.LENGTH_SHORT).show();
-//                        }
-//                    }
-//                });
-//    }
-
+    /**
+     * Initializes the cancellation of the update or activity.
+     */
     private void initCancel() {
         this.ibCancel = findViewById(R.id.ib_edit_list_cancel);
         this.ibCancel.setOnClickListener(new View.OnClickListener() {

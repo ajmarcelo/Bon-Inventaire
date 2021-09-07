@@ -33,17 +33,28 @@ public class AccountEditActivity extends AppCompatActivity {
     private EditText etNewPassword;
     private EditText etConfirmNewPassword;
     private EditText etCurrentPassword;
-    private String initialName;
     private ProgressBar pbAccountEdit;
+    private String initialName;
+
     private FirebaseAuth mAuth;
     private FirebaseDatabase mDatabase;
     private FirebaseUser mUser;
     private AuthCredential authCredential;
 
+    /**
+     * Initializes the activity.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account_edit);
+
+        this.etName = findViewById(R.id.et_account_edit_name);
+        this.etNewPassword = findViewById(R.id.et_account_edit_password);
+        this.etConfirmNewPassword = findViewById(R.id.et_account_edit_confirm_password);
+        this.etCurrentPassword = findViewById(R.id.et_account_edit_current_password);
+        this.pbAccountEdit = findViewById(R.id.pb_account_edit);
 
         initFirebase();
         initCurrentUserInfo();
@@ -53,12 +64,18 @@ public class AccountEditActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Retrieve an instance of the database using getInstance().
+     */
     private void initFirebase() {
         this.mAuth = FirebaseAuth.getInstance();
         this.mDatabase = FirebaseDatabase.getInstance();
         this.mUser = FirebaseAuth.getInstance().getCurrentUser();
     }
 
+    /**
+     * Initializes the current name of the user before the update.
+     */
     private void initCurrentUserInfo() {
         this.mDatabase.getReference(Collections.users.name())
                 .child(mAuth.getCurrentUser().getUid()).child(Collections.name.name())
@@ -77,17 +94,17 @@ public class AccountEditActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Set the flags of the window, as per the WindowManager.LayoutParams flags.
+     */
     private void initConfiguration() {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
-        this.etName = findViewById(R.id.et_account_edit_name);
-        this.etNewPassword = findViewById(R.id.et_account_edit_password);
-        this.etConfirmNewPassword = findViewById(R.id.et_account_edit_confirm_password);
-        this.etCurrentPassword = findViewById(R.id.et_account_edit_current_password);
-        this.pbAccountEdit = findViewById(R.id.pb_account_edit);
     }
 
+    /**
+     * Initializes the confirmation for updating the user's information activity.
+     */
     private void initConfirm() {
         this.ibConfirm = findViewById(R.id.ib_account_edit_confirm);
         this.ibConfirm.setOnClickListener(new View.OnClickListener() {
@@ -106,6 +123,14 @@ public class AccountEditActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Checks if the input for each field is valid and if an information has changed.
+     * @param name
+     * @param newPassword
+     * @param confirmNewPassword
+     * @param currentPassword
+     * @return
+     */
     private boolean checkField(String name, String newPassword, String confirmNewPassword, String currentPassword) {
         boolean hasError = false;
 
@@ -143,6 +168,12 @@ public class AccountEditActivity extends AppCompatActivity {
         return hasError;
     }
 
+    /**
+     * Updates the information of the user.
+     * @param newName
+     * @param newPassword
+     * @param currentPassword
+     */
     private void updateUser(String newName, String newPassword, String currentPassword) {
         this.pbAccountEdit.setVisibility(View.VISIBLE);
 
@@ -197,6 +228,9 @@ public class AccountEditActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Initializes the cancellation of the update or activity.
+     */
     private void initCancel() {
         this.ibCancel = findViewById(R.id.ib_account_edit_cancel);
         this.ibCancel.setOnClickListener(new View.OnClickListener() {

@@ -55,25 +55,6 @@ public class ItemListActivity extends AppCompatActivity {
                 @Override
                 public void onActivityResult(ActivityResult result) {
                     if(result.getResultCode() == Activity.RESULT_OK){
-//                        Intent intent = result.getData();
-//
-//                        String name = intent.getStringExtra(Keys.KEY_NAME.name());
-//                        String list = intent.getStringExtra(Keys.KEY_LIST.name());
-//                        String note = intent.getStringExtra(Keys.KEY_NOTE.name());
-//                        int numStocks = intent.getIntExtra(Keys.KEY_NUM_STOCKS.name(),0);
-//                        String expireDate = intent.getStringExtra(Keys.KEY_EXPIRE_DATE.name());
-//                        int id = intent.getIntExtra(Keys.KEY_ITEM_ID.name(),0);
-//
-//                        if(dataItem.get(0).getItemName().equals(""))
-//                            dataItem.remove(0);
-//
-//                        rvListItems.setVisibility(View.VISIBLE);
-//                        tvListItemsNoItems.setVisibility(View.GONE);
-//
-//                        dataItem.add(0 , new Item(name, list, note, numStocks, expireDate, id));
-//                        itemListAdapter.notifyItemChanged(0);
-//                        itemListAdapter.notifyItemRangeChanged(0, itemListAdapter.getItemCount());
-
                         getDataFromDatabase();
 
                         rvListItems.setVisibility(View.VISIBLE);
@@ -253,7 +234,7 @@ public class ItemListActivity extends AppCompatActivity {
     }
 
     /**
-     * Called when an activity launched exits, giving the requestCode started it with, the resultCode it returned, and any additional data from it.
+     * Called when an activity launched exits, giving the requestCode started it with and the resultCode it returned.
      * @param requestCode
      * @param resultCode
      * @param data

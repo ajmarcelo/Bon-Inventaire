@@ -30,11 +30,15 @@ public class HomeActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseDatabase mDatabase;
 
+    /**
+     * Initializes the activity.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-
+        this.tvHomeGreeting = findViewById(R.id.tv_home_greeting);
         initFirebase();
         initConfiguration();
         initGreeting();
@@ -45,11 +49,17 @@ public class HomeActivity extends AppCompatActivity {
         initHomeSettings();
     }
 
+    /**
+     * Retrieve an instance of the database using getInstance().
+     */
     private void initFirebase() {
         this.mAuth = FirebaseAuth.getInstance();
         this.mDatabase = FirebaseDatabase.getInstance();
     }
 
+    /**
+     * Initializes the name of the user to be used for the greeting message in this activity.
+     */
     private void initGreeting() {
         mDatabase.getReference(Collections.users.name())
                 .child(mAuth.getCurrentUser().getUid()).child(Collections.name.name())
@@ -68,16 +78,19 @@ public class HomeActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "Can't retrieve data", Toast.LENGTH_SHORT).show();
                     }
                 });
-//                });
     }
 
+    /**
+     * Set the flags of the window, as per the WindowManager.LayoutParams flags.
+     */
     private void initConfiguration() {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
-        this.tvHomeGreeting = findViewById(R.id.tv_home_greeting);
     }
 
+    /**
+     * Initializes the intent for the next activity (adding a list).
+     */
     private void initAddList() {
         this.ibAddList = findViewById(R.id.ib_home_add_list);
         this.ibAddList.setOnClickListener(new View.OnClickListener() {
@@ -90,6 +103,9 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Initializes the intent for the next activity (adding an item).
+     */
     private void initAddItem() {
         this.ibAddItem = findViewById(R.id.ib_home_add_item);
         this.ibAddItem.setOnClickListener(new View.OnClickListener() {
@@ -102,6 +118,9 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Initializes the intent for the next activity (viewing all lists).
+     */
     private void initSeeLists() {
         this.ibSeeLists = findViewById(R.id.ib_home_see_lists);
         this.ibSeeLists.setOnClickListener(new View.OnClickListener() {
@@ -114,6 +133,9 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Initializes the intent for the next activity (viewing all items).
+     */
     private void initSeeItems() {
         this.ibSeeItems = findViewById(R.id.ib_home_see_items);
         this.ibSeeItems.setOnClickListener(new View.OnClickListener() {
@@ -126,6 +148,9 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Initializes the intent for the next activity (viewing the account settings).
+     */
     private void initHomeSettings() {
         this.fabHomeSettings = findViewById(R.id.fab_home_settings);
         this.fabHomeSettings.setOnClickListener(new View.OnClickListener() {
