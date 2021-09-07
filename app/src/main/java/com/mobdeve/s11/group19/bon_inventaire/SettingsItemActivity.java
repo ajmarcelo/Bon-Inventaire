@@ -2,9 +2,15 @@ package com.mobdeve.s11.group19.bon_inventaire;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.Dialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +22,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -27,8 +35,13 @@ import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class SettingsItemActivity extends AppCompatActivity {
+
+    public static final String CHANNEL_NAME = "Bon_Inventaire";
+    public static final String CHANNEL_ID = "BI_Notify";
+    public static final long MILISECOND_IN_24HRS = 86400000;
 
     private TextView tvEdit;
     private TextView tvDelete;
@@ -121,6 +134,8 @@ public class SettingsItemActivity extends AppCompatActivity {
                 Item item = new Item(name,list, note, numStocks,expireDate, id);
                 retrieveItem(item);
 //                deleteItem(item);
+
+                getUserName(id, name);
             }
         });
 
@@ -130,6 +145,132 @@ public class SettingsItemActivity extends AppCompatActivity {
                 dialog.dismiss();
             }
         });
+    }
+
+    private void createNotifChannel () {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT);
+
+            channel.enableVibration(true);
+            channel.enableLights(true);
+            NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            manager.createNotificationChannel(channel);
+        }
+    }
+
+    private void getUserName(int itemId, String itemName) {
+        mDatabase.getReference(Collections.users.name())
+                .child(mAuth.getCurrentUser().getUid()).child(Collections.name.name())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        String name = snapshot.getValue().toString();
+                        cancelNotifStockRepeat("Bonjour, " + name + "! " + itemName + "is out of stock.", itemId);
+                        cancelNotifExp("Bonjour, " + name + "! " + itemName, itemId);
+                        cancelNotifExpOthers("Bonjour, " + name + "! " + itemName, itemId);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Toast.makeText(getApplicationContext(), "Can't retrieve data", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private void cancelNotifStockRepeat (String body, int itemId) {
+        createNotifChannel();
+
+        String reqCodeRepeat = Integer.toString(itemId) + "999";
+
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+
+        Intent intent = new Intent(SettingsItemActivity.this, NotificationAlarm.class);
+        intent.putExtra(Keys.KEY_TITLE.name(), "Out of stock!");
+        intent.putExtra(Keys.KEY_MSG.name(), body);
+        intent.putExtra(Keys.KEY_CHANNEL_ID.name(), CHANNEL_ID);
+
+        PendingIntent pendInt0d = PendingIntent.getBroadcast(SettingsItemActivity.this,
+                Integer.parseInt(reqCodeRepeat), intent, 0);
+
+        alarmManager.cancel(pendInt0d);
+    }
+
+    private void cancelNotifExp (String body, int itemId) {
+        String expiredMsg = " has expired";
+        String expiredTitle = "Item expired";
+        String reqCode0d = Integer.toString(itemId) + "0";
+
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+
+        Intent intentRedirect0d = new Intent(this, HomeActivity.class);
+        intentRedirect0d.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingRedirect0d = PendingIntent.getActivity(this, Integer.parseInt(reqCode0d), intentRedirect0d, 0);
+
+        Intent intent0d = new Intent(SettingsItemActivity.this, NotificationAlarm.class);
+        intent0d.putExtra(Keys.KEY_TITLE.name(), expiredTitle);
+        intent0d.putExtra(Keys.KEY_MSG.name(), body + expiredMsg);
+        intent0d.putExtra(Keys.KEY_CHANNEL_ID.name(), CHANNEL_ID);
+        intent0d.putExtra(Keys.KEY_REDIRECT_INTENT.name(), pendingRedirect0d);
+
+        PendingIntent pendInt0d = PendingIntent.getBroadcast(SettingsItemActivity.this,
+                Integer.parseInt(reqCode0d), intent0d, 0);
+
+        alarmManager.cancel(pendInt0d);
+    }
+
+    private void cancelNotifExpOthers (String body, int itemId) {
+        String expireSoonMsg = " will expire in ";
+        String expireSoonTitle = "Item expiring soon!";
+        String reqCode1d = Integer.toString(itemId) + "1";
+        String reqCode3d = Integer.toString(itemId) + "3";
+        String reqCode7d = Integer.toString(itemId) + "7";
+
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+
+        Intent intentRedirect1d = new Intent(this, HomeActivity.class);
+        intentRedirect1d.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingRedirect1d = PendingIntent.getActivity(this, Integer.parseInt(reqCode1d), intentRedirect1d, 0);
+
+        Intent intent1d = new Intent(SettingsItemActivity.this, NotificationAlarm.class);
+        intent1d.putExtra(Keys.KEY_TITLE.name(), expireSoonTitle);
+        intent1d.putExtra(Keys.KEY_MSG.name(), body + expireSoonMsg + "one (1) day");
+        intent1d.putExtra(Keys.KEY_CHANNEL_ID.name(), CHANNEL_ID);
+        intent1d.putExtra(Keys.KEY_REDIRECT_INTENT.name(), pendingRedirect1d);
+
+        PendingIntent pendInt1d = PendingIntent.getBroadcast(SettingsItemActivity.this,
+                Integer.parseInt(reqCode1d), intent1d, 0);
+
+        alarmManager.cancel(pendInt1d);
+
+        Intent intentRedirect3d = new Intent(this, HomeActivity.class);
+        intentRedirect3d.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingRedirect3d = PendingIntent.getActivity(this, Integer.parseInt(reqCode3d), intentRedirect3d, 0);
+
+        Intent intent3d = new Intent(SettingsItemActivity.this, NotificationAlarm.class);
+        intent3d.putExtra(Keys.KEY_TITLE.name(), expireSoonTitle);
+        intent3d.putExtra(Keys.KEY_MSG.name(), body + expireSoonMsg + "three (3) days");
+        intent3d.putExtra(Keys.KEY_CHANNEL_ID.name(), CHANNEL_ID);
+        intent3d.putExtra(Keys.KEY_REDIRECT_INTENT.name(), pendingRedirect3d);
+
+        PendingIntent pendInt3d = PendingIntent.getBroadcast(SettingsItemActivity.this,
+                Integer.parseInt(reqCode3d), intent3d, 0);
+
+        alarmManager.cancel(pendInt3d);
+
+        Intent intentRedirect7d = new Intent(this, HomeActivity.class);
+        intentRedirect7d.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingRedirect7d = PendingIntent.getActivity(this, Integer.parseInt(reqCode7d), intentRedirect7d, 0);
+
+        Intent intent7d = new Intent(SettingsItemActivity.this, NotificationAlarm.class);
+        intent7d.putExtra(Keys.KEY_TITLE.name(), expireSoonTitle);
+        intent7d.putExtra(Keys.KEY_MSG.name(), body + expireSoonMsg + "seven (7) days");
+        intent7d.putExtra(Keys.KEY_CHANNEL_ID.name(), CHANNEL_ID);
+        intent7d.putExtra(Keys.KEY_REDIRECT_INTENT.name(), pendingRedirect7d);
+
+        PendingIntent pendInt7d = PendingIntent.getBroadcast(SettingsItemActivity.this,
+                Integer.parseInt(reqCode7d), intent7d, 0);
+
+        alarmManager.cancel(pendInt7d);
     }
 
 //    public void deleteItem(Item item){
