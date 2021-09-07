@@ -23,10 +23,17 @@ public class ItemAllAdapter extends RecyclerView.Adapter<ItemAllViewHolder> {
         this.activity = activity;
     }
 
+    /**
+     * creates a new ViewHolder object whenever the RecyclerView needs for showing all items.
+     * This is the moment when the row layout is inflated, passed to the ViewHolder
+     * object and each child view can be found and stored.
+     * @param parent
+     * @param viewType
+     */
     @NonNull
     @NotNull
     @Override
-    public ItemAllViewHolder onCreateViewHolder(@NonNull @NotNull ViewGroup parent, int viewType) {
+        public ItemAllViewHolder onCreateViewHolder(@NonNull @NotNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View itemView = inflater.inflate(R.layout.all_item_list, parent, false);
 
@@ -52,6 +59,11 @@ public class ItemAllAdapter extends RecyclerView.Adapter<ItemAllViewHolder> {
         return itemViewHolder;
     }
 
+    /**
+     * This method is used to update the contents of the itemView to reflect the item at the given position.
+     * @param holder
+     * @param position
+     */
     @Override
     public void onBindViewHolder(@NonNull @NotNull ItemAllViewHolder holder, int position) {
         holder.setTvAllItemName(dataItem.get(position).getItemName());
@@ -60,11 +72,19 @@ public class ItemAllAdapter extends RecyclerView.Adapter<ItemAllViewHolder> {
         holder.setTvAllItemStocks(dataItem.get(position).getItemNumStocks() + " QTY");
     }
 
+    /**
+     * It returns The number of items currently available in adapter.
+     * @return
+     */
     @Override
     public int getItemCount() {
         return this.dataItem.size();
     }
 
+    /**
+     * It sets the data to be used by the adapter
+     * @param data
+     */
     public void setData(ArrayList<Item> data){
         this.dataItem.clear();
         this.dataItem.addAll(data);

@@ -23,6 +23,13 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListViewHolder> {
         this.activity = activity;
     }
 
+    /**
+     * creates a new ViewHolder object whenever the RecyclerView needs for showing items in current list.
+     * This is the moment when the row layout is inflated, passed to the ViewHolder
+     * object and each child view can be found and stored.
+     * @param parent
+     * @param viewType
+     */
     @NonNull
     @NotNull
     @Override
@@ -51,6 +58,11 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListViewHolder> {
         return itemListViewHolder;
     }
 
+    /**
+     * This method is used to update the contents of the itemView to reflect the item at the given position.
+     * @param holder
+     * @param position
+     */
     @Override
     public void onBindViewHolder(@NonNull @NotNull ItemListViewHolder holder, int position) {
         holder.setTvListItemName(dataItem.get(position).getItemName());
@@ -58,11 +70,19 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListViewHolder> {
         holder.setTvListItemStocks(dataItem.get(position).getItemNumStocks() + " QTY");
     }
 
+    /**
+     * It returns The number of items currently available in adapter.
+     * @return
+     */
     @Override
     public int getItemCount() {
         return this.dataItem.size();
     }
 
+    /**
+     * It sets the data to be used by the adapter
+     * @param data
+     */
     public void setData(ArrayList<Item> data){
         this.dataItem.clear();
         this.dataItem.addAll(data);

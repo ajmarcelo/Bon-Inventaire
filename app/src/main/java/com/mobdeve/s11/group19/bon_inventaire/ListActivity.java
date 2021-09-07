@@ -39,7 +39,9 @@ public class ListActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseDatabase mDatabase;
 
-
+    /**
+     * A launcher for a previously-prepared call to start the process of executing an ActivityResultContract
+     */
     private ActivityResultLauncher allListAddActivityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
@@ -60,6 +62,10 @@ public class ListActivity extends AppCompatActivity {
             }
     );
 
+    /**
+     * For initializing activity.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,16 +78,25 @@ public class ListActivity extends AppCompatActivity {
         initCancel();
     }
 
+    /**
+     * Retrieve an instance of the database using getInstance().
+     */
     private void initFirebase() {
         this.mAuth = FirebaseAuth.getInstance();
         this.mDatabase = FirebaseDatabase.getInstance();
     }
 
+    /**
+     * Set the flags of the window, as per the WindowManager.LayoutParams flags.
+     */
     private void initConfiguration() {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
+    /**
+     *  Initializes the recycler view of the activity
+     */
     public void initRecyclerView() {
 //        Toast.makeText(getApplicationContext(), "Retrieving list from the database...", Toast.LENGTH_SHORT).show();
 
@@ -109,6 +124,9 @@ public class ListActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Initializes the intent for the next activity (adding a list)
+     */
     private void initAllListAdd() {
         this.fabAllListAdd = findViewById(R.id.fab_all_lists_add);
         this.fabAllListAdd.setOnClickListener(new View.OnClickListener() {
@@ -121,6 +139,9 @@ public class ListActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Initializes the intent for the next activity (navigating back)
+     */
     private void initCancel() {
         this.ibCancel = findViewById(R.id.ib_all_lists_back);
         this.ibCancel.setOnClickListener(new View.OnClickListener() {

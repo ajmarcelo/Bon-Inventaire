@@ -46,6 +46,9 @@ public class ItemListActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseDatabase mDatabase;
 
+    /**
+     * A launcher for a previously-prepared call to start the process of executing an ActivityResultContract
+     */
     private ActivityResultLauncher allItemsAddActivityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
@@ -80,7 +83,11 @@ public class ItemListActivity extends AppCompatActivity {
             }
     );
 
-    @Override
+        /**
+         * For initializing activity.
+         * @param savedInstanceState
+         */
+        @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_list_items);
@@ -109,16 +116,25 @@ public class ItemListActivity extends AppCompatActivity {
         initBack();
     }
 
+    /**
+     * Retrieve an instance of the database using getInstance().
+     */
     private void initFirebase() {
         this.mAuth = FirebaseAuth.getInstance();
         this.mDatabase = FirebaseDatabase.getInstance();
     }
 
+    /**
+     * Set the flags of the window, as per the WindowManager.LayoutParams flags.
+     */
     private void initConfiguration() {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
+    /**
+     *  Initializes the recycler view of the activity
+     */
     private void initRecyclerView () {
 //        Toast.makeText(getApplicationContext(), "Retrieving items from the database...", Toast.LENGTH_SHORT).show();
 
@@ -161,6 +177,10 @@ public class ItemListActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Filters the data of items based on current list
+     * @param dataItem
+     */
     private void filterList (ArrayList<Item> dataItem) {
         Intent intent = getIntent();
 
@@ -177,6 +197,9 @@ public class ItemListActivity extends AppCompatActivity {
         this.dataItem.addAll(tempDataItem);
     }
 
+    /**
+     * Initializes the intent for the next activity (adding an item)
+     */
     private void initListItemsAdd() {
         this.fabListItemsAdd = findViewById(R.id.fab_list_items_add);
         this.fabListItemsAdd.setOnClickListener(new View.OnClickListener() {
@@ -193,6 +216,9 @@ public class ItemListActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Initializes the intent for the next activity (settings for the list)
+     */
     private void initListItemsEdit() {
         this.fabListItemsSettings.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -210,6 +236,9 @@ public class ItemListActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Initializes the intent for the next activity (navigating back)
+     */
     private void initBack() {
         this.ibBack = findViewById(R.id.ib_list_items_back);
         this.ibBack.setOnClickListener(new View.OnClickListener() {
@@ -223,6 +252,12 @@ public class ItemListActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Called when an activity launched exits, giving the requestCode started it with, the resultCode it returned, and any additional data from it.
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -230,6 +265,9 @@ public class ItemListActivity extends AppCompatActivity {
             getDataFromDatabase();
     }
 
+    /**
+     * Retrieves the data from the database and sets the retrieve data to the current data
+     */
     private void getDataFromDatabase(){
         mDatabase.getReference(Collections.users.name())
                 .child(mAuth.getCurrentUser().getUid()).child(Collections.items.name())

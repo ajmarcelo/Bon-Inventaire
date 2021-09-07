@@ -21,6 +21,10 @@ public class ItemViewActivity extends AppCompatActivity {
     private FloatingActionButton fabEdit;
     private ImageButton ibBack;
 
+    /**
+     * Initializes the activity
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,11 +36,17 @@ public class ItemViewActivity extends AppCompatActivity {
         initBack();
     }
 
+    /**
+     * Set the flags of the windows, as per the WindowsManager.LayoutParams flags.
+     */
     private void initConfiguration() {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
+    /**
+     * Loads the data for onResume()
+     */
     private void loadData() {
         Intent intent = getIntent();
 
@@ -54,6 +64,10 @@ public class ItemViewActivity extends AppCompatActivity {
         tvNote.setText(String.valueOf(note));
     }
 
+    /**
+     * When the activity enters the Resumed state, it comes to the foreground, and then the system invokes the onResume() callback.
+     * Then calls loadData()
+     */
     @Override
     protected void onResume() {
         super.onResume();
@@ -61,6 +75,9 @@ public class ItemViewActivity extends AppCompatActivity {
         this.loadData();
     }
 
+    /**
+     * Initializes the values to be shown in the activity
+     */
     private void initValues(){
         this.tvName = findViewById(R.id.tv_item_view_name);
         this.tvList = findViewById(R.id.tv_item_view_list);
@@ -89,6 +106,9 @@ public class ItemViewActivity extends AppCompatActivity {
         this.tvNote.setText(String.valueOf(note));
     }
 
+    /**
+     * Initializes the intent for the next activity (editing an item)
+     */
     private void initEditItem() {
         this.fabEdit = findViewById(R.id.fab_item_view_edit);
         this.fabEdit.setOnClickListener(new View.OnClickListener() {
@@ -111,6 +131,9 @@ public class ItemViewActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Initializes the intent for the next activity (navigating back)
+     */
     private void initBack() {
         this.ibBack = findViewById(R.id.ib_item_view_back);
         this.ibBack.setOnClickListener(new View.OnClickListener() {

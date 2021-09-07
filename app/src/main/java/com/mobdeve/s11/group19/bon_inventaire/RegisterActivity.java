@@ -37,27 +37,14 @@ public class RegisterActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseDatabase mDatabase;
 
+    /**
+     * For initializing activity.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-
-        initFirebase();
-        initConfiguration();
-        initConfirm();
-        initBack();
-        initLogin();
-
-    }
-
-    private void initFirebase() {
-        this.mAuth = FirebaseAuth.getInstance();
-        this.mDatabase = FirebaseDatabase.getInstance();
-    }
-
-    private void initConfiguration() {
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         this.etName = findViewById(R.id.et_register_name);
         this.etEmail = findViewById(R.id.et_register_email);
@@ -67,8 +54,33 @@ public class RegisterActivity extends AppCompatActivity {
 
         this.dataList = new ArrayList<List>();
         dataList.add(new List("Unlisted", "Default List",0));
+
+        initFirebase();
+        initConfiguration();
+        initConfirm();
+        initBack();
+        initLogin();
     }
 
+    /**
+     * Retrieve an instance of the database using getInstance().
+     */
+    private void initFirebase() {
+        this.mAuth = FirebaseAuth.getInstance();
+        this.mDatabase = FirebaseDatabase.getInstance();
+    }
+
+    /**
+     * Set the flags of the window, as per the WindowManager.LayoutParams flags.
+     */
+    private void initConfiguration() {
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+    }
+
+    /**
+     * Initializes confirmation of registration
+     */
     private void initConfirm() {
         this.ibConfirm = findViewById(R.id.ib_register_confirm);
         this.ibConfirm.setOnClickListener(new View.OnClickListener() {
@@ -91,6 +103,14 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Checks if the input for each field is valid.
+     * @param name
+     * @param email
+     * @param password
+     * @param confirmPassword
+     * @return
+     */
     private boolean checkField(String name, String email, String password, String  confirmPassword) {
         boolean hasError = false;
 
@@ -130,6 +150,10 @@ public class RegisterActivity extends AppCompatActivity {
         return hasError;
     }
 
+    /**
+     * Stores the registered user to both realtime database and authentication
+     * of firebase
+     */
     private void storeUser(User user, String name) {
         this.pbRegister.setVisibility(View.VISIBLE);
 
@@ -170,6 +194,9 @@ public class RegisterActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * called when registration is successful
+     */
     private void successfulRegistration() {
         this.pbRegister.setVisibility(View.GONE);
         Toast.makeText(this, "User Successfully Registered", Toast.LENGTH_SHORT).show();
@@ -178,11 +205,17 @@ public class RegisterActivity extends AppCompatActivity {
         finish();
     }
 
+    /**
+     * called when registration failed
+     */
     private void failedRegistration() {
         this.pbRegister.setVisibility(View.GONE);
         Toast.makeText(this, "User Registration Failed", Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * Initializes the intent for the next activity (navigating back)
+     */
     private void initBack() {
         this.ibBack = findViewById(R.id.ib_register_back);
         this.ibBack.setOnClickListener(new View.OnClickListener() {
@@ -193,6 +226,9 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Initializes the intent for the next activity (logging in)
+     */
     private void initLogin() {
         this.tvLogin = findViewById(R.id.tv_register_login);
         this.tvLogin.setOnClickListener(new View.OnClickListener() {

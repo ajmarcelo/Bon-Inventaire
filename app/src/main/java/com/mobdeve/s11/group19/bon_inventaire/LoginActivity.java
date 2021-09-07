@@ -29,10 +29,18 @@ public class LoginActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
 
+    /**
+     * For initializing activity.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        this.etEmail = findViewById(R.id.et_login_email);
+        this.etPassword = findViewById(R.id.et_login_password);
+        this.pbLogin = findViewById(R.id.pb_login);
 
         initFirebase();
         initConfiguration();
@@ -42,19 +50,25 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Retrieve an instance of the authentication using getInstance().
+     */
     private void initFirebase(){
         this.mAuth = FirebaseAuth.getInstance();
     }
 
+    /**
+     * Set the flags of the window, as per the WindowManager.LayoutParams flags.
+     */
     private void initConfiguration() {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        this.etEmail = findViewById(R.id.et_login_email);
-        this.etPassword = findViewById(R.id.et_login_password);
-        this.pbLogin = findViewById(R.id.pb_login);
     }
 
+    /**
+     * Initializes confirmation of logging in
+     */
     private void initConfirm() {
         this.ibConfirm = findViewById(R.id.ib_login_confirm);
         this.ibConfirm.setOnClickListener(new View.OnClickListener() {
@@ -69,6 +83,9 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * called when a user attempts to sign in
+     */
     private void signIn(String email, String password){
         this.pbLogin.setVisibility(View.VISIBLE);
 
@@ -85,6 +102,12 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Checks if the input for each field is valid.
+     * @param email
+     * @param password
+     * @return
+     */
     private boolean checkField(String email, String password) {
         boolean hasError = false;
 
@@ -102,6 +125,9 @@ public class LoginActivity extends AppCompatActivity {
         return hasError;
     }
 
+    /**
+     * called when logging in is successful
+     */
     private void successfulLogin() {
         this.pbLogin.setVisibility(View.GONE);
         Toast.makeText(this, "User Successfully Logged In", Toast.LENGTH_SHORT).show();
@@ -110,11 +136,17 @@ public class LoginActivity extends AppCompatActivity {
         finish();
     }
 
+    /**
+     * called when logging in failed
+     */
     private void failedLogin() {
         this.pbLogin.setVisibility(View.GONE);
         Toast.makeText(this, "Email or Password is not found", Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * Initializes the intent for the next activity (navigating back)
+     */
     private void initBack() {
         this.ibBack = findViewById(R.id.ib_login_back);
         this.ibBack.setOnClickListener(new View.OnClickListener() {
@@ -125,6 +157,9 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Initializes the intent for the next activity (registering)
+     */
     private void initRegister() {
         this.tvRegister = findViewById(R.id.tv_login_register);
         this.tvRegister.setOnClickListener(new View.OnClickListener() {

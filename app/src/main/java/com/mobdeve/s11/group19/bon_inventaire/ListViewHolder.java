@@ -19,10 +19,18 @@ public class ListViewHolder extends RecyclerView.ViewHolder {
         this.tvAllListName = itemView.findViewById(R.id.tv_all_list_name);
     }
 
+    /**
+     * Returns the constraint layout under all_list_list.xml
+     * @return
+     */
     public ConstraintLayout getClAllList() {
         return this.clAllList;
     }
 
+    /**
+     * Sets the text of item name
+     * @param tvAllListName
+     */
     public void setTvAllListName (String tvAllListName) {
         this.tvAllListName.setText(tvAllListName);
     }

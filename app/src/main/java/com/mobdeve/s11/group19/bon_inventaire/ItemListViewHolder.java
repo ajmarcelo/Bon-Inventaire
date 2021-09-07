@@ -23,16 +23,32 @@ public class ItemListViewHolder extends RecyclerView.ViewHolder{
         this.tvListItemDate = itemView.findViewById(R.id.tv_per_item_date);
     }
 
+    /**
+     * Returns the constraint layout under all_item_list.xml
+     * @return
+     */
     public ConstraintLayout getClListItem() { return this.clListItem; }
 
+    /**
+     * Sets the text of item name
+     * @param tvListItemName
+     */
     public void setTvListItemName (String tvListItemName) {
         this.tvListItemName.setText(tvListItemName);
     }
 
+    /**
+     * Sets the text of the item's number of stocked
+     * @param tvListItemStocks
+     */
     public void setTvListItemStocks (String tvListItemStocks) {
         this.tvListItemStocks.setText(tvListItemStocks);
     }
 
+    /**
+     * Sets the text of the item's expiry date
+     * @param tvListItemDate
+     */
     public void setTvListItemDate (String tvListItemDate) {
         this.tvListItemDate.setText(tvListItemDate);
     }
