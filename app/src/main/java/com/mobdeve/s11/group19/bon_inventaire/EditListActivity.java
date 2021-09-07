@@ -44,6 +44,8 @@ public class EditListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_list);
+        initFirebase();
+        initConfiguration();
 
         this.etName = findViewById(R.id.et_edit_list_name);
         this.etDescription = findViewById(R.id.et_edit_list_description);
@@ -56,8 +58,6 @@ public class EditListActivity extends AppCompatActivity {
         etName.setText(initialName);
         etDescription.setText(initialDescription);
 
-        initFirebase();
-        initConfiguration();
         initSave();
         initCancel();
     }

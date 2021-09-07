@@ -43,13 +43,13 @@ public class AddListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_list);
+        initFirebase();
+        initConfiguration();
 
         this.etName = findViewById(R.id.et_add_list_name);
         this.etDescription = findViewById(R.id.et_add_list_description);
         this.pbAddList = findViewById(R.id.pb_add_list);
 
-        initFirebase();
-        initConfiguration();
         initSave();
         initCancel();
     }
@@ -161,7 +161,7 @@ public class AddListActivity extends AppCompatActivity {
     }
 
     /**
-     * Stores the list to the database.
+     * Stores the lists to the database.
      * @param allList
      */
     private void storeList(ArrayList<List> allList) {

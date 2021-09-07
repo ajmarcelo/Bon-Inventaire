@@ -10,7 +10,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
@@ -23,7 +22,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NotificationCompat;
 
 import com.google.android.gms.common.util.ArrayUtils;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -57,28 +55,21 @@ public class AddItemActivity extends AppCompatActivity {
     private EditText etExpireDate;
     private EditText etNote;
     private ProgressBar pbAddItem;
+
     private FirebaseAuth mAuth;
     private FirebaseDatabase mDatabase;
 
+    /**
+     * Initializes the activity.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_item);
-
         initFirebase();
         initConfiguration();
-        initSave();
-        initCancel();
-    }
 
-    private void initFirebase() {
-        this.mAuth = FirebaseAuth.getInstance();
-        this.mDatabase = FirebaseDatabase.getInstance();
-    }
-
-    private void initConfiguration() {
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         this.userLists = new ArrayList<List>();
         this.etName = findViewById(R.id.et_add_item_name);
         this.etNumStocks = findViewById(R.id.et_add_item_num_stocks);
@@ -129,17 +120,44 @@ public class AddItemActivity extends AppCompatActivity {
                     public void onCancelled(@NonNull DatabaseError error) {
                     }
                 });
+
+        initSave();
+        initCancel();
     }
 
-    private String[] dropdownList (ArrayList<List> userLists) {
-        int n = userLists.size();
-        dropdown = new String[userLists.size()];
+    /**
+     * Retrieve an instance of the database using getInstance().
+     */
+    private void initFirebase() {
+        this.mAuth = FirebaseAuth.getInstance();
+        this.mDatabase = FirebaseDatabase.getInstance();
+    }
+
+    /**
+     * Set the flags of the window, as per the WindowManager.LayoutParams flags.
+     */
+    private void initConfiguration() {
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+    }
+
+    /**
+     * Gets the name of the lists from the current user's lists retrieved from the database.
+     * @param userList
+     * @return
+     */
+    private String[] dropdownList (ArrayList<List> userList) {
+        int n = userList.size();
+        dropdown = new String[userList.size()];
         for(int i = 0; i < n; i++) {
-            dropdown[i] = userLists.get(i).getListName();
+            dropdown[i] = userList.get(i).getListName();
         }
         return dropdown;
     }
 
+    /**
+     * Initializes the adding of an item.
+     */
     private void initSave() {
         this.ibSave = findViewById(R.id.ib_add_item_save);
         this.ibSave.setOnClickListener(new View.OnClickListener() {
@@ -168,6 +186,13 @@ public class AddItemActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Checks if the input for each field is valid.
+     * @param name
+     * @param list
+     * @param numStocks
+     * @return
+     */
     private boolean checkField(String name, String list, String numStocks) {
         boolean hasError = false;
 
@@ -201,7 +226,10 @@ public class AddItemActivity extends AppCompatActivity {
         return hasError;
     }
 
-//    public void retrieveItem(Item item) {
+    /**
+     * Retrieves the items of the user from the database
+     * @param item
+     */
     public void retrieveItem(Item item) {
         Toast.makeText(getApplicationContext(), "Adding item to the database...", Toast.LENGTH_SHORT).show();
         pbAddItem.setVisibility(View.VISIBLE);
@@ -216,12 +244,10 @@ public class AddItemActivity extends AppCompatActivity {
                         if(allItem == null) {
                             allItem = new ArrayList<Item>();
                             allItem.add(0,item);
-//                            storeItem(allItem);
                             storeItem(allItem);
                         } else {
                             item.setItemID(allItem.size());
                             allItem.add(0,item);
-//                            storeItem(allItem);
                             storeItem(allItem);
                         }
                     }
@@ -232,20 +258,10 @@ public class AddItemActivity extends AppCompatActivity {
                 });
     }
 
-//    private boolean isSameItem(ArrayList<Item> allItem, Item item){
-//        for(int i = 0; i < allItem.size(); i++) {
-//            Item tempItem = allItem.get(i);
-//            if(tempItem.getItemName().equals(item.getItemName())){
-//                if(tempItem.getItemList().equals(item.getItemList())){
-//                    Toast.makeText(getApplicationContext(), "Item is on another List", Toast.LENGTH_SHORT).show();
-//                }
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
-
-//    private void storeItem(ArrayList<Item> allItem) {
+    /**
+     * Stores the updated items to the database.
+     * @param allItem
+     */
     private void storeItem(ArrayList<Item> allItem) {
         mDatabase.getReference(Collections.users.name())
                 .child(mAuth.getCurrentUser().getUid()).child(Collections.items.name())
@@ -279,6 +295,9 @@ public class AddItemActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Initializes the cancellation of the update or activity.
+     */
     private void initCancel() {
         this.ibCancel = findViewById(R.id.ib_add_item_cancel);
         this.ibCancel.setOnClickListener(new View.OnClickListener() {
@@ -289,6 +308,13 @@ public class AddItemActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Gets the name of the user to be used for the greeting message in the notification.
+     * @param itemId
+     * @param expDate
+     * @param itemName
+     * @param numStocks
+     */
     private void getUserName(int itemId, String expDate, String itemName, int numStocks) {
         mDatabase.getReference(Collections.users.name())
                 .child(mAuth.getCurrentUser().getUid()).child(Collections.name.name())

@@ -58,27 +58,17 @@ public class EditItemInListActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseDatabase mDatabase;
 
-
-
+    /**
+     * Initializes the activity.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_item);
-
         initFirebase();
         initConfiguration();
-        initSave();
-        initCancel();
-    }
 
-    private void initFirebase() {
-        this.mAuth = FirebaseAuth.getInstance();
-        this.mDatabase = FirebaseDatabase.getInstance();
-    }
-
-    private void initConfiguration() {
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         this.userLists = new ArrayList<List>();
         this.etName = findViewById(R.id.et_edit_item_name);
         this.etList = findViewById(R.id.et_edit_item_list);
@@ -122,17 +112,44 @@ public class EditItemInListActivity extends AppCompatActivity {
 
         if(expireDate.isEmpty())
             etExpireDate.setHint("No Date");
+
+        initSave();
+        initCancel();
     }
 
-    private String[] dropdownList (ArrayList<List> userLists) {
-        int n = userLists.size();
-        dropdown = new String[userLists.size()];
+    /**
+     * Retrieve an instance of the database using getInstance().
+     */
+    private void initFirebase() {
+        this.mAuth = FirebaseAuth.getInstance();
+        this.mDatabase = FirebaseDatabase.getInstance();
+    }
+
+    /**
+     * Set the flags of the window, as per the WindowManager.LayoutParams flags.
+     */
+    private void initConfiguration() {
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+    }
+
+    /**
+     * Gets the name of the lists from the current user's lists retrieved from the database.
+     * @param userList
+     * @return
+     */
+    private String[] dropdownList (ArrayList<List> userList) {
+        int n = userList.size();
+        dropdown = new String[userList.size()];
         for(int i = 0; i < n; i++) {
-            dropdown[i] = userLists.get(i).getListName();
+            dropdown[i] = userList.get(i).getListName();
         }
         return dropdown;
     }
 
+    /**
+     * Initializes the editing of an item.
+     */
     private void initSave() {
         this.ibSave = findViewById(R.id.ib_edit_item_save);
         this.ibSave.setOnClickListener(new View.OnClickListener() {
@@ -163,6 +180,14 @@ public class EditItemInListActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Checks if the input for each field is valid and if an information has changed.
+     * @param name
+     * @param list
+     * @param numStocks
+     * @param note
+     * @return
+     */
     private boolean checkField(String name, String list, int numStocks, String note) {
         boolean hasError = false;
 
@@ -195,6 +220,10 @@ public class EditItemInListActivity extends AppCompatActivity {
         return hasError;
     }
 
+    /**
+     * Updates the information of the item.
+     * @param item
+     */
     public void updateItems(Item item){
 
         HashMap editedItem = new HashMap();
@@ -242,6 +271,9 @@ public class EditItemInListActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Initializes the cancellation of the update or activity.
+     */
     private void initCancel() {
         this.ibCancel = findViewById(R.id.ib_edit_item_cancel);
         this.ibCancel.setOnClickListener(new View.OnClickListener() {
@@ -252,6 +284,12 @@ public class EditItemInListActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Gets the name of the user to be used for the greeting message in the notification.
+     * @param itemName
+     * @param itemId
+     * @param numStocks
+     */
     private void getUserName(String itemName, int itemId, int numStocks) {
         mDatabase.getReference(Collections.users.name())
                 .child(mAuth.getCurrentUser().getUid()).child(Collections.name.name())
@@ -358,65 +396,3 @@ public class EditItemInListActivity extends AppCompatActivity {
         Toast.makeText(EditItemInListActivity.this, "Stock notification done", Toast.LENGTH_SHORT).show();
     }
 }
-
-//    public void retrieveItem(Item item) {
-//        Toast.makeText(getApplicationContext(), "Adding item to the database...", Toast.LENGTH_SHORT).show();
-//
-//        mDatabase.getReference(Collections.users.name())
-//                .child(mAuth.getCurrentUser().getUid()).child(Collections.items.name())
-//                .addListenerForSingleValueEvent(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                        GenericTypeIndicator<ArrayList<Item>> t = new GenericTypeIndicator<ArrayList<Item>>() {};
-//                        ArrayList<Item> allItem = snapshot.getValue(t);
-//
-//                        int index = findIndex(allItem,item);
-//                        allItem.set(index, item);
-//                        storeItem(allItem, index);
-//
-//                    }
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError error) {
-//                        Toast.makeText(getApplicationContext(), "Can't retrieve data", Toast.LENGTH_SHORT).show();
-//                    }
-//                });
-//    }
-//
-//    private int findIndex(ArrayList<Item> allItem, Item item){
-//        int sentinel = 0;
-//        for(int i = 0; i < allItem.size(); i++) {
-//            Item tempItem = allItem.get(i);
-//            if(tempItem.getItemID() == item.getItemID()){
-//                return i;
-//            }
-//        }
-//        return sentinel;
-//    }
-//
-//    private void storeItem(ArrayList<Item> allItem, int index) {
-//
-//        mDatabase.getReference(Collections.users.name())
-//                .child(mAuth.getCurrentUser().getUid()).child(Collections.items.name())
-//                .setValue(allItem)
-//                .addOnCompleteListener(new OnCompleteListener<Void>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<Void> task) {
-//                        if(task.isSuccessful()) {
-//                            Toast.makeText(getApplicationContext(), "Successfully Added to the database", Toast.LENGTH_SHORT).show();
-//                            Intent intent = new Intent();
-//
-//                            intent.putExtra(KEY_NAME, allItem.get(index).getItemName());
-//                            intent.putExtra(KEY_LIST, allItem.get(index).getItemList());
-//                            intent.putExtra(KEY_NUM_STOCKS, allItem.get(index).getItemNumStocks());
-//                            intent.putExtra(KEY_EXPIRE_DATE, allItem.get(index).getItemExpireDate().toString());
-//                            intent.putExtra(KEY_NOTE, allItem.get(index).getItemNote());
-//                            intent.putExtra(KEY_ID, allItem.get(index).getItemID());
-//
-//                            setResult(Activity.RESULT_OK, intent);
-//                            finish();
-//                        } else {
-//                            Toast.makeText(getApplicationContext(), "Can't Add to the database", Toast.LENGTH_SHORT).show();
-//                        }
-//                    }
-//                });
-//    }

@@ -72,7 +72,8 @@ public class ItemListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_list_items);
-
+        initFirebase();
+        initConfiguration();
         this.tvTitle = findViewById(R.id.tv_list_items_title);
         this.tvDescription = findViewById(R.id.tv_list_items_description);
         this.tvListItemsNoItems = findViewById(R.id.tv_list_items_no_items);
@@ -89,8 +90,6 @@ public class ItemListActivity extends AppCompatActivity {
         if(list.equals("Unlisted"))
             fabListItemsSettings.setVisibility(View.GONE);
 
-        initFirebase();
-        initConfiguration();
         initRecyclerView();
         initListItemsAdd();
         initListItemsEdit();
@@ -117,8 +116,6 @@ public class ItemListActivity extends AppCompatActivity {
      *  Initializes the recycler view of the activity
      */
     private void initRecyclerView () {
-//        Toast.makeText(getApplicationContext(), "Retrieving items from the database...", Toast.LENGTH_SHORT).show();
-
         mDatabase.getReference(Collections.users.name())
                 .child(mAuth.getCurrentUser().getUid()).child(Collections.items.name())
                 .addListenerForSingleValueEvent(new ValueEventListener() {

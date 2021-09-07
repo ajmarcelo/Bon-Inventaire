@@ -49,6 +49,8 @@ public class AccountEditActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account_edit);
+        initFirebase();
+        initCurrentUserInfo();
 
         this.etName = findViewById(R.id.et_account_edit_name);
         this.etNewPassword = findViewById(R.id.et_account_edit_password);
@@ -56,8 +58,6 @@ public class AccountEditActivity extends AppCompatActivity {
         this.etCurrentPassword = findViewById(R.id.et_account_edit_current_password);
         this.pbAccountEdit = findViewById(R.id.pb_account_edit);
 
-        initFirebase();
-        initCurrentUserInfo();
         initConfiguration();
         initConfirm();
         initCancel();
