@@ -41,6 +41,10 @@ public class SettingsItemInListActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseDatabase mDatabase;
 
+    /**
+     * For initializing activity.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +59,9 @@ public class SettingsItemInListActivity extends AppCompatActivity {
         initBack();
     }
 
+    /**
+     * Initializes the dialog box confirmation for deleting an item.
+     */
     @SuppressLint("UseCompatLoadingForDrawables")
     private void initConfirmationDialogBox() {
         dialog = new Dialog(SettingsItemInListActivity.this);
@@ -67,16 +74,25 @@ public class SettingsItemInListActivity extends AppCompatActivity {
         btnDeleteItemInListContinue = dialog.findViewById(R.id.btn_confirm_delete_item_continue);
     }
 
+    /**
+     * Retrieve an instance of the database using getInstance().
+     */
     private void initFirebase() {
         this.mAuth = FirebaseAuth.getInstance();
         this.mDatabase = FirebaseDatabase.getInstance();
     }
 
+    /**
+     * Set the flags of the window, as per the WindowManager.LayoutParams flags.
+     */
     private void initConfiguration() {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
+    /**
+     * Initializes the intent for the next activity (editing the item information).
+     */
     private void initEdit() {
         this.tvEdit = findViewById(R.id.tv_settings_item_edit);
         this.tvEdit.setOnClickListener(new View.OnClickListener() {
@@ -98,7 +114,11 @@ public class SettingsItemInListActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Initializes the deletion of a list.
+     */
     private void initDelete() {
+        //Triggers the dialog box for the confirmation for deleting the item
         this.tvDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -106,6 +126,7 @@ public class SettingsItemInListActivity extends AppCompatActivity {
             }
         });
 
+        //Proceeds to deleting the item in the database
         this.btnDeleteItemInListContinue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -120,9 +141,10 @@ public class SettingsItemInListActivity extends AppCompatActivity {
 
                 Item item = new Item(name,list, note, numStocks,expireDate, id);
                 retrieveItem(item);
-//                deleteItem(item);
             }
         });
+
+        //Cancels the deletion of the item
         this.btnDeleteItemInListCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -131,44 +153,10 @@ public class SettingsItemInListActivity extends AppCompatActivity {
         });
     }
 
-//    public void deleteItem(Item item){
-//
-//        mDatabase.getReference(Collections.users.name())
-//                .child(mAuth.getCurrentUser().getUid())
-//                .child(Collections.items.name())
-//                .orderByChild("itemID")
-//                .equalTo(item.getItemID())
-//                .addListenerForSingleValueEvent(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                        for (DataSnapshot child : snapshot.getChildren()) {
-//                            Log.d("Item Parent: ", child.getKey());
-//                            mDatabase.getReference(Collections.users.name())
-//                                    .child(mAuth.getCurrentUser().getUid())
-//                                    .child(Collections.items.name())
-//                                    .child(child.getKey())
-//                                    .removeValue();
-//                        }
-//                        Intent intent = new Intent();
-//
-//                        intent.putExtra(Keys.KEY_NAME.name(), item.getItemName());
-//                        intent.putExtra(Keys.KEY_LIST.name(), item.getItemList());
-//                        intent.putExtra(Keys.KEY_NUM_STOCKS.name(), item.getItemNumStocks());
-//                        intent.putExtra(Keys.KEY_EXPIRE_DATE.name(), item.getItemExpireDate());
-//                        intent.putExtra(Keys.KEY_NOTE.name(), item.getItemNote());
-//                        intent.putExtra(Keys.KEY_ITEM_ID.name(), item.getItemID());
-//
-//                        setResult(Activity.RESULT_OK, intent);
-//                        finish();
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError error) {
-//                        Log.d("DatabaseError: ", error.toString());
-//                    }
-//                });
-//    }
-
+    /**
+     * Retrieves the items of the current user.
+     * @param item
+     */
     public void retrieveItem(Item item) {
         Toast.makeText(getApplicationContext(), "Deleting item to the database...", Toast.LENGTH_SHORT).show();
 
@@ -193,6 +181,12 @@ public class SettingsItemInListActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Looks for the index of the item to be deleted.
+     * @param allItem
+     * @param item
+     * @return
+     */
     private int findIndex(ArrayList<Item> allItem, Item item){
         int sentinel = 0;
         for(int i = 0; i < allItem.size(); i++) {
@@ -204,6 +198,11 @@ public class SettingsItemInListActivity extends AppCompatActivity {
         return sentinel;
     }
 
+    /**
+     * Stores the updated items of the user after an item is deleted
+     * @param allItem
+     * @param item
+     */
     private void storeItem(ArrayList<Item> allItem, Item item) {
 
         mDatabase.getReference(Collections.users.name())
@@ -232,6 +231,9 @@ public class SettingsItemInListActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Initializes the intent for the next activity (navigating back).
+     */
     private void initBack() {
         this.ibBack = findViewById(R.id.ib_settings_item_back);
         this.ibBack.setOnClickListener(new View.OnClickListener() {
@@ -242,6 +244,9 @@ public class SettingsItemInListActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Dismisses the dialog box.
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();
