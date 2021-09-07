@@ -14,5 +14,6 @@ public enum Keys {
     KEY_TITLE,
     KEY_MSG,
     KEY_CHANNEL_ID,
-    KEY_CHANNEL_NAME
+    KEY_CHANNEL_NAME,
+    KEY_REDIRECT_INTENT
 }
