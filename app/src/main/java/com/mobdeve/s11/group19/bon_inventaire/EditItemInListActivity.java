@@ -296,7 +296,7 @@ public class EditItemInListActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         String name = snapshot.getValue().toString();
-                        checkDecrease("Bonjour, " + name + "! " + itemName + " is out of stock.", numStocks, itemId);
+                        checkDecrease("Bonjour, " + name + "! " + itemName, numStocks, itemId);
                     }
 
                     @Override
@@ -333,13 +333,13 @@ public class EditItemInListActivity extends AppCompatActivity {
 
         if (newNumStocks < Integer.parseInt(oldNumStocks)) {
             if (newNumStocks == 0) {
-                initNotifStockRepeat(body, itemId);
+                initNotifStockRepeat(body + " is out of stock.", itemId);
             }
             else if (newNumStocks == 1) {
                 Intent intent = new Intent(this, HomeActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 PendingIntent pendingIntent = PendingIntent.getActivity(this, Integer.parseInt(reqCodeRepeat), intent, 0);
-                initNotifStock("Low on stock!", body + etName.getText().toString() + " is low on stock.", pendingIntent);
+                initNotifStock("Low on stock!", body + " is low on stock.", pendingIntent);
             }
         }
         else {
