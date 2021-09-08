@@ -167,7 +167,7 @@ public class EditItemInListActivity extends AppCompatActivity {
                 String note = etNote.getText().toString().trim();
                 int id = intent.getIntExtra(Keys.KEY_ITEM_ID.name(),0);
 
-                if (!checkField(name,list,Integer.parseInt(numStocks),note)) {
+                if (!checkField(name,list,numStocks,note)) {
                     if(list.isEmpty())
                         list = "Unlisted";
                     Item item = new Item(name,list, note, Integer.parseInt(numStocks),expireDate, id);
@@ -188,13 +188,8 @@ public class EditItemInListActivity extends AppCompatActivity {
      * @param note          The note inputted by the user
      * @return              Returns true if there is an error in the input fields. Otherwise, it returns false
      */
-    private boolean checkField(String name, String list, int numStocks, String note) {
+    private boolean checkField(String name, String list, String numStocks, String note) {
         boolean hasError = false;
-
-        if(name.equals(initialName) && (numStocks == initialNumStocks) && list.equals(initialList) && note.equals(initialNote)) {
-            Toast.makeText(getApplicationContext(), "No Changes Has Been Made", Toast.LENGTH_SHORT).show();
-            hasError = true;
-        }
 
         if(name.isEmpty()) {
             this.etName.setError("Required Field");
@@ -209,21 +204,27 @@ public class EditItemInListActivity extends AppCompatActivity {
                 hasError = true;
             }
 
-        if(Integer.toString(numStocks).isEmpty()) {
+        if(numStocks.isEmpty()) {
             this.etNumStocks.setError("Required Field");
             this.etNumStocks.requestFocus();
             hasError = true;
         }
-        else if(numStocks < 0) {
+        else if(Integer.parseInt(numStocks) < 0) {
             this.etNumStocks.setError("Minimum is 0.");
             this.etNumStocks.requestFocus();
             hasError = true;
         }
-        else if(numStocks > 1000000) {
+        else if(Integer.parseInt(numStocks) > 1000000) {
             this.etNumStocks.setError("Limit exceeded!\nMaximum is 1,000,000.");
             this.etNumStocks.requestFocus();
             hasError = true;
         }
+
+        if(name.equals(initialName) && (numStocks.equals(Integer.toString(initialNumStocks))) && list.equals(initialList) && note.equals(initialNote)) {
+            Toast.makeText(getApplicationContext(), "No Changes Has Been Made", Toast.LENGTH_SHORT).show();
+            hasError = true;
+        }
+
         return hasError;
     }
 
