@@ -23,13 +23,12 @@ public class ItemAllAdapter extends RecyclerView.Adapter<ItemAllViewHolder> {
         this.activity = activity;
     }
 
-    //TODO
     /**
      * Creates a new ViewHolder object whenever the RecyclerView needs for showing all items.
      * This is the moment when the row layout is inflated, passed to the ViewHolder
      * object and each child view can be found and stored.
-     * @param parent
-     * @param viewType
+     * @param parent the ViewGroup into which the new View will be added after it is bound to an adapter position.
+     * @param viewType the view type of the new View.
      */
     @NonNull
     @NotNull
@@ -60,11 +59,10 @@ public class ItemAllAdapter extends RecyclerView.Adapter<ItemAllViewHolder> {
         return itemViewHolder;
     }
 
-    //TODO
     /**
      * This method is used to update the contents of the itemView to reflect the item at the given position.
-     * @param holder
-     * @param position
+     * @param holder the ViewHolder which should be updated to represent the contents of the item at the given position in the data set.
+     * @param position the position of the item within the adapter's data set.
      */
     @Override
     public void onBindViewHolder(@NonNull @NotNull ItemAllViewHolder holder, int position) {

@@ -230,12 +230,11 @@ public class ItemListActivity extends AppCompatActivity {
         });
     }
 
-    //TODO
     /**
      * Called when an activity launched exits, giving the requestCode started it with and the resultCode it returned.
-     * @param requestCode
-     * @param resultCode
-     * @param data
+     * @param requestCode was set when calling startActivityForResult() as part of the parameter
+     * @param resultCode not used in this overridden method.
+     * @param data not used in this overridden method.
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
