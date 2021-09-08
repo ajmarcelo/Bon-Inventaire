@@ -113,10 +113,9 @@ public class AddListActivity extends AppCompatActivity {
         return hasError;
     }
 
-    //TODO
     /**
      * Retrieves the lists of the current user.
-     * @param list  The list to be retrieved in the
+     * @param list The list to be added
      */
     public void retrieveList(List list) {
         mDatabase.getReference(Collections.users.name())

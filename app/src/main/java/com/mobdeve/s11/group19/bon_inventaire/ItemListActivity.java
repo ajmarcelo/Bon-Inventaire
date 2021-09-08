@@ -157,7 +157,7 @@ public class ItemListActivity extends AppCompatActivity {
 
     /**
      * Filters the data of items based on current list
-     * @param dataItem
+     * @param dataItem The list of items of the current user
      */
     private void filterList (ArrayList<Item> dataItem) {
         Intent intent = getIntent();
@@ -230,6 +230,7 @@ public class ItemListActivity extends AppCompatActivity {
         });
     }
 
+    //TODO
     /**
      * Called when an activity launched exits, giving the requestCode started it with and the resultCode it returned.
      * @param requestCode

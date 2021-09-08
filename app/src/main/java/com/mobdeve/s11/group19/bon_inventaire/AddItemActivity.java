@@ -257,10 +257,9 @@ public class AddItemActivity extends AppCompatActivity {
                 });
     }
 
-    //TODO
     /**
-     * Stores the updated items to the database.
-     * @param allItem
+     * Stores the updated set of items to the database.
+     * @param allItem The user's updated list of items
      */
     private void storeItem(ArrayList<Item> allItem) {
         mDatabase.getReference(Collections.users.name())

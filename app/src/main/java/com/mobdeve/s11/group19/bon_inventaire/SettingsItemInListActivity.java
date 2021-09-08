@@ -153,10 +153,9 @@ public class SettingsItemInListActivity extends AppCompatActivity {
         });
     }
 
-    //TODO
     /**
      * Retrieves the items of the current user.
-     * @param item
+     * @param item The item to be deleted
      */
     public void retrieveItem(Item item) {
         Toast.makeText(getApplicationContext(), "Deleting item to the database...", Toast.LENGTH_SHORT).show();
@@ -199,11 +198,10 @@ public class SettingsItemInListActivity extends AppCompatActivity {
         return sentinel;
     }
 
-    //TODO
     /**
      * Stores the updated items of the user after an item is deleted
-     * @param allItem   The arraylist containing all current items
-     * @param item      The
+     * @param allItem   The user's updated list of items
+     * @param item      The item to be deleted
      */
     private void storeItem(ArrayList<Item> allItem, Item item) {
 

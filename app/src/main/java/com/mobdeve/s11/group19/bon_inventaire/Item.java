@@ -18,7 +18,7 @@ public class Item {
 
     /**
      * Returns the name of the item.
-     * @return
+     * @return Returns a String containing the item's name
      */
     public String getItemName() {
         return this.itemName;
@@ -26,7 +26,7 @@ public class Item {
 
     /**
      * Returns the name of the list where the item belongs to.
-     * @return
+     * @return Returns a String containing the list's name
      */
     public String getItemList() {
         return this.itemList;
@@ -34,7 +34,7 @@ public class Item {
 
     /**
      * Returns the note of the item.
-     * @return
+     * @return Returns a String containing the item's note
      */
     public String getItemNote() {
         return this.itemNote;
@@ -42,7 +42,7 @@ public class Item {
 
     /**
      * Returns the number of stocks of the item.
-     * @return
+     * @return Returns an integer value of the item's number of stock
      */
     public int getItemNumStocks() {
         return this.itemNumStocks;
@@ -50,7 +50,7 @@ public class Item {
 
     /**
      * Returns the expiration date of the item.
-     * @return
+     * @return Returns a String containing the item's expiration date
      */
     public String getItemExpireDate() {
         return this.itemExpireDate;
@@ -58,19 +58,19 @@ public class Item {
 
     /**
      * Returns the ID of the item.
-     * @return
+     * @return Returns an integer value of the item's ID
      */
     public int getItemID() { return this.itemID; }
 
     /**
      * Sets the ID of the item.
-     * @param id
+     * @param id The unique ID to be assigned on the item
      */
     public void setItemID(int id) { this.itemID = id;}
 
     /**
      * Sets the name of the list where the item belongs to.
-     * @param itemList
+     * @param itemList The name of the list to be assigned
      */
     public void setItemList(String itemList) { this.itemList = itemList;}
 }

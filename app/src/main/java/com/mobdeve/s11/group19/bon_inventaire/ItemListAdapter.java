@@ -23,6 +23,7 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListViewHolder> {
         this.activity = activity;
     }
 
+    //TODO
     /**
      * creates a new ViewHolder object whenever the RecyclerView needs for showing items in current list.
      * This is the moment when the row layout is inflated, passed to the ViewHolder
@@ -58,6 +59,7 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListViewHolder> {
         return itemListViewHolder;
     }
 
+    //TODO
     /**
      * This method is used to update the contents of the itemView to reflect the item at the given position.
      * @param holder
@@ -72,7 +74,7 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListViewHolder> {
 
     /**
      * It returns The number of items currently available in adapter.
-     * @return
+     * @return  Returns an integer of the adapter's current number of items
      */
     @Override
     public int getItemCount() {
@@ -81,7 +83,7 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListViewHolder> {
 
     /**
      * It sets the data to be used by the adapter
-     * @param data
+     * @param data The data to update the view with
      */
     public void setData(ArrayList<Item> data){
         this.dataItem.clear();

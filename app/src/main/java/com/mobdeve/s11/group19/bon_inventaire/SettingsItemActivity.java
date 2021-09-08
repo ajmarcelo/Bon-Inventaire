@@ -309,10 +309,9 @@ public class SettingsItemActivity extends AppCompatActivity {
         alarmManager.cancel(pendInt7d);
     }
 
-    //TODO
     /**
      * Retrieves the items of the current user.
-     * @param item
+     * @param item The item to be deleted
      */
     public void retrieveItem(Item item) {
         Toast.makeText(getApplicationContext(), "Deleting item to the database...", Toast.LENGTH_SHORT).show();
@@ -354,11 +353,11 @@ public class SettingsItemActivity extends AppCompatActivity {
         }
         return sentinel;
     }
-    //TODO
+
     /**
      * Storing the items from the deleted list to the "Unlisted" list.
-     * @param allItem
-     * @param item
+     * @param allItem   The user's updated list of items
+     * @param item      The item to be deleted
      */
     private void storeItem(ArrayList<Item> allItem, Item item) {
 
