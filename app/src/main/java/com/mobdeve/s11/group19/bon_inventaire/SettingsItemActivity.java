@@ -178,6 +178,8 @@ public class SettingsItemActivity extends AppCompatActivity {
 
     /**
      * Gets the name of the current user for the following notification-related functions
+     * @param itemId   The ID of the current item to be edited
+     * @param itemName The name of the current item to be edited
      */
     private void getUserName(int itemId, String itemName) {
         mDatabase.getReference(Collections.users.name())

@@ -18,6 +18,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListViewHolder> {
         this.dataList = dataList;
     }
 
+    //TODO
     /**
      * creates a new ViewHolder object whenever the RecyclerView needs for showing all items.
      * This is the moment when the row layout is inflated, passed to the ViewHolder
@@ -50,6 +51,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListViewHolder> {
         return listViewHolder;
     }
 
+    //TODO
     /**
      * This method is used to update the contents of the itemView to reflect the item at the given position.
      * @param holder
@@ -62,7 +64,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListViewHolder> {
 
     /**
      * It returns The number of items currently available in adapter.
-     * @return
+     * @return Returns an integer of the adapter's current number of items
      */
     @Override
     public int getItemCount() {

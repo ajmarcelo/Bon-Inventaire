@@ -105,11 +105,11 @@ public class RegisterActivity extends AppCompatActivity {
 
     /**
      * Checks if the input for each field is valid.
-     * @param name
-     * @param email
-     * @param password
-     * @param confirmPassword
-     * @return
+     * @param name              The name inputted by the user
+     * @param email             The email inputted by the user
+     * @param password          The password inputted by the user
+     * @param confirmPassword   The new password inputted and confirmed by the user
+     * @return                  Returns true if there is an error in the input fields. Otherwise, it returns false
      */
     private boolean checkField(String name, String email, String password, String  confirmPassword) {
         boolean hasError = false;

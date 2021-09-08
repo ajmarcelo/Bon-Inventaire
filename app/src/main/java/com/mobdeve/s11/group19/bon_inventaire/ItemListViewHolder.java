@@ -25,13 +25,13 @@ public class ItemListViewHolder extends RecyclerView.ViewHolder{
 
     /**
      * Returns the constraint layout under all_item_list.xml
-     * @return
+     * @return  Returns a constraint layout
      */
     public ConstraintLayout getClListItem() { return this.clListItem; }
 
     /**
      * Sets the text of item name
-     * @param tvListItemName
+     * @param tvListItemName The String containing the name of an item
      */
     public void setTvListItemName (String tvListItemName) {
         this.tvListItemName.setText(tvListItemName);
@@ -39,7 +39,7 @@ public class ItemListViewHolder extends RecyclerView.ViewHolder{
 
     /**
      * Sets the text of the item's number of stocked
-     * @param tvListItemStocks
+     * @param tvListItemStocks The String containing the number of stocks of an item
      */
     public void setTvListItemStocks (String tvListItemStocks) {
         this.tvListItemStocks.setText(tvListItemStocks);
@@ -47,7 +47,7 @@ public class ItemListViewHolder extends RecyclerView.ViewHolder{
 
     /**
      * Sets the text of the item's expiry date
-     * @param tvListItemDate
+     * @param tvListItemDate The String containing the expiration date of an item
      */
     public void setTvListItemDate (String tvListItemDate) {
         this.tvListItemDate.setText(tvListItemDate);

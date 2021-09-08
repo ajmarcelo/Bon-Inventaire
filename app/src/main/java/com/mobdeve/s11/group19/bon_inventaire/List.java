@@ -15,7 +15,7 @@ public class List {
 
     /**
      * Returns the name of the list.
-     * @return
+     * @return Returns a String containing the list's name
      */
     public String getListName() {
         return this.listName;
@@ -23,7 +23,7 @@ public class List {
 
     /**
      * Returns the description of the list.
-     * @return
+     * @return Returns a String containing the list's description
      */
     public String getListDescription() {
         return this.listDescription;
@@ -31,7 +31,7 @@ public class List {
 
     /**
      * Returns the ID of the list
-     * @return
+     * @return Returns a String containing the list's ID
      */
     public int getListID() {
         return this.listID;
@@ -39,7 +39,7 @@ public class List {
 
     /**
      * Sets the ID of the list.
-     * @param listID
+     * @param listID The ID of the list to be assigned
      */
     public void setListID(int listID) {
         this.listID = listID;

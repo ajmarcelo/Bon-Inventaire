@@ -12,7 +12,7 @@ public class User {
 
     /**
      * Returns the email of the user.
-     * @return
+     * @return The String containing the user's email
      */
     public String getEmail() {
         return this.email;
@@ -20,7 +20,7 @@ public class User {
 
     /**
      * Returns the password of the user.
-     * @return
+     * @return The String containing the user's password
      */
     public String getPassword() {
         return this.password;

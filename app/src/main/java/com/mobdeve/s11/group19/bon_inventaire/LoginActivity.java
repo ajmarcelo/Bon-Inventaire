@@ -104,9 +104,9 @@ public class LoginActivity extends AppCompatActivity {
 
     /**
      * Checks if the input for each field is valid.
-     * @param email
-     * @param password
-     * @return
+     * @param email     The email inputted by the user
+     * @param password  The password inputted by the user
+     * @return          Returns true if there is an error in the input fields. Otherwise, it returns false
      */
     private boolean checkField(String email, String password) {
         boolean hasError = false;

@@ -21,7 +21,7 @@ public class ListViewHolder extends RecyclerView.ViewHolder {
 
     /**
      * Returns the constraint layout under all_list_list.xml
-     * @return
+     * @return Returns a constraint layout
      */
     public ConstraintLayout getClAllList() {
         return this.clAllList;
@@ -29,7 +29,7 @@ public class ListViewHolder extends RecyclerView.ViewHolder {
 
     /**
      * Sets the text of item name
-     * @param tvAllListName
+     * @param tvAllListName The String containing the name of an item
      */
     public void setTvAllListName (String tvAllListName) {
         this.tvAllListName.setText(tvAllListName);
