@@ -159,7 +159,7 @@ public class SettingsListActivity extends AppCompatActivity {
      * Updates the list name of the items under the currently updated list.
      * Since the list is deleted, the items under the deleted list will be
      * moved to the "Unlisted" list.
-     * @param list
+     * @param list  The list to be deleted.
      */
     public void updateItems(List list){
 
@@ -206,7 +206,7 @@ public class SettingsListActivity extends AppCompatActivity {
 
     /**
      * Retrieves the lists of the current user.
-     * @param list
+     * @param list  The list to be deleted.
      */
     public void retrieveList(List list) {
         mDatabase.getReference(Collections.users.name())
@@ -232,8 +232,8 @@ public class SettingsListActivity extends AppCompatActivity {
 
     /**
      * Looks for the index of the list to be deleted.
-     * @param allList
-     * @param list
+     * @param allList   All of the lists under the current user.
+     * @param list      The list to be deleted.
      * @return
      */
     private int findIndex(ArrayList<List> allList, List list){
@@ -249,8 +249,8 @@ public class SettingsListActivity extends AppCompatActivity {
 
     /**
      * Storing the items from the deleted list to the "Unlisted" list.
-     * @param allList
-     * @param list
+     * @param allList   All of the lists under the current user.
+     * @param list      The list to be deleted.
      */
     private void storeItem(ArrayList<List> allList, List list) {
 
