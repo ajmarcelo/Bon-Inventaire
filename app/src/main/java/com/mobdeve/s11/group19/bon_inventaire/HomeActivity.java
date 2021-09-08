@@ -2,6 +2,7 @@ package com.mobdeve.s11.group19.bon_inventaire;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageButton;
@@ -75,7 +76,7 @@ public class HomeActivity extends AppCompatActivity {
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        Toast.makeText(getApplicationContext(), "Can't retrieve data", Toast.LENGTH_SHORT).show();
+                        Log.d("DatabaseError: ", error.toString());
                     }
                 });
     }

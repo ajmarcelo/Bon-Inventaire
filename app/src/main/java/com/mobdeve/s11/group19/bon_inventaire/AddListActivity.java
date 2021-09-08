@@ -3,6 +3,7 @@ package com.mobdeve.s11.group19.bon_inventaire;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
@@ -138,7 +139,7 @@ public class AddListActivity extends AppCompatActivity {
                     }
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        Toast.makeText(getApplicationContext(), "Can't retrieve lists", Toast.LENGTH_SHORT).show();
+                        Log.d("DatabaseError: ", error.toString());
                     }
                 });
     }
@@ -181,7 +182,7 @@ public class AddListActivity extends AppCompatActivity {
                             setResult(Activity.RESULT_OK, intent);
                             finish();
                         } else {
-                            Toast.makeText(getApplicationContext(), "List NOT Added", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "List not Added", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });

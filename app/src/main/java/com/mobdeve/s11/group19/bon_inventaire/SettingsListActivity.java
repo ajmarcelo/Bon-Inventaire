@@ -225,7 +225,7 @@ public class SettingsListActivity extends AppCompatActivity {
                     }
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        Toast.makeText(getApplicationContext(), "Can't retrieve data", Toast.LENGTH_SHORT).show();
+                        Log.d("DatabaseError: ", error.toString());
                     }
                 });
     }
@@ -263,7 +263,7 @@ public class SettingsListActivity extends AppCompatActivity {
                         if(task.isSuccessful()) {
                             updateItems(list);
                         } else {
-                            Toast.makeText(getApplicationContext(), "Can't Edit to the database", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "List Failed to be Deleted", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });

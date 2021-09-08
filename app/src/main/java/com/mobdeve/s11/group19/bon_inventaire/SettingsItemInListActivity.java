@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -158,7 +159,7 @@ public class SettingsItemInListActivity extends AppCompatActivity {
      * @param item The item to be deleted
      */
     public void retrieveItem(Item item) {
-        Toast.makeText(getApplicationContext(), "Deleting item to the database...", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), "Deleting item...", Toast.LENGTH_SHORT).show();
 
         mDatabase.getReference(Collections.users.name())
                 .child(mAuth.getCurrentUser().getUid()).child(Collections.items.name())
@@ -176,7 +177,7 @@ public class SettingsItemInListActivity extends AppCompatActivity {
                     }
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        Toast.makeText(getApplicationContext(), "Can't retrieve data", Toast.LENGTH_SHORT).show();
+                        Log.d("DatabaseError: ", error.toString());
                     }
                 });
     }
@@ -212,7 +213,7 @@ public class SettingsItemInListActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if(task.isSuccessful()) {
-                            Toast.makeText(getApplicationContext(), "Successfully Deleted from the database", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "Item Successfully Deleted", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent();
 
                             intent.putExtra(Keys.KEY_NAME.name(), item.getItemName());
@@ -225,7 +226,7 @@ public class SettingsItemInListActivity extends AppCompatActivity {
                             setResult(Activity.RESULT_OK, intent);
                             finish();
                         } else {
-                            Toast.makeText(getApplicationContext(), "Can't delete to the database", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "Item Can't Be Deleted", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });

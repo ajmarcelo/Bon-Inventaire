@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
@@ -230,7 +231,7 @@ public class AddItemActivity extends AppCompatActivity {
      * @param item  The item to be added in the database
      */
     public void retrieveItem(Item item) {
-        Toast.makeText(getApplicationContext(), "Adding item to the database...", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), "Adding item...", Toast.LENGTH_SHORT).show();
         pbAddItem.setVisibility(View.VISIBLE);
         mDatabase.getReference(Collections.users.name())
                 .child(mAuth.getCurrentUser().getUid()).child(Collections.items.name())
@@ -252,7 +253,7 @@ public class AddItemActivity extends AppCompatActivity {
                     }
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        Toast.makeText(getApplicationContext(), "Can't retrieve data", Toast.LENGTH_SHORT).show();
+                        Log.d("DatabaseError: ", error.toString());
                     }
                 });
     }
@@ -269,7 +270,7 @@ public class AddItemActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if(task.isSuccessful()) {
-                            Toast.makeText(getApplicationContext(), "Successfully Added to the database", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "Item Successfully Added", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent();
 
                             intent.putExtra(Keys.KEY_NAME.name(), allItem.get(0).getItemName());
@@ -285,7 +286,7 @@ public class AddItemActivity extends AppCompatActivity {
                             setResult(Activity.RESULT_OK, intent);
                             finish();
                         } else {
-                            Toast.makeText(getApplicationContext(), "Can't Add to the database", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "Adding Item Failed", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -325,7 +326,7 @@ public class AddItemActivity extends AppCompatActivity {
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        Toast.makeText(getApplicationContext(), "Can't retrieve data", Toast.LENGTH_SHORT).show();
+                        Log.d("DatabaseError: ", error.toString());
                     }
                 });
     }
