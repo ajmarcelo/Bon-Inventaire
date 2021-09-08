@@ -283,9 +283,6 @@ public class AddItemActivity extends AppCompatActivity {
                             getUserName(allItem.get(0).getItemID(), allItem.get(0).getItemExpireDate().toString(),
                                     allItem.get(0).getItemName(), allItem.get(0).getItemNumStocks());
 
-                            //TODO
-                            Toast.makeText(AddItemActivity.this, "DONE", Toast.LENGTH_SHORT).show();
-
                             setResult(Activity.RESULT_OK, intent);
                             finish();
                         } else {
