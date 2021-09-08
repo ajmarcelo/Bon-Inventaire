@@ -218,6 +218,11 @@ public class SettingsListActivity extends AppCompatActivity {
                         ArrayList<List> allList = snapshot.getValue(t);
 
                         int index = findIndex(allList,list);
+
+                        Log.d("List Index", Integer.toString(index));
+                        Log.d("List Name", list.getListName());
+                        Log.d("List Desc", list.getListDescription());
+
                         allList.remove(index);
 
                         storeItem(allList, list);
@@ -240,10 +245,12 @@ public class SettingsListActivity extends AppCompatActivity {
         int sentinel = 0;
         for(int i = 0; i < allList.size(); i++) {
             List tempList = allList.get(i);
-            if(tempList.getListID() == list.getListID()){
+            if(tempList.getListName().equals(list.getListName())){
+                Log.d("Return called:", Integer.toString(i));
                 return i;
             }
         }
+        Log.d("Sentinel called:", Integer.toString(sentinel));
         return sentinel;
     }
 

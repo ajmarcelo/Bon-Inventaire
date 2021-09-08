@@ -70,7 +70,7 @@ public class ListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_view_all_lists);
+            setContentView(R.layout.activity_view_all_lists);
 
         initFirebase();
         initConfiguration();
