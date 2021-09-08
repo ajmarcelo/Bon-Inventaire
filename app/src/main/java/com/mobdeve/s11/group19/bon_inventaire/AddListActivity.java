@@ -78,10 +78,10 @@ public class AddListActivity extends AppCompatActivity {
         this.ibSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String name = etName.getText().toString();
+                String name = etName.getText().toString().trim();
                 if(!name.isEmpty())
                     name = name.substring(0,1).toUpperCase() + name.substring(1).toLowerCase();
-                String description = etDescription.getText().toString();
+                String description = etDescription.getText().toString().trim();
                 int id = 0;
 
                 if (!checkField(name)) {

@@ -163,13 +163,13 @@ public class AddItemActivity extends AppCompatActivity {
         this.ibSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String name = etName.getText().toString();
+                String name = etName.getText().toString().trim();
                 if(!name.isEmpty())
                     name = name.substring(0,1).toUpperCase() + name.substring(1).toLowerCase();
-                String list = etList.getText().toString();
-                String numStocks = etNumStocks.getText().toString();
-                String expireDate = etExpireDate.getText().toString();
-                String note = etNote.getText().toString();
+                String list = etList.getText().toString().trim();
+                String numStocks = etNumStocks.getText().toString().trim();
+                String expireDate = etExpireDate.getText().toString().trim();
+                String note = etNote.getText().toString().trim();
                 int id = 0;
 
                 if (!checkField(name, list, numStocks)) {
