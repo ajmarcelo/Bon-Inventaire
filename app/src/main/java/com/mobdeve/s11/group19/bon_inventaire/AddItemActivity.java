@@ -280,8 +280,10 @@ public class AddItemActivity extends AppCompatActivity {
                             intent.putExtra(Keys.KEY_NOTE.name(), allItem.get(0).getItemNote());
                             intent.putExtra(Keys.KEY_ITEM_ID.name(), allItem.get(0).getItemID());
 
-                            getUserName(allItem.get(0).getItemID(), allItem.get(0).getItemExpireDate().toString(),
-                                    allItem.get(0).getItemName(), allItem.get(0).getItemNumStocks());
+                            if(!allItem.get(0).getItemExpireDate().isEmpty()) {
+                                getUserName(allItem.get(0).getItemID(), allItem.get(0).getItemExpireDate().toString(),
+                                        allItem.get(0).getItemName(), allItem.get(0).getItemNumStocks());
+                            }
 
                             setResult(Activity.RESULT_OK, intent);
                             finish();
