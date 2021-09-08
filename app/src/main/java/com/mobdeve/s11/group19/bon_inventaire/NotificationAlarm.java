@@ -28,6 +28,8 @@ public class NotificationAlarm extends BroadcastReceiver {
         builder.setAutoCancel(true)
                 .setSmallIcon(R.drawable.app_name_logo)
                 .setContentIntent(pendingIntent)
+                .setStyle(new NotificationCompat.BigTextStyle()
+                .bigText(body))
                 .setContentTitle(title)
                 .setContentText(body);
 
